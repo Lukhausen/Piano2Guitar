@@ -9,6 +9,7 @@ function generateChordDiagram() {
     }
 
     const svg = createSVGElement('svg', { width: '180', height: '180' });
+    drawTopBar(svg);
     drawStrings(svg);
     drawFrets(svg);
     drawNotes(svg, input);
@@ -28,12 +29,25 @@ function createSVGElement(tag, attributes) {
     return element;
 }
 
+function drawTopBar(svg) {
+    const topBar = createSVGElement('rect', {
+        x: '30', 
+        y: '22', // Adjusted to ensure the top bar does not interfere with the frets
+        width: '125', 
+        height: '8', // Ensure this represents the nut and not the first fret
+        fill: '#000',
+        stroke: '#000', 'stroke-width': '2'
+    });
+    svg.appendChild(topBar);
+}
+
+
 function drawStrings(svg) {
     for (let i = 0; i < 6; i++) {
         const line = createSVGElement('line', {
             x1: 30 + i * 25, y1: '30',
             x2: 30 + i * 25, y2: '160',
-            stroke: '#333', 'stroke-width': '3'
+            stroke: '#000', 'stroke-width': '2'
         });
         svg.appendChild(line);
     }
@@ -44,7 +58,7 @@ function drawFrets(svg) {
         const line = createSVGElement('line', {
             x1: '30', y1: 50 + j * 25,
             x2: '155', y2: 50 + j * 25,
-            stroke: '#888', 'stroke-width': '3'
+            stroke: '#000', 'stroke-width': '2'
         });
         svg.appendChild(line);
     }
@@ -63,7 +77,7 @@ function drawNotes(svg, input) {
                 const position = barreFret ? 40 + (fret - parseInt(barreFret.fret)) * 25 : 40 + (fret - 1) * 25;
                 const circle = createSVGElement('circle', {
                     cx: 30 + k * 25, cy: position,
-                    r: '8', fill: '#007bff'
+                    r: '8', fill: '#222'
                 });
                 svg.appendChild(circle);
             }
@@ -75,14 +89,17 @@ function drawMuteIndicators(svg, input) {
     for (let i = 0; i < 6; i++) {
         if (input[i] === 'x') {
             const text = createSVGElement('text', {
-                x: 30 + i * 25, y: '25',
-                'font-family': 'Arial', 'font-size': '15', fill: 'red'
+                x: 30 + i * 25, 
+                y: '15', // Adjust the y-coordinate so the 'X' appears above the top bar
+                'font-family': 'Arial', 'font-size': '15', fill: '#000',
+                'text-anchor': 'middle'
             });
-            text.textContent = 'X';
+            text.textContent = '✖';
             svg.appendChild(text);
         }
     }
 }
+
 
 function findBarreFret(input) {
     const counts = {};
@@ -100,16 +117,22 @@ function findBarreFret(input) {
 }
 
 function drawBarre(svg, index, fret) {
+    const barreWidth = (5 - index) * 25;
+    const barreHeight = 10;
+    const barreX = 30 + index * 25 - 5;
+    const barreY = 35;
+
     const rect = createSVGElement('rect', {
-        x: 30 + index * 25, y: '40',
-        width: (5 - index) * 25, height: '10',
-        fill: '#ccc'
+        x: barreX, y: barreY,
+        width: barreWidth + 10, height: barreHeight,
+        rx: '5', ry: '5',
+        fill: '#000'
     });
     svg.appendChild(rect);
 
     const text = createSVGElement('text', {
-        x: 30 + index * 25 + 5, y: '35',
-        'font-family': 'Arial', 'font-size': '12', fill: '#333'
+        x: barreX + 5, y: barreY - 5,
+        'font-family': 'Arial', 'font-size': '12', fill: '#111'
     });
     text.textContent = fret;
     svg.appendChild(text);
