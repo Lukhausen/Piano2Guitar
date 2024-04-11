@@ -17,6 +17,8 @@ function generateChordDiagram() {
     diagram.appendChild(svg);
 }
 
+const topSpacing = 3
+
 function isValidChordString(input) {
     return input && input.length === 6 && /^[0-9x]{6}$/.test(input);
 }
@@ -32,7 +34,7 @@ function createSVGElement(tag, attributes) {
 function drawTopBar(svg) {
     const topBar = createSVGElement('rect', {
         x: '30', 
-        y: '22', // Adjusted to ensure the top bar does not interfere with the frets
+        y: '21', // Adjusted to ensure the top bar does not interfere with the frets
         width: '125', 
         height: '8', // Ensure this represents the nut and not the first fret
         fill: '#000',
@@ -41,12 +43,12 @@ function drawTopBar(svg) {
     svg.appendChild(topBar);
 }
 
-
 function drawStrings(svg) {
+    
     for (let i = 0; i < 6; i++) {
         const line = createSVGElement('line', {
             x1: 30 + i * 25, y1: '30',
-            x2: 30 + i * 25, y2: '160',
+            x2: 30 + i * 25, y2: 160+topSpacing,
             stroke: '#000', 'stroke-width': '2'
         });
         svg.appendChild(line);
@@ -56,8 +58,8 @@ function drawStrings(svg) {
 function drawFrets(svg) {
     for (let j = 0; j < 5; j++) {
         const line = createSVGElement('line', {
-            x1: '30', y1: 50 + j * 25,
-            x2: '155', y2: 50 + j * 25,
+            x1: '30', y1: 50 +topSpacing + j * 25,
+            x2: '155', y2: 50 +topSpacing+ j * 25,
             stroke: '#000', 'stroke-width': '2'
         });
         svg.appendChild(line);
@@ -99,7 +101,6 @@ function drawMuteIndicators(svg, input) {
         }
     }
 }
-
 
 function findBarreFret(input) {
     const counts = {};
