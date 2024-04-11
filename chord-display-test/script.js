@@ -8,7 +8,7 @@ function generateChordDiagram() {
         return;
     }
 
-    const svg = createSVGElement('svg', { width: '180', height: '180' });
+    const svg = createSVGElement('svg', { width: '200', height: '180' });
     drawTopBar(svg);
     drawStrings(svg);
     drawFrets(svg);
@@ -131,9 +131,10 @@ function drawBarre(svg, index, fret) {
     svg.appendChild(rect);
 
     const text = createSVGElement('text', {
-        x: barreX + 5, y: barreY - 5,
-        'font-family': 'Arial', 'font-size': '12', fill: '#111'
+        x: barreX +barreWidth +25, y: barreY+barreHeight,
+        'font-family': 'Arial', 'font-size': '20', fill: '#111',
+        'text-anchor': 'middle'
     });
-    text.textContent = fret;
+    text.textContent = fret+"fr";
     svg.appendChild(text);
 }
