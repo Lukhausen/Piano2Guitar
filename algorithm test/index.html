@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Guitar Chord Finder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    input {
+      padding: 5px;
+      font-size: 16px;
+    }
+    button {
+      padding: 5px 10px;
+      font-size: 16px;
+    }
+    #output {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Guitar Chord Finder</h1>
+  <input type="text" id="chordInput" placeholder="Enter a chord (e.g., CEG)">
+  <button onclick="findGuitarChords()">Find Chords</button>
+  <div id="output"></div>
+
+  <script>
+    const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const standardTuning = ['E', 'A', 'D', 'G', 'B', 'E'];
+
+    function getValidFretsForString(note, guitarString){
+        note = notes.indexOf(note)
+        guitarString = notes.indexOf(guitarString)
+        validFrets[0] = (note - guitarString) % 12
+        validFrets[1] = validFrets[0] + 12
+        return validFrets
+    }
+
+
+    function findGuitarChords() {
+      const chordInput = document.getElementById('chordInput').value.toUpperCase();
+      const chordNotes = chordInput.split('');
+      const chordNumbers = chordNotes.map(note => {
+        const index = notes.indexOf(note);
+        return index !== -1 ? index : null;
+      }).filter(num => num !== null);
+
+      const guitarChords = [];
+
+      for (let i = 0; i < standardTuning.length; i++) {
+        const stringNote = notes.indexOf(standardTuning[i]);
+        const fretPositions = [];
+
+        for (let j = 0; j < chordNumbers.length; j++) {
+          const fretPosition = (chordNumbers[j] - stringNote + 12) % 12;
+          fretPositions.push(fretPosition);
+          fretPositions.push(fretPosition + 12);
+        }
+
+        guitarChords.push(fretPositions);
+      }
+
+      const chordIntervals = [];
+      for (let i = 0; i <= 12; i++) {
+        const interval = guitarChords.map(string => {
+          const fretPositions = string.filter(fret => fret >= i && fret < i + 4);
+          return fretPositions.length > 0 ? fretPositions[0] - i : 'x';
+        });
+        if (!interval.every(fret => fret === 'x')) {
+          chordIntervals.push(interval.join(''));
+        }
+      }
+
+      const outputDiv = document.getElementById('output');
+      outputDiv.innerHTML = `<h2>Possible Guitar Chords for ${chordInput}:</h2>`;
+      chordIntervals.forEach(chord => {
+        outputDiv.innerHTML += `<p>${chord}</p>`;
+      });
+    }
+  </script>
+</body>
+</html>
