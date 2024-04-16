@@ -1,18 +1,17 @@
 function generateChordDiagram() {
     const input = document.getElementById('chordInput').value.trim();
+    const fingers = document.getElementById('fingerInput').value.trim();
     const diagram = document.getElementById('diagram');
     diagram.innerHTML = '';
-
     if (!isValidChordString(input)) {
         diagram.textContent = 'Please enter a valid chord string (e.g., 555575).';
         return;
     }
-
     const svg = createSVGElement('svg', { width: '200', height: '180' });
     drawTopBar(svg);
     drawStrings(svg);
     drawFrets(svg);
-    drawNotes(svg, input);
+    drawNotes(svg, input, fingers);
     drawMuteIndicators(svg, input);
     diagram.appendChild(svg);
 }
@@ -66,12 +65,11 @@ function drawFrets(svg) {
     }
 }
 
-function drawNotes(svg, input) {
+function drawNotes(svg, input, fingers) {
     const barreFret = findBarreFret(input);
     if (barreFret) {
         drawBarre(svg, barreFret.index, barreFret.fret);
     }
-
     for (let k = 0; k < 6; k++) {
         if (input[k] !== 'x' && (!barreFret || k < barreFret.index || input[k] !== barreFret.fret.toString())) {
             const fret = parseInt(input[k]);
@@ -79,9 +77,24 @@ function drawNotes(svg, input) {
                 const position = barreFret ? 40 + (fret - parseInt(barreFret.fret)) * 25 : 40 + (fret - 1) * 25;
                 const circle = createSVGElement('circle', {
                     cx: 30 + k * 25, cy: position,
-                    r: '8', fill: '#222'
+                    r: '10', fill: '#222'
                 });
                 svg.appendChild(circle);
+
+                // Draw finger number on top of the circle
+                if (fingers && fingers[k]) {
+                    const text = createSVGElement('text', {
+                        x: 30 + k * 25,
+                        y: position + 4,
+                        'font-family': 'Arial',
+                        'font-size': '15',
+                        'font-weight': 'bold',
+                        fill: '#fff',
+                        'text-anchor': 'middle'
+                    });
+                    text.textContent = fingers[k];
+                    svg.appendChild(text);
+                }
             }
         }
     }
