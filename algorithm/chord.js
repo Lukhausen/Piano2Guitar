@@ -1,6 +1,9 @@
 import { STANDARD_TUNING, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
 import { parseNotes, removeDuplicateArrays } from './utils.js';
 
+//const NOTE_INDEX_MAP = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+
 export class ChordVoicing {
   constructor(voicing, barre, rating, fingersUsed, barreSize) {
     this.voicing = voicing;
@@ -8,6 +11,7 @@ export class ChordVoicing {
     this.rating = rating;
     this.fingersUsed = fingersUsed
     this.barreSize = barreSize
+    this.fingerPositions = [0,0,0,0,0,0]
   }
 }
 
@@ -104,8 +108,34 @@ export class Chord {
   }
 
   getFingerPosition(chordVoicing) {
-
+    let fingerPositions = new Array(6).fill(0);
+    let minFret = Math.min(...chordVoicing.voicing.filter(f => f > 0));
+    let maxFret = Math.max(...chordVoicing.voicing);
+  
+    for (let fret = minFret; fret <= maxFret; fret++) {
+      let currentFinger = 1;
+      for (let string = 5; string >= 0; string--) {
+        if (chordVoicing.voicing[string] === fret) {
+          fingerPositions[string] = currentFinger++;
+          if (currentFinger > 4) break; // Prevent using more than four fingers
+        }
+      }
+    }
+  
+    // Adjust for barre, if necessary
+    if (chordVoicing.barre) {
+      let barreFret = chordVoicing.barre;
+      let barreFinger = fingerPositions[chordVoicing.voicing.indexOf(barreFret)];
+      chordVoicing.voicing.forEach((fret, index) => {
+        if (fret === barreFret) {
+          fingerPositions[index] = barreFinger; // Assign barre finger to all strings at barre fret
+        }
+      });
+    }
+  
+    return fingerPositions;
   }
+  
 
   rateVoicing(chordVoicing) {
     let rating = 0;
