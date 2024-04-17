@@ -5,3 +5,4 @@ export const NOTE_INDEX_MAP = {
   'F': 5, 'F#': 6, 'G': 7, 'G#': 8, 'A': 9,
   'A#': 10, 'B': 11
 };
+export const BARRE_RATING = 1

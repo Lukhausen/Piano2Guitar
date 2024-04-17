@@ -1,11 +1,9 @@
 {
-    "name": "piano2guitar",
-    "version": "1.0.0",
-    "type": "module",
-    "scripts": {
-      "start": "main.js"
-    },
-    "dependencies": {
-    }
-  }
-  
+  "name": "piano2guitar",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "main.js"
+  },
+  "dependencies": {}
+}
