@@ -7,7 +7,7 @@ let lastPlayChords;
 for (let i = 0; i < repetitions; i++) {
     const startTime = performance.now();
     
-    const chord = new Chord("E, C, G, B, D");
+    const chord = new Chord("E, C, G");
     const allChords = chord.generateAllChordCombinations();
     const playableChords = chord.filterPlayableChords(allChords, 0, true);
     

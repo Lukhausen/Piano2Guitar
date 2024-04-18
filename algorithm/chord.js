@@ -5,13 +5,62 @@ import { parseNotes, removeDuplicateArrays } from './utils.js';
 
 
 export class ChordVoicing {
-  constructor(voicing, barre, rating, fingersUsed, barreSize) {
+  constructor(voicing, barre, fingersUsed, barreSize, minAboveZero) {
     this.voicing = voicing;
     this.barre = barre;
-    this.rating = rating;
+    this.rating = 0;
     this.fingersUsed = fingersUsed
     this.barreSize = barreSize
+    this.minAboveZero = minAboveZero
     this.fingerPositions = [0,0,0,0,0,0]
+  }
+  getFingerPosition() {
+    let startPosition = this.minAboveZero
+    let finger = 1
+
+    //Make the start Position the BArre Position and If there is an Barre, Set all The according Things to Barre
+    if (this.barre) {
+      for (let i = this.barreSize; i > 0; i--) {
+        if (this.voicing[6 - i]== this.barre){
+          this.fingerPositions[6 - i] = 1
+        }
+        
+        finger = 2
+      }
+    }
+    //Now go through each Fret, Start With the lowest fret above zero or with the barre fret.
+
+    for (let fret = 0; fret < 4; fret++) {
+      for (let string = 0; string < 6; string++) {
+        if (startPosition+fret == this.voicing[string] && this.fingerPositions[string] !== 1 && this.voicing[string] !== 0){
+          this.fingerPositions[string] = finger
+          finger++
+        }
+      }
+    }
+
+    return;
+  }
+
+  rateVoicing(chordVoicing) {
+    let rating = 0;
+    if (chordVoicing.barre !== null) {
+      rating + BARRE_RATING
+    }
+
+
+    // Rate playability: easier chords have smaller fret spreads and fewer fingers used
+    const frets = chordVoicing.filter(fret => fret > 0);
+    const fretSpread = frets.length > 0 ? Math.max(...frets) - Math.min(...frets) : 0;
+    const fingersUsed = frets.length;
+    rating += 5 - fretSpread; // max spread of 5 frets is still reasonable
+    rating += 5 - fingersUsed; // less fingers used is better, up to 5 fingers considered
+
+    // Rate sound quality: richer chords with open strings get higher ratings
+    const openStrings = chordVoicing.filter(fret => fret === 0).length;
+    rating += openStrings; // each open string adds a point
+
+    return rating;
   }
 }
 
@@ -62,7 +111,7 @@ export class Chord {
     return chords;
   }
 
-  User
+
   filterPlayableChords(allChords, rootNote = 0, startWithRoot = true) {
     const playableChords = allChords.map(chord => {
       if (startWithRoot) {
@@ -98,8 +147,10 @@ export class Chord {
         fingersUsed = chord.filter(fret => fret >= minAboveZero).length;
       }
       if (fingersUsed <= 4) {
-        const rating = this.rateVoicing(chord);
-        return new ChordVoicing(chord, barreUseFingers > 0 ? minAboveZero : null, rating, barreUseFingers > 0 ? barreAddFingers : fingersUsed, barreUseFingers);
+        let voicing = new ChordVoicing(chord, barreUseFingers > 0 ? minAboveZero : null, barreUseFingers > 0 ? barreAddFingers : fingersUsed, barreUseFingers, minAboveZero)
+        voicing.getFingerPosition();
+        voicing.rateVoicing(chord);
+        return voicing;
       }
       return null;
     }
@@ -107,54 +158,8 @@ export class Chord {
     return removeDuplicateArrays(playableChords);
   }
 
-  getFingerPosition(chordVoicing) {
-    let fingerPositions = new Array(6).fill(0);
-    let minFret = Math.min(...chordVoicing.voicing.filter(f => f > 0));
-    let maxFret = Math.max(...chordVoicing.voicing);
-  
-    for (let fret = minFret; fret <= maxFret; fret++) {
-      let currentFinger = 1;
-      for (let string = 5; string >= 0; string--) {
-        if (chordVoicing.voicing[string] === fret) {
-          fingerPositions[string] = currentFinger++;
-          if (currentFinger > 4) break; // Prevent using more than four fingers
-        }
-      }
-    }
-  
-    // Adjust for barre, if necessary
-    if (chordVoicing.barre) {
-      let barreFret = chordVoicing.barre;
-      let barreFinger = fingerPositions[chordVoicing.voicing.indexOf(barreFret)];
-      chordVoicing.voicing.forEach((fret, index) => {
-        if (fret === barreFret) {
-          fingerPositions[index] = barreFinger; // Assign barre finger to all strings at barre fret
-        }
-      });
-    }
-  
-    return fingerPositions;
-  }
-  
-
-  rateVoicing(chordVoicing) {
-    let rating = 0;
-    if (chordVoicing.barre !== null) {
-      rating + BARRE_RATING
-    }
 
 
-    // Rate playability: easier chords have smaller fret spreads and fewer fingers used
-    const frets = chordVoicing.filter(fret => fret > 0);
-    const fretSpread = frets.length > 0 ? Math.max(...frets) - Math.min(...frets) : 0;
-    const fingersUsed = frets.length;
-    rating += 5 - fretSpread; // max spread of 5 frets is still reasonable
-    rating += 5 - fingersUsed; // less fingers used is better, up to 5 fingers considered
 
-    // Rate sound quality: richer chords with open strings get higher ratings
-    const openStrings = chordVoicing.filter(fret => fret === 0).length;
-    rating += openStrings; // each open string adds a point
 
-    return rating;
-  }
 }
