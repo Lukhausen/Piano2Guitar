@@ -1,3 +1,5 @@
+import { STANDARD_TUNING, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
+import { parseNotes, removeDuplicateArrays } from './utils.js';
 import { Chord } from './chord.js';
 
 let totalDuration = 0;
@@ -7,9 +9,8 @@ let lastPlayChords;
 for (let i = 0; i < repetitions; i++) {
     const startTime = performance.now();
     
-    const chord = new Chord("E, C, G");
-    const allChords = chord.generateAllChordCombinations();
-    const playableChords = chord.filterPlayableChords(allChords, 0, true);
+    const chord = new Chord("E, G, B", 4, true, STANDARD_TUNING);
+    const playableChords = chord.playableChords
     
     if (i === repetitions - 1) { // Only save the last result
         lastPlayChords = playableChords;
@@ -18,10 +19,14 @@ for (let i = 0; i < repetitions; i++) {
     const endTime = performance.now();
     totalDuration += endTime - startTime; // Calculate the duration for this iteration
 }
-console.log(lastPlayChords);
+
+// Sort lastPlayChords by difficulty
+if (lastPlayChords && lastPlayChords.length > 0) {
+    lastPlayChords.sort((a, b) => a.rating - b.rating);
+}
+
+console.log(lastPlayChords); // Print sorted chords
+
 // Calculate the average time
 const averageTime = totalDuration / repetitions;
 console.log(`Average Processing Time: ${averageTime.toFixed(2)} ms`);
-
-// Print the last result
-
