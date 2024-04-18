@@ -1,10 +1,22 @@
-// Check if the Web MIDI API is available and initiate
+// Global variables to manage retries
+let retryCount = 0;
+const maxRetries = 5;
+
+// Entry point to check if the Web MIDI API is available and initiate
 if (navigator.requestMIDIAccess) {
-    navigator.requestMIDIAccess()
-        .then(onMIDISuccess, onMIDIFailure)
-        .catch(err => console.error('Error accessing MIDI devices:', err));
+    attemptMIDIAccess();
 } else {
     console.log("Web MIDI API not supported!");
+}
+
+// Function to attempt to access MIDI, with retry logic
+function attemptMIDIAccess() {
+    navigator.requestMIDIAccess()
+        .then(onMIDISuccess, onMIDIFailure)
+        .catch(err => {
+            console.error('Error accessing MIDI devices:', err);
+            handleRetry(err);
+        });
 }
 
 function onMIDISuccess(midiAccess) {
@@ -14,7 +26,20 @@ function onMIDISuccess(midiAccess) {
 }
 
 function onMIDIFailure() {
-    updateStatus("Failed to access MIDI devices.");
+    updateStatus("Failed to access MIDI devices. Retrying...");
+    handleRetry(new Error("Initial connection failed"));
+}
+
+// Retry handler function
+function handleRetry(err) {
+    if (retryCount < maxRetries) {
+        retryCount++;
+        console.log(`Retrying... Attempt ${retryCount}`);
+        setTimeout(attemptMIDIAccess, 1000); // Retry after 1 second
+    } else {
+        console.error('Final attempt failed. Error:', err);
+        updateStatus(`Failed to connect after ${maxRetries} attempts: ${err.message}`);
+    }
 }
 
 const notesPlayed = new Set();
