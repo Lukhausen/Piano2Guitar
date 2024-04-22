@@ -36,8 +36,8 @@ function drawTopBar(svg) {
         y: '21', // Adjusted to ensure the top bar does not interfere with the frets
         width: '125', 
         height: '8', // Ensure this represents the nut and not the first fret
-        fill: '#000',
-        stroke: '#000', 'stroke-width': '2'
+        fill: '#fff',
+        stroke: '#fff', 'stroke-width': '2'
     });
     svg.appendChild(topBar);
 }
@@ -48,7 +48,7 @@ function drawStrings(svg) {
         const line = createSVGElement('line', {
             x1: 30 + i * 25, y1: '30',
             x2: 30 + i * 25, y2: 160+topSpacing,
-            stroke: '#000', 'stroke-width': '2'
+            stroke: '#fff', 'stroke-width': '2'
         });
         svg.appendChild(line);
     }
@@ -59,7 +59,7 @@ function drawFrets(svg) {
         const line = createSVGElement('line', {
             x1: '30', y1: 50 +topSpacing + j * 25,
             x2: '155', y2: 50 +topSpacing+ j * 25,
-            stroke: '#000', 'stroke-width': '2'
+            stroke: '#fff', 'stroke-width': '2'
         });
         svg.appendChild(line);
     }
@@ -77,7 +77,7 @@ function drawNotes(svg, input, fingers) {
                 const position = barreFret ? 40 + (fret - parseInt(barreFret.fret)) * 25 : 40 + (fret - 1) * 25;
                 const circle = createSVGElement('circle', {
                     cx: 30 + k * 25, cy: position,
-                    r: '10', fill: '#222'
+                    r: '10', fill: '#eee'
                 });
                 svg.appendChild(circle);
 

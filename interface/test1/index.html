@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop Interface</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="search-box">
+            <input type="text" id="itemFilter" placeholder="Search items...">
+        </div>
+        <div class="items" id="itemsList">
+            <!-- Items will be populated here by JavaScript -->
+        </div>
+        <div class="selected-items" id="selectedItems">
+            <!-- Dragged items will appear here -->
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
