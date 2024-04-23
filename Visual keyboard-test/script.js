@@ -1,6 +1,5 @@
 let playedNotes = [];
 
-
 document.addEventListener('DOMContentLoaded', () => {
     createPiano()
 });
@@ -34,6 +33,7 @@ function createPiano() {
             key.style.boxSizing = "border-box";
             key.style.position = `absolute`;
 
+
         } else{
             key.classList.add("key","white");
             key.style.boxSizing = "border-box";
@@ -66,6 +66,14 @@ function updatePlayedNotes() {
     document.getElementById('playedNotes').textContent = 'Played Notes: [' + playedNotes.join(', ') + ']';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Listener for the button is already set via onclick in HTML
-});
+function clearPiano() {
+    playedNotes = []; // Clear the array of played notes
+
+    // Remove the selectedKey class from all keys
+    document.querySelectorAll('.key.selectedKey').forEach(key => {
+        key.classList.remove("selectedKey");
+    });
+
+    // Update the display of played notes
+    updatePlayedNotes();
+}

@@ -1,18 +1,4 @@
-body {
-  padding: 0;
-  margin: 0;
-  background-color: #767676;
-}
 
-.piano-container {
-  display: flex;
-  position: relative;
-  width: 90vw;
-  height: 50vh;
-  border-radius: 0.62vw;
-  background-color: #24272e;
-  box-shadow: 0 2vw 4vw rgba(7, 0, 53, 0.25);
-}
 
 .key.white {
   background-color: #ffffff;

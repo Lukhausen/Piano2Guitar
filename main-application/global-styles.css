@@ -1,0 +1,19 @@
+html{
+    background-color: #001e1f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+body{
+    margin: 0;
+}
+
+.piano-container {
+    display: flex;
+    position: relative;
+    width: 90vw;
+    height: 50vh;
+    border-radius: 0.62vw;
+    box-shadow: 0 2vw 4vw rgba(7, 0, 53, 0.25);
+  }

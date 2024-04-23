@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Absolute Positioning Example</title>
+<style>
+    .parent {
+        position: relative; /* Establishes a positioning context */
+        width: 300px; /* Width of the parent */
+        height: 200px; /* Height of the parent */
+        background-color: #f8f8f8; /* Light grey background */
+        border: 1px solid #ccc; /* Border for visibility */
+    }
+    .child {
+        position: absolute; /* Absolute positioning relative to the nearest positioned ancestor */
+        top: 10%; /* 10% from the top of the parent */
+        left: 20%; /* 20% from the left of the parent */
+        width: 50%; /* Width is 50% of the parent's width */
+        height: 30%; /* Height is 30% of the parent's height */
+        background-color: #4682B4; /* Steel blue background */
+    }
+</style>
+</head>
+<body>
+<div class="parent">
+    <div class="child"></div>
+</div>
+</body>
+</html>

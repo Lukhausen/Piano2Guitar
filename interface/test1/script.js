@@ -70,6 +70,7 @@ function createSelectedItemElement(item) {
     selectedItemElement.addEventListener('click', removeSelectedItem);
 
 
+
     return selectedItemElement;
 }
 
