@@ -1,35 +1,71 @@
 let playedNotes = [];
 
+
 document.addEventListener('DOMContentLoaded', () => {
+    createPiano()
+});
+
+
+function createPiano() {
     const pianoContainer = document.querySelector('.piano-container');
-    const base = "./audio/";
-    
+    pianoContainer.innerHTML = ''; // Clear existing piano keys
+    let octaves = 2;
+
+    const layout = [0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0]
+    const keysPerOctave = layout.length;
+    const whiteKeyAmmount = layout.filter(x => x === 0).length;
+    const whiteKeyWidth = 100 / (whiteKeyAmmount * octaves)
+    //Black Keys are roughly 58% of the WHite Keys
+    const blackKeyWidth = whiteKeyWidth * 0.5829787234
+    // How many Percent the black keys are are of the white key height
+    const blackKeyHeight = 0.63
+    const totalKeys = octaves * keysPerOctave;
+
     // Creating keys
-    for (let index = 1; index <= 24; index++) {
-        let div = document.createElement("div");
-        div.setAttribute('data-note', index);
-        div.classList.add("key", index <= 10 ? "black-key" : "white-key");
-        pianoContainer.appendChild(div);
+    let whiteCounter = 0
+    for (let index = 0; index < totalKeys; index++) {
+        let key = document.createElement("div");
+        key.setAttribute('data-note', index);
+        if (layout[index%keysPerOctave] == 1){
+            key.classList.add("key","black");
+            key.style.left = `${(whiteCounter * whiteKeyWidth)-(blackKeyWidth/2)}%`;
+            key.style.width = `${blackKeyWidth}%`;
+            key.style.height = `${blackKeyHeight*100}%`;
+            key.style.boxSizing = "border-box";
+            key.style.position = `absolute`;
+
+        } else{
+            key.classList.add("key","white");
+            key.style.boxSizing = "border-box";
+            key.style.width = `${whiteKeyWidth}%`;
+            whiteCounter++
+        }
+        pianoContainer.appendChild(key);
     }
 
-    // Adding click event listeners
-    document.querySelectorAll('.white-key, .black-key').forEach(key => {
-        key.addEventListener('click', function() {
+    addKeyListeners();
+}
+
+function addKeyListeners() {
+    document.querySelectorAll('.key').forEach(key => {
+        key.addEventListener('click', function () {
             const note = key.getAttribute('data-note');
             if (playedNotes.includes(note)) {
-                // Remove note if it's already selected
                 playedNotes = playedNotes.filter(n => n !== note);
-                key.style.backgroundColor = ""; // Remove the yellow background
+                key.classList.remove("selectedKey");
             } else {
-                // Add note if not already selected
                 playedNotes.push(note);
-                key.style.backgroundColor = "yellow"; // Set the yellow background
+                key.classList.add("selectedKey");
             }
             updatePlayedNotes();
         });
     });
-    
-    function updatePlayedNotes() {
-        document.getElementById('playedNotes').textContent = 'Played Notes: [' + playedNotes.join(', ') + ']';
-    }
+}
+
+function updatePlayedNotes() {
+    document.getElementById('playedNotes').textContent = 'Played Notes: [' + playedNotes.join(', ') + ']';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Listener for the button is already set via onclick in HTML
 });
