@@ -84,10 +84,12 @@ export class Chord {
           barreAddFingers++;
         }
       }
+      if (barreUseFingers)
       if (barreUseFingers >= 2 && barreAddFingers > 3) {
         return null;
-      } else if (barreUseFingers === 0) {
+      } else if (barreUseFingers < 2) {
         fingersUsed = chord.filter(fret => fret >= minAboveZero).length;
+        barreUseFingers = 0
       }
       if (fingersUsed <= 4) {
         let voicing = new ChordVoicing(chord, barreUseFingers > 0 ? minAboveZero : null, barreUseFingers > 0 ? barreAddFingers : fingersUsed, barreUseFingers, minAboveZero)
