@@ -1,8 +1,10 @@
 class DragAndDropList {
-    constructor(items, dropzoneId, itemsContainer, itemSearch, selectedItems) {
+    constructor(items, dropzoneId, itemsContainer, itemSearch, selectedItems, emptyMessage) {
         this.idCounter = 0;
         this.items = items;
         this.dropzoneId = dropzoneId;
+
+        this.emptyMessageContainer = document.getElementById(emptyMessage);
         this.itemsContainer = document.getElementById(itemsContainer);
         this.selectedItemsContainer = document.getElementById(selectedItems);
         this.itemFilterInput = document.getElementById(itemSearch);
@@ -13,6 +15,13 @@ class DragAndDropList {
 
         this.addEventListeners();
         this.populateItemsList();
+        
+        
+        this.emptyMessage = "Add chords by clicking on them"
+        this.emptyMessageElement = document.createElement('div');
+        this.emptyMessageElement.id = "DragAndDrop-EmptyMessage"
+        this.emptyMessageElement.innerHTML = this.emptyMessage
+        this.selectedItemsContainer.appendChild(this.emptyMessageElement)
     }
 
     addEventListeners() {
@@ -60,7 +69,7 @@ class DragAndDropList {
 
     createSelectedItemElement(item) {
         const selectedItemElement = document.createElement('div');
-        selectedItemElement.className = 'selected-dragDropItem';
+        selectedItemElement.className = 'selected-dragDropItem dragDropItem';
         selectedItemElement.draggable = true;
         selectedItemElement.id = `selected-dragDropItem-${this.idCounter++}`;
         selectedItemElement.textContent = item;
@@ -69,14 +78,13 @@ class DragAndDropList {
         selectedItemElement.addEventListener('drop', this.handleDropReorder.bind(this));
         selectedItemElement.addEventListener('dragend', this.handleDragEnd.bind(this));
         selectedItemElement.addEventListener('dragleave', this.handleDragLeave.bind(this));
-        selectedItemElement.addEventListener('dblclick', this.removeSelectedItem.bind(this));
         selectedItemElement.addEventListener('click', this.removeSelectedItem.bind(this));
         return selectedItemElement;
     }
 
     removeSelectedItem(item) {
         item.target.remove();
-        this.updateArrayAndDisplay();
+        this.updateArray();
     }
 
     addSelectedItem(item) {
@@ -86,8 +94,17 @@ class DragAndDropList {
         this.updateDisplayArray();
     }
 
+
+
     updateDisplayArray() {
         this.displayArray.textContent = `Selected Items: ${this.selectedItemsArray.join(', ')}`;
+        console.log(this.selectedItemsArray.length)
+        if (this.selectedItemsArray.length == 0){
+            
+            this.selectedItemsContainer.appendChild(this.emptyMessageElement)
+        } else {
+            this.emptyMessageElement.remove();
+        }
     }
 
     handleDropOnItemList(event) {
@@ -153,7 +170,7 @@ class DragAndDropList {
         event.target.classList.remove('dragging');
         const overItems = document.querySelectorAll('.selected-dragDropItem');
         overItems.forEach(item => item.classList.remove('over'));
-        this.updateArrayAndDisplay();
+        this.updateArray();
     }
 
     allowDrop(event) {
@@ -183,10 +200,10 @@ class DragAndDropList {
             targetElement.before(droppedItemElement);
         }
         targetElement.classList.remove('over');
-        this.updateArrayAndDisplay();
+        this.updateArray();
     }
 
-    updateArrayAndDisplay() {
+    updateArray() {
         this.selectedItemsArray = Array.from(this.selectedItemsContainer.children).map(el => el.textContent);
         this.updateDisplayArray();
     }

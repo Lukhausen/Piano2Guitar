@@ -69,6 +69,18 @@ class Piano {
         });
         this.updatePlayedNotes();
     }
+
+    setOctaves(newOctaves) {
+        if (newOctaves !== this.octaves) {
+            this.octaves = newOctaves;
+            this.totalKeys = this.octaves * this.keysPerOctave;
+            this.whiteKeyWidth = 100 / (this.whiteKeyCount * this.octaves);
+            this.blackKeyWidth = this.whiteKeyWidth * 0.5829787234;
+            this.clearPiano();
+            this.createPiano();
+            this.addKeyListeners();
+        }
+    }
 }
 
 export default Piano;

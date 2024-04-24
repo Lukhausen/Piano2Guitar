@@ -3,9 +3,11 @@
 .key.white {
   background-color: #ffffff;
   border-radius: 0 0 0.3vw 0.3vw;
-  margin: 2px;
+  margin: 1px;
   cursor: pointer;
   z-index: 1;
+  transition: 0.3s;
+
 }
 
 .key.black {
@@ -13,19 +15,27 @@
   border-radius: 0 0 0.3vw 0.3vw;
   cursor: pointer;
   z-index: 2;
-  box-shadow: -10px 10px 40px rgba(0, 0, 0, 0.39);
+  box-shadow: -10px 10px 10px rgba(0, 0, 0, 0.131);
+  transition: 0.3s;
 
 }
 
 .key:hover {
   filter: invert(0.1);
+  transition: 0.1s;
 }
 
 .black.key.selectedKey {
   background-color: #906e11;
+  transition: 0.2s;
+  transform: scaleY(0.99) translateY(-0.5%);
 
 }
 
 .white.key.selectedKey {
   background-color: #ffbb00;
+  transition: 0.2s;
+  transform: scaleY(0.99) translateY(-0.5%);
+
 }
+

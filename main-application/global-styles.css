@@ -1,31 +1,47 @@
 :root {
-    --ligt1: rgb(220, 220, 220);
-    --ligt2: rgb(208, 208, 208);
-    --ligt3: rgb(143, 142, 142);
+    --light1: rgb(220, 220, 220);
+    --light2: rgb(208, 208, 208);
+    --light3: rgb(143, 142, 142);
     --dark1: rgb(57, 57, 57);
     --dark2: rgb(42, 42, 42);
     --dark3: rgb(17, 17, 17);
     --padding: 10px;
+    --rounding: 5px;
 }
 
-.svgIcon {
-    width: 100px;
-    /* Adjust size as needed */
-    height: 100px;
-    /* Adjust size as needed */
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
 }
 
-/* You might not be able to style the SVG contents directly this way */
+/* Track */
+::-webkit-scrollbar-track {
+    background: var(--dark3);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: var(--dark1);
+    border-radius: var(--rounding);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: var(--light3);
+}
+
 svg path {
-    fill: #f00
+    fill: var(--light1)
 }
 
 html {
-    background-color: #001e1f;
+    background-color: var(--dark2);
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100vh;
+    font-family: 'Noto Sans', serif;
 }
 
 body {
@@ -33,18 +49,23 @@ body {
 }
 
 .inputWrapper {
-    height: 100px;
+    display: flex;
+    flex-direction: column;
     width: 80vw;
+    background-color: var(--dark1);
+    gap: var(--padding);
+    padding: var(--padding);
 }
 
 .searchContainer {
     height: 30vh;
-    background-color: blue;
+    background-color: var(--dark1);
     display: flex;
     flex-direction: row;
+    gap: var(--padding);
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1000px) {
     .searchContainer {
         flex-direction: column;
         height: 50vh;
@@ -55,7 +76,26 @@ body {
     flex: 1;
     display: flex;
     flex-direction: row;
-    padding: var(--padding);
+    align-items: end;
+    padding: 5px;
+    background-color: var(--dark2);
+    border-radius: var(--padding);
+}
+
+.visualPianoClear {
+    width: min(5vh, 5vw);
+    height: auto;
+    transition: 0.2s;
+}
+
+.visualPianoClear:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+}
+
+.visualPianoClear:active {
+    cursor: pointer;
+    transform: scale(0.8);
 }
 
 .pianoContainer {
@@ -65,40 +105,84 @@ body {
     height: 100%;
     border-radius: 0.62vw;
     box-shadow: 0 2vw 4vw rgba(7, 0, 53, 0.25);
+
 }
 
 .searchWordContainer {
     flex: 1;
     display: flex;
     flex-direction: column;
+    background-color: var(--dark2);
+    border-radius: var(--padding);
+    overflow: hidden;
+    /* Hides content that overflows the element's box */
+
+
 }
 
 .searchBox {
     width: 100%;
     height: auto;
+    background-color: var(--dark2);
     box-sizing: border-box;
+    border: none;
+    border-bottom: 2px solid var(--dark1);
+    /* Same bottom border on focus */
+    padding: calc(var(--padding) / 2) var(--padding);
+    /* Padding around text */
+    border-radius: var(--rounding) var(--rounding) 0 0;
+    color: var(--light1);
+}
+
+
+.searchBox:focus {
+    outline: none;
 }
 
 .searchChordList {
-    width: 100%;
-    height: 100%;
     display: flex;
     flex-direction: row;
     align-content: flex-start;
     gap: 10px;
-    padding: 10px;
     flex-wrap: wrap;
     box-sizing: border-box;
+    padding: var(--padding);
+    overflow-y: scroll;
+    max-height: 30vh;
+    user-select: none;
+    flex-grow: 0;
+}
+
+.selectedItems {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    align-content: flex-start;
+    gap: 10px;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    padding: var(--padding);
+    background-color: var(--dark2);
+    border-radius: var(--rounding);
+    transition: 1s;
+    user-select: none;
+
 }
 
 .dragDropItem {
     background-color: #fff;
-    padding: 10px;
-
+    padding: calc(var(--padding) / 2) var(--padding);
+    border-radius: var(--rounding);
+    font-weight: 700;
     box-sizing: border-box;
+    color: var(--dark2);
 }
 
+#DragAndDrop-EmptyMessage {
+    opacity: 0.2;
 
+}
 
 .settings {
     background-color: aqua;
