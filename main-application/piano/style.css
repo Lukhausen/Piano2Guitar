@@ -5,6 +5,7 @@
   border-radius: 0 0 0.3vw 0.3vw;
   margin: 2px;
   cursor: pointer;
+  z-index: 1;
 }
 
 .key.black {

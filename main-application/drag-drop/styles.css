@@ -1,0 +1,70 @@
+/* General body styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+/* Styling for the container */
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* Search box styling */
+.search-box input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+/* Item list styling */
+.items, .selected-items {
+    border: 1px solid #ddd;
+    padding: 10px;
+    min-height: 50px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    background-color: #fafafa;
+}
+
+.item, .selected-item {
+    padding: 8px 16px;
+    margin: 5px;
+    display: inline-block;
+    background-color: #eee;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 2px solid #00000000;
+
+}
+
+.item:hover, .selected-item:hover {
+    background-color: #ddd;
+}
+
+/* Dragging and dropping styles */
+.dragging {
+    opacity: 0.5;
+}
+
+.over {
+    border: 2px dashed #00000043;
+}
+
+/* Display array box */
+#displayArray {
+    padding: 10px;
+    background-color: #ddd;
+    border-radius: 4px;
+    margin-top: 20px;
+}
