@@ -1,7 +1,7 @@
 class Piano {
     constructor(containerSelector, options = {}) {
         this.container = document.querySelector(containerSelector);
-        this.updatePlayedNotesDebounced = this.debounce(this.updatePlayedNotes, 300);
+        this.updatePlayedNotesDebounced = this.debounce(this.updatePlayedNotes, 10);
 
         this.octaves = options.octaves || 2;
         this.playedNotes = [];
@@ -60,10 +60,10 @@ class Piano {
                         key.classList.add("selectedKey");
                         this.updatePlayedNotesDebounced();
                     }
-                } else{
+                } else {
                     this.setRootNote(note);
                 }
-                
+
             });
 
             key.addEventListener('dblclick', (event) => {
@@ -104,16 +104,14 @@ class Piano {
         this.updatePlayedNotesDebounced();
     }
 
+    // Create a Custom event to update the Other things
     updatePlayedNotes() {
-        const display = document.getElementById('playedNotes');
-        if (display) {
-            display.textContent = `Played Notes: [${this.playedNotes.join(', ')}], Root Note: ${this.rootNote || "None"}`;
-        }
         const event = new CustomEvent('notesChanged', { detail: { notes: this.playedNotes, rootNote: this.rootNote } });
+        console.log("Dispatching Note Change Event: " + this.playedNotes + " Root: " + this.rootNote)
         this.container.dispatchEvent(event);
     }
 
-    
+
 
     clearPiano() {
         this.playedNotes = []; // Clear the array of played notes

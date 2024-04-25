@@ -46,7 +46,7 @@ class DragAndDropList {
         this.selectedItemsContainer.addEventListener('dragover', this.allowDrop.bind(this));
         this.selectedItemsContainer.addEventListener('drop', this.handleDropOnContainer.bind(this));
         this.itemFilterInput.addEventListener('input', this.filterItems.bind(this));
-        this.itemsContainer.addEventListener('drop', this.handleDropOnItemList.bind(this));
+        //this.itemsContainer.addEventListener('drop', this.handleDropOnItemList.bind(this));
     }
 
     handleWindowDragOver(e) {
@@ -71,16 +71,51 @@ class DragAndDropList {
 
     createItemElement(item, isSelectable = false) {
         const itemElement = document.createElement('div');
-        itemElement.textContent = item;
+        itemElement.textContent = item.name; // Assuming item is an object with 'name' and 'probability'
         itemElement.className = 'dragDropItem';
-        itemElement.draggable = true;
+        //itemElement.draggable = true;
         itemElement.id = `dragDropItem-${this.idCounter++}`;
-        itemElement.addEventListener('dragstart', this.handleDragStart.bind(this));
-        itemElement.addEventListener('dragend', this.handleDragEnd.bind(this));
+
+        if (item.probability !== undefined) {
+            const probabilitySpan = document.createElement('span');
+            probabilitySpan.textContent = `(${item.probability}%)`;
+            probabilitySpan.style.backgroundColor = this.getBackgroundColor(item.probability);
+            if (item.probability == 100){
+                itemElement.style.boxShadow = '0px 0px 10px 0px rgba(255,200,0)';
+            }
+
+            itemElement.appendChild(probabilitySpan);
+        }
+
+        //itemElement.addEventListener('dragstart', this.handleDragStart.bind(this));
+        //itemElement.addEventListener('dragend', this.handleDragEnd.bind(this));
         if (isSelectable) {
             itemElement.addEventListener('click', () => this.addSelectedItem(item));
         }
         return itemElement;
+    }
+
+    getBackgroundColor(probability) {
+        const startColor = [221, 221, 221]; // #ddd
+        const endColor = [63, 243, 51]; // #3f3
+        const winnerColor = [255,200,0]
+    
+        // Ensure probability is within the new range of 50 to 100
+        probability = Math.max(50, Math.min(100, probability));
+        
+        // Transforming probability to start changing from 50 to 100
+        const scaledProbability = (probability - 50) / 50;
+    
+        // Adjusting the probability scale logarithmically from 0.0 at probability 50 to 1.0 at probability 100
+        const adjustedProbability = Math.log10(1 + 9 * scaledProbability); // Logarithmic scale from 0 to 1
+    
+        let blendedColor = startColor.map((component, index) => {
+            return Math.round(component + (endColor[index] - component) * adjustedProbability);
+        });
+        if (probability == 100){
+            blendedColor = winnerColor
+        }
+        return `rgb(${blendedColor.join(',')})`;
     }
 
     createSelectedItemElement(item) {
@@ -88,7 +123,7 @@ class DragAndDropList {
         selectedItemElement.className = 'selected-dragDropItem dragDropItem';
         selectedItemElement.draggable = true;
         selectedItemElement.id = `selected-dragDropItem-${this.idCounter++}`;
-        selectedItemElement.textContent = item;
+        selectedItemElement.textContent = item.name; // Assuming item is an object with 'name'
         selectedItemElement.addEventListener('dragstart', this.handleDragStart.bind(this));
         selectedItemElement.addEventListener('dragover', this.handleDragOver.bind(this));
         selectedItemElement.addEventListener('drop', this.handleDropReorder.bind(this));
@@ -106,15 +141,33 @@ class DragAndDropList {
     addSelectedItem(item) {
         const selectedItemElement = this.createSelectedItemElement(item);
         this.selectedItemsContainer.appendChild(selectedItemElement);
-        this.selectedItemsArray.push(item);
+        this.selectedItemsArray.push(item.name); // Store only the name in the array
         this.updateDisplayArray();
     }
 
-    ceateAndInsertElement(item){
+    ceateAndInsertElement(item) {
         const element = this.createSelectedItemElement(item)
-        this.addSelectedItem (element)
+        this.addSelectedItem(element)
+    }
+    updateItems(newItems) {
+        console.log("Updating Library...")
+        // Clear existing items from the display and internal storage
+        this.clearList()
+        this.items = newItems;
+
+        // Repopulate the items list with new items
+        this.populateItemsList();
     }
 
+    clearList() {
+        // Clear the internal items array
+        this.items = [];
+
+        // Remove all child elements of the items container
+        while (this.itemsContainer.firstChild) {
+            this.itemsContainer.removeChild(this.itemsContainer.firstChild);
+        }
+    }
 
 
     handleDropOnItemList(event) {
@@ -191,11 +244,15 @@ class DragAndDropList {
         const droppedItemElement = document.getElementById(droppedItemId);
 
         if (droppedItemElement && !droppedItemElement.classList.contains('selected-dragDropItem')) {
-            const newClone = this.createSelectedItemElement(droppedItemElement.textContent);
+            const item = {
+                name: droppedItemElement.textContent,
+                probability: undefined // Probability is not needed in selected items
+            };
+            const newClone = this.createSelectedItemElement(item);
             this.selectedItemsContainer.appendChild(newClone);
-            this.selectedItemsArray.push(droppedItemElement.textContent);
+            this.selectedItemsArray.push(item.name);
+            this.updateDisplayArray();
         }
-        this.updateDisplayArray();
     }
 
     insertAtCorrectPosition(droppedItemElement, targetElement) {
