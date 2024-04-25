@@ -5,10 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to calculate the number of octaves based on screen width
     function calculateOctaves() {
         const screenWidth = window.innerWidth;
-        console.log(screenWidth)
-        const baseOctaves = 1; // Base octaves to start with
-        const extraOctaves = Math.ceil((screenWidth - 1000) / 1000);
-        return Math.max(baseOctaves, baseOctaves + extraOctaves); // Ensure at least 2 octaves
+        console.log((Math.sqrt(screenWidth)))
+        const maxOctaves = 3; // Base octaves to start with
+        const extraOctaves = Math.ceil((Math.sqrt(screenWidth)) / 25);
+        return Math.min(maxOctaves, extraOctaves);
     }
 
     // Create a new Piano instance with dynamic number of octaves
@@ -33,4 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const newOctaves = calculateOctaves();
         myPiano.setOctaves(newOctaves); // Assuming there's a method to update the octaves dynamically
     };
+
+
+    document.querySelector('.pianoContainer').addEventListener('notesChanged', (e) => {
+        console.log('Piano notes changed:', e.detail.notes, e.detail.rootNote);
+        //dragAndDropList.ceateAndInsertElement(e.detail.notes)
+        // Additional logic to handle the change in notes
+    });
 });

@@ -4,10 +4,12 @@
     --light3: rgb(143, 142, 142);
     --dark1: rgb(57, 57, 57);
     --dark2: rgb(42, 42, 42);
-    --dark3: rgb(17, 17, 17);
+    --dark3: rgb(32, 32, 32);
     --padding: 10px;
     --rounding: 5px;
 }
+
+
 
 /* width */
 ::-webkit-scrollbar {
@@ -35,7 +37,7 @@ svg path {
 }
 
 html {
-    background-color: var(--dark2);
+    background-color: var(--dark3);
     color: #fff;
     display: flex;
     align-items: center;
@@ -44,8 +46,11 @@ html {
     font-family: 'Noto Sans', serif;
 }
 
+
 body {
     margin: 0;
+    box-shadow: 0 0 10vw rgba(6, 6, 6, 0.552);
+
 }
 
 .inputWrapper {
@@ -65,7 +70,7 @@ body {
     gap: var(--padding);
 }
 
-@media only screen and (max-width: 1000px) {
+@media only screen and (max-width: 1200px) {
     .searchContainer {
         flex-direction: column;
         height: 50vh;
@@ -111,6 +116,7 @@ body {
 .searchWordContainer {
     flex: 1;
     display: flex;
+    height: 100%;
     flex-direction: column;
     background-color: var(--dark2);
     border-radius: var(--padding);
@@ -143,6 +149,7 @@ body {
     display: flex;
     flex-direction: row;
     align-content: flex-start;
+    height: 100%;
     gap: 10px;
     flex-wrap: wrap;
     box-sizing: border-box;
@@ -159,7 +166,7 @@ body {
     display: flex;
     flex-direction: row;
     align-content: flex-start;
-    gap: 10px;
+    gap: var(--padding);
     flex-wrap: wrap;
     box-sizing: border-box;
     padding: var(--padding);
@@ -181,7 +188,8 @@ body {
 
 #DragAndDrop-EmptyMessage {
     opacity: 0.2;
-
+    display: flex;
+    gap: var(--padding);
 }
 
 .settings {

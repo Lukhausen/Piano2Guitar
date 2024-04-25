@@ -1,8 +1,12 @@
 class Piano {
     constructor(containerSelector, options = {}) {
         this.container = document.querySelector(containerSelector);
+        this.updatePlayedNotesDebounced = this.debounce(this.updatePlayedNotes, 300);
+
         this.octaves = options.octaves || 2;
         this.playedNotes = [];
+        this.rootNote = null; // Add a property for the root note
+
         this.layout = [0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0];
         this.keysPerOctave = this.layout.length;
         this.whiteKeyCount = this.layout.filter(x => x === 0).length;
@@ -11,9 +15,12 @@ class Piano {
         this.blackKeyHeight = 0.63;
         this.totalKeys = this.octaves * this.keysPerOctave;
 
+
         this.createPiano();
         this.addKeyListeners();
     }
+
+
 
     createPiano() {
         this.container.innerHTML = ''; // Clear existing piano keys
@@ -43,29 +50,79 @@ class Piano {
         this.container.querySelectorAll('.key').forEach(key => {
             key.addEventListener('click', () => {
                 const note = key.getAttribute('data-note');
-                if (this.playedNotes.includes(note)) {
-                    this.playedNotes = this.playedNotes.filter(n => n !== note);
-                    key.classList.remove("selectedKey");
-                } else {
-                    this.playedNotes.push(note);
-                    key.classList.add("selectedKey");
+                if (this.rootNote !== note) { // Check if it's not the current root note
+                    if (this.playedNotes.includes(note)) {
+                        this.playedNotes = this.playedNotes.filter(n => n !== note);
+                        key.classList.remove("selectedKey");
+                        this.updatePlayedNotesDebounced();
+                    } else {
+                        this.playedNotes.push(note);
+                        key.classList.add("selectedKey");
+                        this.updatePlayedNotesDebounced();
+                    }
+                } else{
+                    this.setRootNote(note);
                 }
-                this.updatePlayedNotes();
+                
+            });
+
+            key.addEventListener('dblclick', (event) => {
+                event.stopPropagation(); // Prevent the click event from firing
+                const note = key.getAttribute('data-note');
+                this.setRootNote(note);
             });
         });
+    }
+
+
+    debounce(func, delay) {
+        let timeoutId;
+        return function (...args) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                func.apply(this, args);
+            }, delay);
+        };
+    }
+
+    setRootNote(note) {
+        // Update root note and ensure it's part of the played notes
+        if (this.rootNote === note) {
+            this.rootNote = null;
+            this.container.querySelector(`.key[data-note="${note}"]`).classList.remove('rootNote');
+        } else {
+            if (this.rootNote !== null) {
+                this.container.querySelector(`.key[data-note="${this.rootNote}"]`).classList.remove('rootNote');
+            }
+            this.rootNote = note;
+            if (!this.playedNotes.includes(note)) {
+                this.playedNotes.push(note);
+            }
+            this.container.querySelector(`.key[data-note="${note}"]`).classList.add('rootNote');
+            this.container.querySelector(`.key[data-note="${note}"]`).classList.add('selectedKey');
+        }
+        this.updatePlayedNotesDebounced();
     }
 
     updatePlayedNotes() {
         const display = document.getElementById('playedNotes');
         if (display) {
-            display.textContent = 'Played Notes: [' + this.playedNotes.join(', ') + ']';
+            display.textContent = `Played Notes: [${this.playedNotes.join(', ')}], Root Note: ${this.rootNote || "None"}`;
         }
+        const event = new CustomEvent('notesChanged', { detail: { notes: this.playedNotes, rootNote: this.rootNote } });
+        this.container.dispatchEvent(event);
     }
+
+    
 
     clearPiano() {
         this.playedNotes = []; // Clear the array of played notes
+        this.rootNote = null; // Clear the root note
         this.container.querySelectorAll('.key.selectedKey').forEach(key => {
             key.classList.remove("selectedKey");
+        });
+        this.container.querySelectorAll('.key.rootNote').forEach(key => {
+            key.classList.remove("rootNote");
         });
         this.updatePlayedNotes();
     }

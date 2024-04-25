@@ -15,13 +15,29 @@ class DragAndDropList {
 
         this.addEventListeners();
         this.populateItemsList();
-        
-        
-        this.emptyMessage = "Add chords by clicking on them"
+
+        this.emptyMessage = "Click on chords to add"; // Placeholder for the input string
         this.emptyMessageElement = document.createElement('div');
-        this.emptyMessageElement.id = "DragAndDrop-EmptyMessage"
-        this.emptyMessageElement.innerHTML = this.emptyMessage
-        this.selectedItemsContainer.appendChild(this.emptyMessageElement)
+        this.emptyMessageElement.id = "DragAndDrop-EmptyMessage";
+
+        // Split the input message by spaces to get individual words
+        const words = this.emptyMessage.split(' ');
+
+        // Create a base element to clone from
+        const baseElement = this.createItemElement("Sample Word"); // Replace "Sample Word" with any sample text
+        baseElement.draggable = false;
+        baseElement.isSelectable = false;
+
+        // Loop through each word and append a cloned element to the emptyMessageElement
+        words.forEach(word => {
+            const clone = baseElement.cloneNode(true);
+            clone.innerHTML = word; // Set the innerHTML to the current word
+            this.emptyMessageElement.appendChild(clone);
+        });
+
+        this.selectedItemsContainer.appendChild(this.emptyMessageElement);
+
+
     }
 
     addEventListeners() {
@@ -94,18 +110,12 @@ class DragAndDropList {
         this.updateDisplayArray();
     }
 
-
-
-    updateDisplayArray() {
-        this.displayArray.textContent = `Selected Items: ${this.selectedItemsArray.join(', ')}`;
-        console.log(this.selectedItemsArray.length)
-        if (this.selectedItemsArray.length == 0){
-            
-            this.selectedItemsContainer.appendChild(this.emptyMessageElement)
-        } else {
-            this.emptyMessageElement.remove();
-        }
+    ceateAndInsertElement(item){
+        const element = this.createSelectedItemElement(item)
+        this.addSelectedItem (element)
     }
+
+
 
     handleDropOnItemList(event) {
         event.preventDefault();
@@ -114,8 +124,7 @@ class DragAndDropList {
 
         if (droppedItemElement && droppedItemElement.classList.contains('selected-dragDropItem')) {
             droppedItemElement.remove();
-            this.selectedItemsArray = this.selectedItemsArray.filter(item => item !== droppedItemElement.textContent);
-            this.updateDisplayArray();
+            this.updateArray();
         }
     }
 
@@ -170,7 +179,6 @@ class DragAndDropList {
         event.target.classList.remove('dragging');
         const overItems = document.querySelectorAll('.selected-dragDropItem');
         overItems.forEach(item => item.classList.remove('over'));
-        this.updateArray();
     }
 
     allowDrop(event) {
@@ -206,6 +214,18 @@ class DragAndDropList {
     updateArray() {
         this.selectedItemsArray = Array.from(this.selectedItemsContainer.children).map(el => el.textContent);
         this.updateDisplayArray();
+    }
+
+    updateDisplayArray() {
+        this.displayArray.textContent = `Selected Items: ${this.selectedItemsArray.join(', ')}`;
+        console.log(this.selectedItemsArray.length);
+        if (this.selectedItemsArray.length == 0) {
+            if (!this.emptyMessageElement.parentNode) {
+                this.selectedItemsContainer.appendChild(this.emptyMessageElement);
+            }
+        } else {
+            this.emptyMessageElement.remove();
+        }
     }
 
     filterItems() {
