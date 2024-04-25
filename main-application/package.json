@@ -1,0 +1,16 @@
+{
+  "name": "main-application",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html --dist-dir output"
+  },
+  "keywords": [],
+  "author": "Lukas Marschhausen",
+  "license": "Closed-Source",
+  "devDependencies": {
+    "javascript-obfuscator": "^4.1.0",
+    "parcel": "^2.12.0"
+  }
+}

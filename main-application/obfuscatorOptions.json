@@ -1,0 +1,20 @@
+{
+  "compact": true,
+  "controlFlowFlattening": true,
+  "controlFlowFlatteningThreshold": 1.0,
+  "deadCodeInjection": true,
+  "deadCodeInjectionThreshold": 0.5,
+  "debugProtection": true,
+  "debugProtectionInterval": 2000,
+  "disableConsoleOutput": true,
+  "rotateStringArray": true,
+  "stringArray": true,
+  "stringArrayEncoding": ["base64", "rc4"],
+  "stringArrayThreshold": 1.0,
+  "selfDefending": true,
+  "unicodeEscapeSequence": true,
+  "splitStrings": true,
+  "splitStringsChunkLength": 5,
+  "identifierNamesGenerator": "mangled",
+  "domainLock": ["yourwebsite.com"]
+}
