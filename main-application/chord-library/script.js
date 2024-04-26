@@ -34,35 +34,42 @@ class ChordLibrary {
             '6': { notes: [0, 4, 7, 9] }, // Major 6th
             '5': { notes: [0, 7] }, // Power chord
             '6/9': { notes: [0, 4, 7, 9, 14] }, // Major 6/9
-            'm11': { notes: [0, 3, 7, 10, 17] }, // Minor 11
-            'M7#11': { notes: [0, 4, 7, 11, 18] }, // Major 7#11
+            'm11': { notes: [0, 3, 7, 10, 14, 17] }, // Minor 11
+            'M7#11': { notes: [0, 4, 7, 11, 14, 18] }, // Major 7#11
             'm7b5': { notes: [0, 3, 6, 10] }, // Half-Diminished
+            '+7': { notes: [0, 4, 8, 10] }, // Augmented 7th
+            'dim7': { notes: [0, 3, 6, 9] }, // Diminished 7th
+            'M7+5': { notes: [0, 4, 8, 11] }, // Augmented Major 7th
+            'mM9': { notes: [0, 3, 7, 11, 14] }, // Minor Major 9th
+            'dimM7': { notes: [0, 3, 6, 11] }, // Diminished Major 7th
+            '7alt': { notes: [0, 4, 6, 10, 13] }, // Altered Dominant (using 6 and 13)
+            'M13': { notes: [0, 4, 7, 11, 14, 17, 21] }, // Major 13th
 
-            '/C': { notes: [0, 4, 7], root: 0}, // C Major
-            '/Cm': { notes: [0, 3, 7], root: 0}, // C Minor
-            '/C#': { notes: [0, 4, 7], root: 1}, // C# Major
-            '/C#m': { notes: [0, 3, 7], root: 1}, // C# Minor
-            '/D': { notes: [0, 4, 7], root: 2}, // D Major
-            '/Dm': { notes: [0, 3, 7], root: 2}, // D Minor
-            '/D#': { notes: [0, 4, 7], root: 3}, // D# Major
-            '/D#m': { notes: [0, 3, 7], root: 3}, // D# Minor
-            '/E': { notes: [0, 4, 7], root: 4}, // E Major
-            '/Em': { notes: [0, 3, 7], root: 4}, // E Minor
-            '/F': { notes: [0, 4, 7], root: 5}, // F Major
-            '/Fm': { notes: [0, 3, 7], root: 5}, // F Minor
-            '/F#': { notes: [0, 4, 7], root: 6}, // F# Major
-            '/F#m': { notes: [0, 3, 7], root: 6}, // F# Minor
-            '/G': { notes: [0, 4, 7], root: 7}, // G Major
-            '/Gm': { notes: [0, 3, 7], root: 7}, // G Minor
-            '/G#': { notes: [0, 4, 7], root: 8}, // G# Major
-            '/G#m': { notes: [0, 3, 7], root: 8}, // G# Minor
-            '/A': { notes: [0, 4, 7], root: 9}, // A Major
-            '/Am': { notes: [0, 3, 7], root: 9}, // A Minor
-            '/A#': { notes: [0, 4, 7], root: 10}, // A# Major
-            '/A#m': { notes: [0, 3, 7], root: 10}, // A# Minor
-            '/B': { notes: [0, 4, 7], root: 11}, // B Major
-            '/Bm': { notes: [0, 3, 7], root: 11} // B Minor
-            
+            '/C': { notes: [0, 4, 7], root: 0 }, // C Major
+            'm/C': { notes: [0, 3, 7], root: 0 }, // C Minor
+            '/C#': { notes: [0, 4, 7], root: 1 }, // C# Major
+            'm/C#': { notes: [0, 3, 7], root: 1 }, // C# Minor
+            '/D': { notes: [0, 4, 7], root: 2 }, // D Major
+            'm/D': { notes: [0, 3, 7], root: 2 }, // D Minor
+            '/D#': { notes: [0, 4, 7], root: 3 }, // D# Major
+            'm/D#': { notes: [0, 3, 7], root: 3 }, // D# Minor
+            '/E': { notes: [0, 4, 7], root: 4 }, // E Major
+            'm/E': { notes: [0, 3, 7], root: 4 }, // E Minor
+            '/F': { notes: [0, 4, 7], root: 5 }, // F Major
+            'm/F': { notes: [0, 3, 7], root: 5 }, // F Minor
+            '/F#': { notes: [0, 4, 7], root: 6 }, // F# Major
+            'm/F#': { notes: [0, 3, 7], root: 6 }, // F# Minor
+            '/G': { notes: [0, 4, 7], root: 7 }, // G Major
+            'm/G': { notes: [0, 3, 7], root: 7 }, // G Minor
+            '/G#': { notes: [0, 4, 7], root: 8 }, // G# Major
+            'm/G#': { notes: [0, 3, 7], root: 8 }, // G# Minor
+            '/A': { notes: [0, 4, 7], root: 9 }, // A Major
+            'm/A': { notes: [0, 3, 7], root: 9 }, // A Minor
+            '/A#': { notes: [0, 4, 7], root: 10 }, // A# Major
+            'm/A#': { notes: [0, 3, 7], root: 10 }, // A# Minor
+            '/B': { notes: [0, 4, 7], root: 11 }, // B Major
+            'm/B': { notes: [0, 3, 7], root: 11 } // B Minor
+
         };
 
         this.generateChords();
@@ -103,30 +110,30 @@ class ChordLibrary {
         this.chords.forEach(chord => {
             let chordNotes = [...chord.notes];
 
-            console.log("Comparing to: " + chord.name)
+            //console.log("Comparing to: " + chord.name)
             //Add the Root note to the Chords For Cases like A/D
             const inputNotesSet = new Set(noteArray);
-            console.log("Input Notes Set: ", inputNotesSet);
+            //console.log("Input Notes Set: ", inputNotesSet);
 
             const commonNotes = new Set([...chordNotes].filter(note => inputNotesSet.has(note)));
-            console.log("Common Notes with Chord: ", commonNotes);
+            //console.log("Common Notes with Chord: ", commonNotes);
 
             const totalUniqueNotes = new Set([...chordNotes, ...noteArray]);
-            console.log("Total Unique Notes: ", totalUniqueNotes);
+            //console.log("Total Unique Notes: ", totalUniqueNotes);
 
 
             let matchPercentage = (commonNotes.size / totalUniqueNotes.size) * 100;
-            console.log("Searched Root: " + rootNote + " Presen Root: " + chord.rootNote);
+            //console.log("Searched Root: " + rootNote + " Presen Root: " + chord.rootNote);
 
             // Adjusting match percentage based on root note comparison
             if (rootNote !== null) {
                 if (chord.rootNote == rootNote) {
-                    console.log("Matching Root for: " + chord.name + " Root: " + chord.rootNote + " Notes: " + chordNotes)
+                    //console.log("Matching Root for: " + chord.name + " Root: " + chord.rootNote + " Notes: " + chordNotes)
                     // If root notes match, this is fine as calculated
                 } else {
                     // Penalize the match percentage slightly if root notes don't match
                     matchPercentage *= 0.85; // Penalize by 10%
-                    console.log("Panelized for not matching Root")
+                    //console.log("Panelized for not matching Root")
                 }
             } else {
                 //If a Custom Root in the CHord Details is specified but the user hasnt put a custom root
