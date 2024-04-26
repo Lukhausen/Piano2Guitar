@@ -1,7 +1,7 @@
 class Piano {
     constructor(containerSelector, options = {}) {
         this.container = document.querySelector(containerSelector);
-        this.updatePlayedNotesDebounced = this.debounce(this.updatePlayedNotes, 10);
+        this.updatePlayedNotesDebounced = this.debounce(this.updatePlayedNotes, 100);
 
         this.octaves = options.octaves || 2;
         this.playedNotes = [];
@@ -19,13 +19,21 @@ class Piano {
         this.totalKeys = this.octaves * this.keysPerOctave;
 
         this.audioElements = [];
-
+        this.volume = true
 
         this.createPiano();
         this.addKeyListeners();
     }
 
+    volumeOff() {
+        this.volume = false
+        this.audioElements.forEach(audio => { audio.pause(); audio.currentTime = 0; });
 
+    }
+
+    volumeOn() {
+        this.volume = true
+    }
 
     createPiano() {
         this.container.innerHTML = ''; // Clear existing piano keys
@@ -130,12 +138,14 @@ class Piano {
     }
 
     playSoundLong(index, volume) {
-        const audio = this.audioElements[index];
-        audio.volume = volume; // Set the volume to the dynamically calculated value
-        if (!audio.paused) {
-            audio.currentTime = 0; // Reset only if it is already playing
+        if (this.volume) {
+            const audio = this.audioElements[index];
+            audio.volume = volume; // Set the volume to the dynamically calculated value
+            if (!audio.paused) {
+                audio.currentTime = 0; // Reset only if it is already playing
+            }
+            audio.play();
         }
-        audio.play();
     }
 
 
