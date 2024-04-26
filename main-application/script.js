@@ -31,6 +31,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const emptyMessageContainer = "emptyMessageContainer";
     const dragAndDropList = new DragAndDropList(allChordLibraryItems, dropzone, itemsContainer, itemSearch, selectedItems, emptyMessageContainer);
 
+    window.playPiano = function () {
+        myPiano.playChord();
+        console.log("Piano played");
+    };
+
+
     window.clearPiano = function () {
         document.getElementById("itemSearch").value=""
         myPiano.clearPiano();

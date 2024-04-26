@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piano2Guitar</title>
+    <link rel="stylesheet" href="/index.fb819936.css">
+    <link rel="stylesheet" href="/index.00e3896b.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <script type="module" src="/index.84e6249a.js"></script>
+</head>
+
+<body>
+    <div class="inputWrapper">
+        <div class="settings"> Settings </div>
+        <div class="searchContainer">
+            <div class="visualPianoContainer">
+                <div class="pianoContainer"></div> <svg width="24" height="24" class="visualPianoClear"
+                    onclick="clearPiano()" viewBox="0 -960 960 960">
+                    <path fill="currentColor"
+                        d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120zm80-160h80v-360h-80zm160 0h80v-360h-80z" />
+                </svg>
+            </div>
+            <div class="searchWordContainer">
+                <div class="blackFadeBottom"></div> <input class="searchBox" type="text" id="itemSearch"
+                    placeholder="Search chords...">
+                <div class="searchChordList" id="itemsContainer"> </div>
+            </div>
+        </div> Your Selected Progression <div class="selectedItems" id="selectedItems"> </div>
+    </div>
+</body>
+
+</html>

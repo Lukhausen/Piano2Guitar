@@ -26,9 +26,11 @@
 }
 
 .black.key.selectedKey {
-  background-color: #906e11;
+  background-color: #a97c00;
   transition: 0.2s;
   transform: scaleY(0.99) translateY(-0.5%);
+  box-shadow: 0 0 10px #ffbb006e; /* Add a glowing effect */
+
 
 }
 
@@ -36,11 +38,13 @@
   background-color: #ffbb00;
   transition: 0.2s;
   transform: scaleY(0.99) translateY(-0.5%);
+  box-shadow: 0 0 10px #ffbb006e; /* Add a glowing effect */
+
 
 }
 
 .key.selectedKey.rootNote, .key.rootNote {
   background-color: #ff0000; /* Red background for the root note */
-  transform: scaleY(1.01) translateY(0.5%);  box-shadow: 0 0 10px rgba(255, 0, 0, 0.8); /* Add a glowing effect */
+  transform: scaleY(1.01) translateY(0.5%);  box-shadow: 0 0 10px rgba(255, 0, 0, 0.732); /* Add a glowing effect */
   transition: background-color 0.3s, transform 0.3s; /* Smooth transitions */
 }
