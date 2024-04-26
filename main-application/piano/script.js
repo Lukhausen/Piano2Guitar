@@ -52,18 +52,20 @@ class Piano {
         this.container.querySelectorAll('.key').forEach(key => {
             key.addEventListener('click', () => {
                 console.log("Click triggered")
+                let currentTime = Date.now();
 
                 const note = key.getAttribute('data-note');
                 if (this.rootNote === note) {
                     key.classList.add("selectedKey");
                     key.classList.remove("rootNote");
-                    let currentTime = Date.now();
+                    if (currentTime - this.lastClickTime > 200) {
+                        this.lastClickTime = currentTime;
+                        console.log("Set Time to: "+currentTime)
+                    }
 
-                    this.lastClickTime = currentTime;
-                    console.log("Set Time to: "+currentTime)
                     this.rootNote = null;
 
-                } else if (this.playedNotes.includes(note)) {
+                } else if (this.playedNotes.includes(note) && (currentTime - this.lastClickTime > 300)) {
                     this.playedNotes = this.playedNotes.filter(n => n !== note);
                     key.classList.remove("selectedKey");
                 } else {
@@ -74,7 +76,6 @@ class Piano {
             });
 
             key.addEventListener('dblclick', (event) => {
-                event.stopPropagation();
                 console.log("Doubleclick triggered")
                 const note = key.getAttribute('data-note');
                 if (this.rootNote === note) {
@@ -86,7 +87,7 @@ class Piano {
                         this.container.querySelector(`.key[data-note="${this.rootNote}"]`).classList.remove('rootNote');
                     }
                     let currentTime = Date.now();
-                    if (currentTime - this.lastClickTime < 200) {
+                    if (currentTime - this.lastClickTime < 500) {
                         console.log("AAAAAAAAAAAAA Lastclick to early")
                     } else {
                         this.rootNote = note;

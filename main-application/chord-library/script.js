@@ -139,7 +139,7 @@ class ChordLibrary {
                 //If a Custom Root in the CHord Details is specified but the user hasnt put a custom root
                 if (chord.customRoot == true) {
                     matchPercentage *= 0.85; // Penalize by 10%
-                    console.log("Panelized For Havinng Specific when it shouldnt")
+                    //console.log("Panelized For Havinng Specific when it shouldnt")
 
                 }
             }
@@ -166,10 +166,10 @@ class ChordLibrary {
     getChordByName(name) {
         const chord = this.chords.find(chord => chord.name === name);
         if (chord) {
-            console.log('Chord found:', chord);
+            //console.log('Chord found:', chord);
             return chord;
         } else {
-            console.log('No chord found with the name:', name);
+            //console.log('No chord found with the name:', name);
             return null;
         }
     }
