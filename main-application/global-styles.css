@@ -110,7 +110,9 @@ body {
     height: 100%;
     box-shadow: 0 2vw 4vw rgba(7, 0, 53, 0.25);
     border:none;
-    flex:1
+    flex:1;
+    border-radius: var(--padding);
+
 }
 .pianoIconContainer{
     display: flex;

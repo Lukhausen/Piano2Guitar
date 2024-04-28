@@ -44,7 +44,7 @@
 }
 
 .key.selectedKey.rootNote, .key.rootNote {
-  background-color: #ff0000; /* Red background for the root note */
+  background-color: #ff1100; /* Red background for the root note */
   transform: scaleY(1.01) translateY(0.5%);  box-shadow: 0 0 10px rgba(255, 0, 0, 0.732); /* Add a glowing effect */
   transition: background-color 0.3s, transform 0.3s; /* Smooth transitions */
 }

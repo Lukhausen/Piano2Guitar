@@ -82,6 +82,7 @@ class DragAndDropList {
             probabilitySpan.style.backgroundColor = this.getBackgroundColor(item.probability);
             if (item.probability == 100){
                 itemElement.style.boxShadow = '0px 0px 10px 0px rgba(255,200,0)';
+                itemElement.style.fontSize ="x-large"
             }
 
             itemElement.appendChild(probabilitySpan);
