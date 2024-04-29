@@ -170,6 +170,18 @@ class DragAndDropList {
         }
     }
 
+    clearSelectedList() {
+        // Clear the internal items array
+        this.selectedItemsArray = [];
+
+        // Remove all child elements of the items container
+        while (this.selectedItemsContainer.firstChild) {
+            this.selectedItemsContainer.removeChild(this.selectedItemsContainer.firstChild);
+        }
+        this.updateDisplayArray();
+
+    }
+
 
     handleDropOnItemList(event) {
         event.preventDefault();

@@ -196,6 +196,16 @@ body {
     flex-grow: 0;
 }
 
+.selectedItemsWrapper{
+    display: flex;
+    flex-direction: row;
+    background-color: var(--dark2);
+    padding: var(--padding);
+    gap: var(--padding);
+    border-radius: var(--rounding);
+
+}
+
 .selectedItems {
     width: 100%;
     height: auto;
@@ -206,14 +216,12 @@ body {
     gap: var(--padding);
     flex-wrap: wrap;
     box-sizing: border-box;
-    padding: var(--padding);
-    background-color: var(--dark2);
-    border-radius: var(--rounding);
     transition: 1s;
     user-select: none;
     overflow: hidden;
     overflow-x:auto;
     font-size: x-large;
+    border-radius: var(--rounding);
 
 }
 

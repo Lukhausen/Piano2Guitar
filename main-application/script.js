@@ -88,6 +88,12 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Piano cleared");
     };
 
+    window.clearProgression = function () {
+        document.getElementById("itemSearch").value = ""
+        dragAndDropList.clearSelectedList();
+        console.log("Selected Items cleared");
+    };
+
     // Handle window resize to adjust the number of octaves dynamically
     window.onresize = function () {
         const newOctaves = calculateOctaves();
