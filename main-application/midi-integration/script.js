@@ -28,7 +28,7 @@ export class MIDIAccessManager {
     }
 
     onMIDIFailure() {
-        this.updateStatus("Failed to access MIDI devices. Retrying...");
+        this.updateStatus("No MIDI Devices found...");
         this.handleRetry(new Error("Initial connection failed"));
     }
 
@@ -38,8 +38,8 @@ export class MIDIAccessManager {
             console.log(`Retrying... Attempt ${this.retryCount}`);
             setTimeout(() => this.attemptMIDIAccess(), 1000); // Retry after 1 second
         } else {
-            console.error('Final attempt failed. Error:', err);
-            this.updateStatus(`Failed to connect after ${this.maxRetries} attempts: ${err.message}`);
+            console.error(`Failed to connect after ${this.maxRetries} attempts: ${err.message}`);
+            this.updateStatus(`No MIDI Devices found.`);
         }
     }
 
