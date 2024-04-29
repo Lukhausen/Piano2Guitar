@@ -20,6 +20,8 @@ class Piano {
 
         this.audioElements = [];
         this.volume = true
+        this.globalVolume = 0.7;  // Global volume set to maximum by default
+
 
         this.createPiano();
         this.addKeyListeners();
@@ -34,6 +36,18 @@ class Piano {
     volumeOn() {
         this.volume = true
     }
+
+    updateVolume() {
+        const activeCount = this.playedNotes.length;
+        const volume = activeCount > 0 ? 1 / Math.sqrt(activeCount) : 1;
+        this.audioElements.forEach(audio => {
+            if (!audio.paused) {  // Only update audio elements that are currently playing
+                audio.volume = volume;
+            }
+        });
+    }
+    
+    
 
     createPiano() {
         this.container.innerHTML = ''; // Clear existing piano keys
@@ -137,12 +151,12 @@ class Piano {
         this.audioElements[index].play();
     }
 
-    playSoundLong(index, volume) {
+    playSoundLong(index, localVolume) {
         if (this.volume) {
             const audio = this.audioElements[index];
-            audio.volume = volume; // Set the volume to the dynamically calculated value
+            audio.volume = localVolume * this.globalVolume; // Apply global volume scaling
             if (!audio.paused) {
-                audio.currentTime = 0; // Reset only if it is already playing
+                audio.currentTime = 0; // Reset if it is already playing
             }
             audio.play();
         }
@@ -150,20 +164,40 @@ class Piano {
 
 
     playChord() {
-        // Sort the played notes to ensure they are played from lowest to highest
         this.playedNotes.sort((a, b) => a - b);
-
-        // Calculate the volume based on the number of notes
-        const volume = 1 / Math.sqrt(this.playedNotes.length / 1);
-
-        // Play each note with a slight delay
+        const localVolume = 1 / Math.sqrt(this.playedNotes.length / 1);
         this.playedNotes.forEach((note, index) => {
-            const randomDelay = Math.random() * 30; // Random delay between 0 and 50 milliseconds
+            const randomDelay = Math.random() * 30;
             setTimeout(() => {
-                this.playSoundLong(note, volume);
-            }, 20 * index + randomDelay); // 100 ms delay increment for each note
+                this.playSoundLong(note, localVolume);
+            }, 20 * index + randomDelay);
         });
     }
+
+    activateKey(index) {
+        const key = this.container.querySelector(`.key[data-note="${index}"]`);
+        if (!key.classList.contains("selectedKey")) {
+            key.classList.add("selectedKey");
+            this.playedNotes.push(index);
+            this.updatePlayedNotesDebounced();
+            this.updateVolume(); // Adjust volume based on the new number of active notes
+        }
+        this.playSoundLong(index, 0.75); // Initial play sound with default volume
+    }
+    
+    
+
+    deactivateKey(index) {
+        const key = this.container.querySelector(`.key[data-note="${index}"]`);
+        if (key.classList.contains("selectedKey")) {
+            key.classList.remove("selectedKey");
+            this.playedNotes = this.playedNotes.filter(n => n !== index);
+            this.updatePlayedNotesDebounced();
+            // Do not update volume here to keep it consistent with the number of keys pressed
+        }
+    }
+    
+    
 
     updatePlayedNotes() {
         const event = new CustomEvent('notesChanged', { detail: { notes: this.playedNotes, rootNote: this.rootNote } });

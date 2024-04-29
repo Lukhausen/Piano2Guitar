@@ -1,16 +1,25 @@
 import DragAndDropList from './drag-drop/script.js';
 import Piano from './piano/script.js';
 import { Chord, ChordLibrary } from "./chord-library/script.js"
+import MIDIAccessManager from "./midi-integration/script.js"
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    // Import the MidiManager
+    const midiManager = new MIDIAccessManager();
+    var visualPianoOctaves = 3
+
+
     // Function to calculate the number of octaves based on screen width
     function calculateOctaves() {
         const screenWidth = window.innerWidth;
         console.log((Math.sqrt(screenWidth)))
         const maxOctaves = 3; // Base octaves to start with
         const extraOctaves = Math.ceil((Math.sqrt(screenWidth)) / 25);
-        return Math.min(maxOctaves, extraOctaves);
+        visualPianoOctaves = Math.min(maxOctaves, extraOctaves)
+        return visualPianoOctaves;
     }
+
 
     // Create a new Piano instance with dynamic number of octaves
     const myPiano = new Piano('.pianoContainer', { octaves: calculateOctaves() });
@@ -37,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.toggleVolume = function () {
         const volumeIcon = document.querySelector('.visualPianoIcon');
-    
+
         if (isVolumeOn) {
             myPiano.volumeOff(); // Turn volume off
             isVolumeOn = false;
@@ -66,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     window.clearPiano = function () {
-        document.getElementById("itemSearch").value=""
+        document.getElementById("itemSearch").value = ""
         myPiano.clearPiano();
         console.log("Piano cleared");
     };
@@ -78,17 +87,39 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
+
+
     document.querySelector('.pianoContainer').addEventListener('notesChanged', (e) => {
         console.log('Piano notes changed:', e.detail.notes, e.detail.rootNote);
         let items
         if (e.detail.notes.length > 0) {
-            console.log("Reviced notesChanged Event: "+e.detail.notes+ " Root: "+e.detail.rootNote)
+            console.log("Reviced notesChanged Event: " + e.detail.notes + " Root: " + e.detail.rootNote)
             items = chordLibrary.searchChords(e.detail.notes, e.detail.rootNote, 50)
-        } else{
+        } else {
             items = allChordLibraryItems
         }
         //dragAndDropList.ceateAndInsertElement(e.detail.notes)
         dragAndDropList.updateItems(items)
         // Additional logic to handle the change in notes
     });
+
+
+    //Midi Integration for Pinao Notes 
+    // Event listener for MIDI Note On
+    window.addEventListener('noteOn', (e) => {
+        console.log("MIDI Key press event: "+e)
+        const { note } = e.detail;
+        myPiano.activateKey(note%(visualPianoOctaves*12)); // Assuming activateKey takes the MIDI note number
+    });
+
+    // Event listener for MIDI Note Off
+    window.addEventListener('noteOff', (e) => {
+        const { note } = e.detail;
+        myPiano.deactivateKey(note%(visualPianoOctaves*12)); // Assuming deactivateKey takes the MIDI note number
+    });
+
+    window.addEventListener("statusUpdated", (e)=>{
+        document.getElementById("MIDIStatusDiv").innerHTML = e.detail
+
+    })
 });
