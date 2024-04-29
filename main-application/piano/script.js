@@ -1,7 +1,7 @@
 class Piano {
     constructor(containerSelector, options = {}) {
         this.container = document.querySelector(containerSelector);
-        this.updatePlayedNotesDebounced = this.debounce(this.updatePlayedNotes, 100);
+        this.updatePlayedNotesDebounced = this.debounce(this.updatePlayedNotes, 50);
 
         this.octaves = options.octaves || 2;
         this.playedNotes = [];
@@ -197,7 +197,28 @@ class Piano {
         }
     }
     
-    
+    setRootNote(note) {
+        const key = this.container.querySelector(`.key[data-note="${note}"]`);
+        if (this.rootNote !== null) {
+            // Remove rootNote class from the old root note
+            this.container.querySelector(`.key[data-note="${this.rootNote}"]`).classList.remove('rootNote');
+        }
+        this.rootNote = note; // Update the rootNote to the new note
+        key.classList.add('rootNote', 'selectedKey'); // Add rootNote class to new root note
+        if (!this.playedNotes.includes(note)) {
+            this.playedNotes.push(note); // Add root note to playedNotes if it's not already there
+        }
+        this.updatePlayedNotesDebounced();
+    }
+
+    clearRootNote() {
+        if (this.rootNote !== null) {
+            const key = this.container.querySelector(`.key[data-note="${this.rootNote}"]`);
+            key.classList.remove('rootNote'); // Remove the rootNote class
+            this.rootNote = null; // Reset the rootNote property
+            this.updatePlayedNotesDebounced();
+        }
+    }
 
     updatePlayedNotes() {
         const event = new CustomEvent('notesChanged', { detail: { notes: this.playedNotes, rootNote: this.rootNote } });

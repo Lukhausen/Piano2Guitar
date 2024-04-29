@@ -106,13 +106,14 @@ class ChordLibrary {
             rootNote = rootNote % 12
 
         }
+        const inputNotesSet = new Set(noteArray);
 
         this.chords.forEach(chord => {
             let chordNotes = [...chord.notes];
 
             //console.log("Comparing to: " + chord.name)
             //Add the Root note to the Chords For Cases like A/D
-            const inputNotesSet = new Set(noteArray);
+            
             //console.log("Input Notes Set: ", inputNotesSet);
 
             const commonNotes = new Set([...chordNotes].filter(note => inputNotesSet.has(note)));

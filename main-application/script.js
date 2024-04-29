@@ -2,11 +2,18 @@ import DragAndDropList from './drag-drop/script.js';
 import Piano from './piano/script.js';
 import { Chord, ChordLibrary } from "./chord-library/script.js"
 import MIDIAccessManager from "./midi-integration/script.js"
+import CustomPopup from "./pup-up.js"
 
 document.addEventListener('DOMContentLoaded', () => {
 
     // Import the MidiManager
     const midiManager = new MIDIAccessManager();
+    const popUp = new CustomPopup()
+
+    window.closePopup = function(){
+        popUp.close()
+    }
+
     var visualPianoOctaves = 3
 
 
@@ -20,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return visualPianoOctaves;
     }
 
+    
 
     // Create a new Piano instance with dynamic number of octaves
     const myPiano = new Piano('.pianoContainer', { octaves: calculateOctaves() });
@@ -105,21 +113,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     //Midi Integration for Pinao Notes 
-    // Event listener for MIDI Note On
+    let actualPressedKeys = new Map(); // Maps actual notes to their counts
+    let visualPressedKeys = new Set();
+
+    function mapNoteToVisualKey(note) {
+        return note % (visualPianoOctaves * 12);
+    }
+
     window.addEventListener('noteOn', (e) => {
-        console.log("MIDI Key press event: "+e)
         const { note } = e.detail;
-        myPiano.activateKey(note%(visualPianoOctaves*12)); // Assuming activateKey takes the MIDI note number
+        const visualKey = mapNoteToVisualKey(note);
+        let count = actualPressedKeys.get(note) || 0;
+        actualPressedKeys.set(note, count + 1);
+        visualPressedKeys.add(visualKey);
+        myPiano.activateKey(visualKey);
+        updateRootNote();
     });
 
-    // Event listener for MIDI Note Off
     window.addEventListener('noteOff', (e) => {
         const { note } = e.detail;
-        myPiano.deactivateKey(note%(visualPianoOctaves*12)); // Assuming deactivateKey takes the MIDI note number
+        if (actualPressedKeys.has(note)) {
+            let count = actualPressedKeys.get(note);
+            if (count > 1) {
+                actualPressedKeys.set(note, count - 1);
+            } else {
+                actualPressedKeys.delete(note);
+                // Check if any other actual key maps to the same visual key
+                const anyOther = [...actualPressedKeys.keys()].some(k => mapNoteToVisualKey(k) === mapNoteToVisualKey(note));
+                if (!anyOther) {
+                    visualPressedKeys.delete(mapNoteToVisualKey(note));
+                    myPiano.deactivateKey(mapNoteToVisualKey(note));
+                }
+            }
+        }
+        updateRootNote();
     });
 
-    window.addEventListener("statusUpdated", (e)=>{
+    function updateRootNote() {
+        if (actualPressedKeys.size > 0) {
+            const lowestNote = Math.min(...actualPressedKeys.keys());
+            const visualKey = mapNoteToVisualKey(lowestNote);
+            myPiano.setRootNote(visualKey);
+        } else {
+            myPiano.clearRootNote();
+        }
+    }
+
+    window.addEventListener("statusUpdated", (e) => {
         document.getElementById("MIDIStatusDiv").innerHTML = e.detail
 
     })
+
+
+    //Functionality to autom,atically add Chord when played by midi:
+    window.addEventListener('notesOutput', (e) => {
+        const notes = e.detail;
+        if (notes.length > 0) {
+            const rootNote = Math.min(...notes);
+            const searchResults = chordLibrary.searchChords(notes, rootNote, 100);
+            if (searchResults.length > 0) {
+                const chord = searchResults[0];
+                dragAndDropList.addSelectedItem({ name: chord.name });
+                //popUp.open("Added: " +chord.name, { autoClose: true, duration: 1000 });
+            }
+        }
+    });
 });
