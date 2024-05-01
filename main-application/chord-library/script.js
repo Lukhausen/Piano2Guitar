@@ -35,7 +35,7 @@ class ChordLibrary {
             '5': { notes: [0, 7] }, // Power chord
             '6/9': { notes: [0, 4, 7, 9, 14] }, // Major 6/9
             'm11': { notes: [0, 3, 7, 10, 14, 17] }, // Minor 11
-            'M7#11': { notes: [0, 4, 7, 11, 14, 18] }, // Major 7#11
+            'M7#11': { notes: [0, 4, 7, 11, 18] }, // Major 7#11
             'm7b5': { notes: [0, 3, 6, 10] }, // Half-Diminished
             '+7': { notes: [0, 4, 8, 10] }, // Augmented 7th
             'dim7': { notes: [0, 3, 6, 9] }, // Diminished 7th
@@ -44,6 +44,25 @@ class ChordLibrary {
             'dimM7': { notes: [0, 3, 6, 11] }, // Diminished Major 7th
             '7alt': { notes: [0, 4, 6, 10, 13] }, // Altered Dominant (using 6 and 13)
             'M13': { notes: [0, 4, 7, 11, 14, 17, 21] }, // Major 13th
+            'M11': { notes: [0, 4, 7, 11, 14, 17] }, // Major 11th
+            'M7sus4': { notes: [0, 5, 7, 11] }, // Major 7th Suspended 4th
+            'm7#5': { notes: [0, 3, 8, 10] }, // Minor 7th #5
+            'M#5': { notes: [0, 4, 8] }, // Major #5
+            '9#11': { notes: [0, 4, 7, 10, 14, 18] }, // Dominant 9th #11
+            '13#11': { notes: [0, 4, 7, 10, 14, 18, 21] }, // Dominant 13th #11
+            '7b5': { notes: [0, 4, 6, 10] }, // Dominant 7th Flat Five
+            'M7b5': { notes: [0, 4, 6, 11] }, // Major 7th Flat Five
+            'M7#5': { notes: [0, 4, 8, 11] }, // Major 7th Sharp Five
+            'm7b9': { notes: [0, 3, 7, 10, 13] }, // Minor 7th Flat Nine
+            '9b5': { notes: [0, 4, 6, 10, 14] }, // 9th Flat Five
+            '9#5': { notes: [0, 4, 8, 10, 14] }, // 9th Sharp Five
+            '7b9': { notes: [0, 4, 7, 10, 13] }, // Dominant 7th Flat Nine
+            '7#9': { notes: [0, 4, 7, 10, 15] }, // Dominant 7th Sharp Nine
+            '7#11': { notes: [0, 4, 7, 10, 18] }, // Dominant 7th Sharp Eleven
+            'm7add11': { notes: [0, 3, 7, 10, 17] }, // Minor 7th Add 11
+            'add2': { notes: [0, 2, 4, 7] }, // Major Add 2
+            'add4': { notes: [0, 4, 5, 7] }, // Major Add 4
+            '6add9': { notes: [0, 4, 7, 9, 14] }, // Major 6 Add 9
 
             '/C': { notes: [0, 4, 7], root: 0 }, // C Major
             'm/C': { notes: [0, 3, 7], root: 0 }, // C Minor

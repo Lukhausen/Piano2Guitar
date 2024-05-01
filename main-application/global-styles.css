@@ -44,7 +44,7 @@ html {
     align-items: center;
     justify-content: center;
     height: 100vh;
-    font-family: 'Noto Sans', serif;
+    font-family: "Inter", sans-serif;
 }
 
 
@@ -258,6 +258,7 @@ body {
     z-index: 2;
     top: 0%;
     left: var(--padding);
+    height: 100%;
     box-shadow: 0 0 10px rgb(6, 6, 6);
 
 }

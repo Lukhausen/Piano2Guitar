@@ -87,7 +87,7 @@ class Piano {
 
                 const note = key.getAttribute('data-note');
 
-                this.playSoundLong(note, 0.75);
+                
                 if (this.rootNote === note) {
                     key.classList.add("selectedKey");
                     key.classList.remove("rootNote");
@@ -102,8 +102,11 @@ class Piano {
                     this.playedNotes = this.playedNotes.filter(n => n !== note);
                     key.classList.remove("selectedKey");
                 } else {
-                    this.playedNotes.push(note);
+                    if (!this.playedNotes.includes(note)) {
+                        this.playedNotes.push(note);
+                    }
                     key.classList.add("selectedKey");
+                    this.playSoundLong(note, 0.75);
                 }
                 this.updatePlayedNotesDebounced();
             });
