@@ -1,4 +1,5 @@
 :root {
+    --light0: rgb(240, 240, 240);
     --light1: rgb(220, 220, 220);
     --light2: rgb(208, 208, 208);
     --light3: rgb(143, 142, 142);
@@ -228,7 +229,7 @@ body {
 
 
 .dragDropItem {
-    background-color: #fff;
+    background-color: var(--light0);
     padding: calc(var(--padding) / 2) var(--padding);
     border-radius: var(--rounding);
     font-weight: 700;

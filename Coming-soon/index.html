@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PianoToGuitar - Coming Soon</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+body, html {
+  height: 100%;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  color: #E0E0E0;
+  background: linear-gradient(135deg, #121212, #1f1f1f);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.container {
+  width: 80%;
+  max-width: 800px;
+  padding: 60px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+h1 {
+  font-size: 64px;
+  color: #0DFF92;
+  text-shadow: 0 0 20px #0dff9282;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: 600;
+}
+p {
+  font-size: 24px;
+  color: #AAAAAA;
+  margin-bottom: 40px;
+  line-height: 1.8;
+  text-align: center;
+}
+.features-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 20px;
+  row-gap: 40px;
+  text-align: center;
+}
+.features-list li {
+  font-size: 20px;
+  list-style: none;
+}
+.features-list li strong {
+  display: block;
+  margin-bottom: 10px;
+  color: #0DFF92;
+  font-size: 24px;
+}
+.emoji {
+  font-size: 50px;
+  margin-bottom: 10px;
+}
+@media (max-width: 768px) {
+  .container {
+    width: 90%;
+    padding: 40px;
+  }
+  h1 { font-size: 48px; }
+  p, .features-list li { font-size: 18px; }
+  .emoji { font-size: 40px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Coming Soon</h1>
+  <p>Unlock the power of music with <strong>PianoToGuitar</strong>!</p>
+  <ul class="features-list">
+    <li><span class="emoji">🎹➡️🎸</span><strong>Instant Chord Transposition</strong>Seamlessly convert piano keystrokes to guitar frets.</li>
+    <li><span class="emoji">🎸</span><strong>Custom Tunings and Capo Settings</strong>Tailor your guitar for any song.</li>
+    <li><span class="emoji">👆🎼</span><strong>Interactive Learning Interface</strong>Real-time visual feedback on finger placements and progressions.</li>
+    <li><span class="emoji">🔍</span><strong>Advanced Algorithmic Matching</strong>Enjoy the most accurate chord conversions.</li>
+  </ul>
+  <p>Whether you're a beginner or a seasoned musician, <strong>PianoToGuitar</strong> is your next step in musical evolution. Stay tuned!</p>
+</div>
+</body>
+</html>
