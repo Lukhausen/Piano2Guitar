@@ -41,7 +41,7 @@ class ChordLibrary {
             'dim7': { notes: [0, 3, 6, 9] }, // Diminished 7th
             'M7+5': { notes: [0, 4, 8, 11] }, // Augmented Major 7th
             'mM9': { notes: [0, 3, 7, 11, 14] }, // Minor Major 9th
-            'dimM7': { notes: [0, 3, 6, 11] }, // Diminished Major 7th
+            'dimM7': { notes: [0, 3, 6, 11] }, // Diminished Major 7th - check if real
             '7alt': { notes: [0, 4, 6, 10, 13] }, // Altered Dominant (using 6 and 13)
             'M13': { notes: [0, 4, 7, 11, 14, 17, 21] }, // Major 13th
             'M11': { notes: [0, 4, 7, 11, 14, 17] }, // Major 11th

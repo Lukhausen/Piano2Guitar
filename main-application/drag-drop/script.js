@@ -63,16 +63,50 @@ class DragAndDropList {
         }
     }
 
+    last100PercentItemIndex() {
+        let lastIndex = -1;
+        for (let i = 0; i < this.items.length; i++) {
+            if (this.items[i].probability == 100) {
+                lastIndex = i;
+            }
+        }
+        return lastIndex;
+    }
+
     populateItemsList() {
         const lastIndex100Percent = this.last100PercentItemIndex();
+        var first100Percent = false;
         this.items.forEach((item, index) => {
+            if (item.probability == 100 && first100Percent == false) {
+                first100Percent = true
+                // Create and insert a First element
+                const firstElement = document.createElement('div');
+                firstElement.style.width = "100%";
+                firstElement.innerHTML = "BEST MATCHES FOUND:"
+                firstElement.style.backgroundColor = "#ffffff00"
+                firstElement.style.color = "var(--light3)"
+                firstElement.style.fontSize = "small"
+                firstElement.style.marginBottom = "var(--padding)"
+
+                this.itemsContainer.appendChild(firstElement);
+            }
             const itemElement = this.createItemElement(item, true);
-            if (index < lastIndex100Percent) {
-                itemElement.style.marginRight = "0%";
-            } else if (index == lastIndex100Percent) {
-                itemElement.style.marginRight = "100%";
-            } 
             this.itemsContainer.appendChild(itemElement);
+
+            // Check if the current index is the last 100% probability index
+            if (index === lastIndex100Percent) {
+                // Create and insert a break element
+                const breakElement = document.createElement('div');
+                breakElement.style.width = "100%";
+                breakElement.style.height = "2px"; // Adjust the height as necessary
+                breakElement.style.backgroundColor = "var(--dark1)"
+                breakElement.style.marginTop = "var(--padding)"
+                breakElement.style.marginBottom = "var(--padding)"
+                breakElement.style.boxShadow = "var(--padding) 0px 0px 0px var(--dark1), calc(var(--padding)*-1) 0px 0px 0px var(--dark1)"
+
+
+                this.itemsContainer.appendChild(breakElement);
+            }
         });
     }
 
@@ -87,11 +121,10 @@ class DragAndDropList {
             const probabilitySpan = document.createElement('span');
             probabilitySpan.textContent = `(${item.probability}%)`;
             probabilitySpan.style.backgroundColor = this.getBackgroundColor(item.probability);
-            if (item.probability == 100){
+            if (item.probability == 100) {
                 itemElement.style.boxShadow = '0px 0px 13px 0px rgba(0,255,0)';
                 itemElement.style.fontWeight = "800"
                 //itemElement.style.marginRight = "100%"
-                itemElement.style.marginBottom = "var(--padding)"
                 //itemElement.style.marginBottom = "100%"
                 //itemElement.style.filter ="contrast(1.2)"
             }
@@ -110,34 +143,26 @@ class DragAndDropList {
     getBackgroundColor(probability) {
         const startColor = [255, 130, 130]; // #ddd
         const endColor = [230, 230, 30]; // #3f3
-        const winnerColor = [150,200,0]
-    
+        const winnerColor = [150, 200, 0]
+
         // Ensure probability is within the new range of 50 to 100
         probability = Math.max(50, Math.min(100, probability));
-        
+
         // Transforming probability to start changing from 50 to 100
         const scaledProbability = (probability - 50) / 50;
-    
+
         // Adjusting the probability scale logarithmically from 0.0 at probability 50 to 1.0 at probability 100
         const adjustedProbability = Math.log10(1 + 9 * scaledProbability); // Logarithmic scale from 0 to 1
-    
+
         let blendedColor = startColor.map((component, index) => {
             return Math.round(component + (endColor[index] - component) * adjustedProbability);
         });
-        if (probability == 100){
+        if (probability == 100) {
             blendedColor = winnerColor
         }
         return `rgb(${blendedColor.join(',')})`;
     }
-    last100PercentItemIndex() {
-        let lastIndex = -1;
-        for (let i = 0; i < this.items.length; i++) {
-            if (this.items[i].probability == 100) {
-                lastIndex = i;
-            }
-        }
-        return lastIndex;
-    }
+
 
     createSelectedItemElement(item) {
         const selectedItemElement = document.createElement('div');
