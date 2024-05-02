@@ -64,8 +64,15 @@ class DragAndDropList {
     }
 
     populateItemsList() {
-        this.items.forEach(item => {
-            this.itemsContainer.appendChild(this.createItemElement(item, true));
+        const lastIndex100Percent = this.last100PercentItemIndex();
+        this.items.forEach((item, index) => {
+            const itemElement = this.createItemElement(item, true);
+            if (index < lastIndex100Percent) {
+                itemElement.style.marginRight = "0%";
+            } else if (index == lastIndex100Percent) {
+                itemElement.style.marginRight = "100%";
+            } 
+            this.itemsContainer.appendChild(itemElement);
         });
     }
 
@@ -81,8 +88,12 @@ class DragAndDropList {
             probabilitySpan.textContent = `(${item.probability}%)`;
             probabilitySpan.style.backgroundColor = this.getBackgroundColor(item.probability);
             if (item.probability == 100){
-                itemElement.style.boxShadow = '0px 0px 10px 0px rgba(255,200,0)';
-                itemElement.style.filter ="contrast(1.2)"
+                itemElement.style.boxShadow = '0px 0px 13px 0px rgba(0,255,0)';
+                itemElement.style.fontWeight = "800"
+                //itemElement.style.marginRight = "100%"
+                itemElement.style.marginBottom = "var(--padding)"
+                //itemElement.style.marginBottom = "100%"
+                //itemElement.style.filter ="contrast(1.2)"
             }
 
             itemElement.appendChild(probabilitySpan);
@@ -97,9 +108,9 @@ class DragAndDropList {
     }
 
     getBackgroundColor(probability) {
-        const startColor = [221, 221, 221]; // #ddd
-        const endColor = [63, 243, 51]; // #3f3
-        const winnerColor = [255,200,0]
+        const startColor = [255, 130, 130]; // #ddd
+        const endColor = [230, 230, 30]; // #3f3
+        const winnerColor = [150,200,0]
     
         // Ensure probability is within the new range of 50 to 100
         probability = Math.max(50, Math.min(100, probability));
@@ -117,6 +128,15 @@ class DragAndDropList {
             blendedColor = winnerColor
         }
         return `rgb(${blendedColor.join(',')})`;
+    }
+    last100PercentItemIndex() {
+        let lastIndex = -1;
+        for (let i = 0; i < this.items.length; i++) {
+            if (this.items[i].probability == 100) {
+                lastIndex = i;
+            }
+        }
+        return lastIndex;
     }
 
     createSelectedItemElement(item) {
