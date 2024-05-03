@@ -46,10 +46,17 @@ html {
     justify-content: center;
     height: 100vh;
     font-family: "Inter", sans-serif;
-    background: radial-gradient(circle, rgba(7,24,27,1) 0%, rgba(9,9,9,1) 100%);
+    background: radial-gradient(circle, rgba(7, 24, 27, 1) 0%, rgba(9, 9, 9, 1) 100%);
 
 }
 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    font-size: max(1.6vw, 3vh);
+    font-weight: 100;
+}
 
 body {
     margin: 0;
@@ -58,36 +65,65 @@ body {
     width: 80vw;
 }
 
+#settings {
+    height: calc(100% - var(--padding) * 2);
+    position: absolute;
+    z-index: 5;
+    width: calc(100% - var(--padding) * 2);
+    box-sizing: border-box;
+    box-shadow: 0px 0px 50px max(100vh, 100vw) #0000006a;
+    border-radius: var(--rounding);
+    padding:  var(--padding);
+    background-color: #00000077;
+    backdrop-filter: blur(15px) ;
+    display: flex;     
+    opacity: 0;        
+    visibility: hidden; 
+    transition: opacity 0.2s, visibility 0.2s; 
+}
+#settings.visible {
+    opacity: 1;     
+    visibility: visible;
+}
+
+
+#settingsIcon {
+    z-index: 10;
+}
+
 .inputWrapper {
     display: flex;
     flex-direction: column;
     width: 100%;
+    height: 50vh;
     background-color: var(--dark1);
     gap: var(--padding);
     padding: var(--padding);
     box-sizing: border-box;
+    position: relative;
 }
 
+
 .searchContainer {
-    height: 30vh;
     background-color: var(--dark1);
     display: flex;
     flex-direction: row;
     gap: var(--padding);
-
+    flex: 1
 }
 
 
 
 .visualPianoContainer {
-    flex: 1.3;
+    flex: 1.5;
     display: flex;
     flex-direction: row;
     align-items: end;
     padding: calc(var(--padding)/2);
     background-color: var(--dark2);
     border-radius: var(--padding);
-    gap: calc(var(--padding)/2)
+    gap: calc(var(--padding)/2);
+    flex-basis: 10px;
 }
 
 .visualPianoIcon {
@@ -112,48 +148,48 @@ body {
     width: 100%;
     height: 100%;
     box-shadow: 0 2vw 4vw rgba(7, 0, 53, 0.25);
-    border:none;
-    flex:1;
+    border: none;
+    flex: 1;
     border-radius: var(--padding);
 
 }
-.pianoIconContainer{
+
+.pianoIconContainer {
     display: flex;
     flex-direction: column;
     gap: var(--padding);
     padding: calc(var(--padding)/2);
+    max-height: 100%;
 }
 
-.pianoMIDIWrapper{
+.pianoMIDIWrapper {
     display: flex;
     width: 100%;
     height: 100%;
-    border:none;
+    border: none;
     flex-direction: column;
     gap: calc(var(--padding)/2)
 }
 
-#MIDIStatusDiv{
+#MIDIStatusDiv {
     color: var(--light3);
-    font-size:medium;
 }
 
 .searchWordContainer {
     flex: 1;
     display: flex;
     position: relative;
-    height: 100%;
     flex-direction: column;
     background-color: var(--dark2);
     border-radius: var(--padding);
     overflow: hidden;
+    flex-basis: 10px;
     /* Hides content that overflows the element's box */
 
 
 }
 
 .blackFadeBottom {
-    height: 100%;
     width: 100%;
     position: absolute;
     border-radius: var(--padding);
@@ -169,7 +205,6 @@ body {
     background-color: var(--dark2);
     box-sizing: border-box;
     border: none;
-    font-size: large;
     border-bottom: 2px solid var(--dark1);
     /* Same bottom border on focus */
     padding: calc(var(--padding) / 2) var(--padding);
@@ -199,14 +234,15 @@ body {
     flex-grow: 0;
 }
 
-.selectedItemsWrapper{
+.selectedItemsWrapper {
     display: flex;
     flex-direction: row;
     background-color: var(--dark2);
     padding: var(--padding);
     gap: var(--padding);
     border-radius: var(--rounding);
-
+    overflow-y: auto;
+    max-height: 25%;
 }
 
 .selectedItems {
@@ -221,11 +257,9 @@ body {
     box-sizing: border-box;
     transition: 1s;
     user-select: none;
-    overflow: hidden;
-    overflow-x:auto;
-    font-size: x-large;
+    overflow-y: auto;
     border-radius: var(--rounding);
-
+    align-content: center;
 }
 
 
@@ -239,15 +273,19 @@ body {
     color: var(--dark2);
     position: relative;
     cursor: pointer;
-    transition: 0.2s;
-    box-shadow: 0 0 10px #00000056; /* Add a glowing effect */
+    transition: 0.15s;
+    box-shadow: 0 0 10px #00000056;
+    /* Add a glowing effect */
 
 }
-.dragDropItem:hover{
-    transform: scale(1.05);
+
+.dragDropItem:hover {
+    transform: scale(1.05) rotate(-0.001turn);
+    filter: contrast(1.1);
+    z-index: 10;
 }
 
-.dragDropItem:active{
+.dragDropItem:active {
     transform: scale(0.5) translate(-50);
 }
 
@@ -270,6 +308,7 @@ body {
     transform: scale(1.05);
     transition: 0.2s;
     opacity: 0.5;
+    cursor: grabbing;
 }
 
 .dragDropItem.over {
@@ -278,9 +317,10 @@ body {
     opacity: 0.5;
 }
 
-.selected-dragDropItem{
-    box-shadow: 0 0 10px #00000096; /* Add a glowing effect */
-
+.selected-dragDropItem {
+    box-shadow: 0 0 10px #00000096;
+    /* Add a glowing effect */
+    cursor: grab;
 }
 
 #DragAndDrop-EmptyMessage {
@@ -289,27 +329,28 @@ body {
     gap: var(--padding);
 }
 
-.settings {
-    background-color: aqua;
-}
+
 
 
 @media only screen and (max-width: 1200px) {
     .searchContainer {
         flex-direction: column;
-        height: 50vh;
     }
 
     .visualPianoContainer {
-        flex: 0.7;
+        flex: 1;
+        flex-basis: 10px;
     }
 
-    html{
-        font-size:medium;
+    html {
+        font-size: small;
     }
-    body{
+
+    body {
         width: 100vw;
     }
+
+    :root {
+        --padding: 10px;
+    }
 }
-
-
