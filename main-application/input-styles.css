@@ -127,7 +127,7 @@ body {
 }
 
 .visualPianoIcon {
-    width: max(3vh, 2vw);
+    width: max(3vh, 1.5vw);
     height: auto;
     transition: 0.2s;
 }
@@ -259,7 +259,6 @@ height: 100%;
     user-select: none;
     overflow-y: auto;
     border-radius: var(--rounding);
-    align-content: center;
 }
 
 

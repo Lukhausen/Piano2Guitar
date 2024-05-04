@@ -8,9 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //Make Settings Button functional
     window.toggleSettings = function () {
-        let settingsButton = document.getElementById("settings");
+        let settingsScreen = document.getElementById("settings");
         // Toggle a class that controls the visibility and opacity
-        settingsButton.classList.toggle('visible');
+        settingsScreen.classList.toggle('visible');
     }
     
 
