@@ -149,10 +149,6 @@ class Piano {
         };
     }
 
-    playSound(index) {
-        this.audioElements.forEach(audio => { audio.pause(); audio.currentTime = 0; });
-        this.audioElements[index].play();
-    }
 
     playSoundLong(index, localVolume) {
         if (this.volume) {
@@ -166,11 +162,12 @@ class Piano {
     }
 
 
+    
     playChord() {
         this.playedNotes.sort((a, b) => a - b);
         const localVolume = 1 / Math.sqrt(this.playedNotes.length / 1);
         this.playedNotes.forEach((note, index) => {
-            const randomDelay = Math.random() * 30;
+            const randomDelay = Math.random() * 20;
             setTimeout(() => {
                 this.playSoundLong(note, localVolume);
             }, 20 * index + randomDelay);

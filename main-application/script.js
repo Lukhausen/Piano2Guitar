@@ -166,13 +166,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateRootNote() {
         if (actualPressedKeys.size > 0) {
-            const lowestNote = Math.min(...actualPressedKeys.keys());
-            const visualKey = mapNoteToVisualKey(lowestNote);
-            myPiano.setRootNote(visualKey);
+            // Convert actualPressedKeys to an array and sort it
+            const sortedNotes = Array.from(actualPressedKeys.keys()).sort((a, b) => a - b);
+    
+            // Determine if the lowest note should be set as the root note
+            const lowestNote = sortedNotes[0];
+            const lowestNoteMod12 = lowestNote % 12;
+            let setRoot = false;
+    
+            // Check if the lowest note is doubled in higher octaves
+            if (sortedNotes.some(note => note !== lowestNote && note % 12 === lowestNoteMod12)) {
+                setRoot = true;
+            }
+    
+            // Check if the lowest note is 12 interval steps away from the second lowest note
+            if (sortedNotes.length > 1 && (sortedNotes[1] - lowestNote >= 6 )) {
+                setRoot = true;
+            }
+    
+            // Set or clear the root note based on the above conditions
+            if (setRoot) {
+                const visualKey = mapNoteToVisualKey(lowestNote);
+                myPiano.setRootNote(visualKey);
+            } else {
+                myPiano.clearRootNote();
+            }
         } else {
             myPiano.clearRootNote();
         }
     }
+    
 
     window.addEventListener("statusUpdated", (e) => {
         document.getElementById("MIDIStatusDiv").innerHTML = e.detail
