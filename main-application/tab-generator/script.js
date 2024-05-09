@@ -1,5 +1,5 @@
-class ChordDiagram {
-    constructor(fingerPositions, fingerNumbers, barreSize = null, barre = null, numberPosition = 'onNote', showOpenStrings) {
+ export default class TabGenerator {
+    constructor(fingerPositions, fingerNumbers, barreSize = null, barre = null, elementColor = "#000", textColor= "#fff", numberPosition = 'onNote', showOpenStrings) {
         this.fingerPositions = fingerPositions;
         this.fingerNumbers = fingerNumbers;
         this.barreSize = barreSize;
@@ -9,6 +9,8 @@ class ChordDiagram {
         this.topSpacing = 25;
         this.indicatorTopSpacing = 19;
         this.textTopSpacing = 190
+        this.color =elementColor
+        this.textColor = textColor
     }
 
     generateChordDiagram() {
@@ -52,8 +54,8 @@ class ChordDiagram {
             y: 14 + this.topSpacing,
             width: '125',
             height: '5',
-            fill: '#fff',
-            stroke: '#fff',
+            fill: this.color,
+            stroke: this.color,
             'stroke-width': '2'
         });
         svg.appendChild(topBar);
@@ -64,7 +66,7 @@ class ChordDiagram {
             const line = this.createSVGElement('line', {
                 x1: 30 + i * 25, y1: this.topSpacing + 20,
                 x2: 30 + i * 25, y2: 140 + this.topSpacing,
-                stroke: '#fff', 'stroke-width': '2'
+                stroke: this.color, 'stroke-width': '2'
             });
             svg.appendChild(line);
         }
@@ -75,7 +77,7 @@ class ChordDiagram {
             const line = this.createSVGElement('line', {
                 x1: '30', y1: 20 + this.topSpacing + j * 25,
                 x2: '155', y2: 20 + this.topSpacing + j * 25,
-                stroke: '#fff', 'stroke-width': '2'
+                stroke: this.color, 'stroke-width': '2'
             });
             svg.appendChild(line);
         }
@@ -90,7 +92,7 @@ class ChordDiagram {
                     const position = 40 + (fret - barreFret) * 25;
                     const circle = this.createSVGElement('circle', {
                         cx: 30 + k * 25, cy: position + this.topSpacing - 8,
-                        r: '10', fill: color
+                        r: '10', fill: this.color
                     });
                     svg.appendChild(circle);
 
@@ -102,7 +104,7 @@ class ChordDiagram {
                             'font-family': 'Arial',
                             'font-size': '20',
                             'font-weight': '500',
-                            fill: this.numberPosition === 'onNote' ? textColor : color,
+                            fill: this.numberPosition === 'onNote' ? this.textColor : this.color,
                             'text-anchor': 'middle'
                         });
                         text.textContent = this.fingerNumbers[k];
@@ -125,7 +127,7 @@ class ChordDiagram {
                     y1: 10 + ofsetY,
                     x2: 30 + i * 25 + halfStroke + ofsetX,
                     y2: 10 + strokeLength + ofsetY,
-                    stroke: color,
+                    stroke: this.color,
                     'stroke-width': '2'
                 });
                 const line2 = this.createSVGElement('line', {
@@ -133,7 +135,7 @@ class ChordDiagram {
                     y1: 10 + ofsetY,
                     x2: 30 + i * 25 - halfStroke + ofsetX,
                     y2: 10 + strokeLength + ofsetY,
-                    stroke: color,
+                    stroke: this.color,
                     'stroke-width': '2'
                 });
                 svg.appendChild(line1);
@@ -150,7 +152,7 @@ class ChordDiagram {
                     cy: this.indicatorTopSpacing,
                     r: '7',
                     fill: 'none',
-                    stroke: color,
+                    stroke: this.color,
                     'stroke-width': '2'
                 });
                 svg.appendChild(circle);
@@ -169,14 +171,14 @@ class ChordDiagram {
             x: barreX, y: barreY,
             width: barreWidth + 10, height: barreHeight,
             rx: '5', ry: '5',
-            fill: color
+            fill: this.color
         });
         svg.appendChild(rect);
 
         if (this.barre) {
             const text = this.createSVGElement('text', {
                 x: barreX + barreWidth + 15, y: barreY + barreHeight,
-                'font-family': 'Arial', 'font-size': '20', fill: color,
+                'font-family': 'Arial', 'font-size': '20', fill: this.color,
                 'text-anchor': 'left'
             });
             text.textContent = this.barre + "";
@@ -185,18 +187,3 @@ class ChordDiagram {
     }
 }
 
-const fingerPositions = ['x', '13', '12', '5', '0', '0'];
-const fingerNumbers = ['9', '1', '2', '3', '', ''];
-const barreSize = 3;
-const barre = 10;
-const color = "#fff";
-const textColor = "#000";
-const showOpenStrings = true;
-
-try {
-    const chordDiagram = new ChordDiagram(fingerPositions, fingerNumbers, barreSize, barre, 'belowString', showOpenStrings);
-    const svg = chordDiagram.generateChordDiagram();
-    document.getElementById('diagram').appendChild(svg);
-} catch (error) {
-    console.error('Error generating chord diagram:', error);
-}

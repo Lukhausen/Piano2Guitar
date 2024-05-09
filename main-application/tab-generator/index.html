@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guitar Chord Diagram Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Guitar Chord Diagram Generator</h1>
+        <input type="text" id="chordInput" placeholder="Enter chord string like 555575" class="chord-input">
+        <input type="text" id="fingerInput" placeholder="Enter finger positions (e.g., 134211)">
+        <button onclick="generateChordDiagram()" class="generate-btn">Generate Diagram</button>
+        <div id="diagram" class="diagram-container"></div>
+    </div>
+    <script type="module">
+        import TabGenerator from "./script.js"
+
+        const fingerPositions = ['x', '13', '12', '5', '0', '0'];
+        const fingerNumbers = ['9', '1', '2', '1', '', ''];
+        const barreSize = 3;
+        const barre = 10;
+        const color = "#fff";
+        const textColor = "#000";
+        const showOpenStrings = true;
+
+        try {
+            const chordDiagram = new TabGenerator(fingerPositions, fingerNumbers, barreSize, barre, color, textColor, 'belowString', showOpenStrings);
+            const svg = chordDiagram.generateChordDiagram();
+            document.getElementById('diagram').appendChild(svg);
+        } catch (error) {
+            console.error('Error generating chord diagram:', error);
+        }
+    </script>
+</body>
+
+</html>
