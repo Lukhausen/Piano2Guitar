@@ -1,5 +1,5 @@
- export default class TabGenerator {
-    constructor(fingerPositions, fingerNumbers, barreSize = null, barre = null, elementColor = "#000", textColor= "#fff", numberPosition = 'onNote', showOpenStrings) {
+export default class TabGenerator {
+    constructor(fingerPositions, fingerNumbers, barreSize = null, barre = null, elementColor = "#000", textColor = "#fff", numberPosition = 'onNote', showOpenStrings) {
         this.fingerPositions = fingerPositions;
         this.fingerNumbers = fingerNumbers;
         this.barreSize = barreSize;
@@ -9,19 +9,20 @@
         this.topSpacing = 25;
         this.indicatorTopSpacing = 19;
         this.textTopSpacing = 190
-        this.color =elementColor
+        this.topBarHeight = 5
+        this.color = elementColor
         this.textColor = textColor
     }
 
     generateChordDiagram() {
         const svgAttributes = {
-            width: '200', 
-            height: '200', 
+            width: '200',
+            height: '200',
             viewBox: '0 0 200 200'  // This sets the viewBox attribute
         };
         const svg = this.createSVGElement('svg', svgAttributes);
         this.drawDiagramComponents(svg);
-    
+
         return svg;
     }
 
@@ -50,10 +51,10 @@
 
     drawTopBar(svg) {
         const topBar = this.createSVGElement('rect', {
-            x: '30',
+            x: "29.5",
             y: 14 + this.topSpacing,
             width: '125',
-            height: '5',
+            height: this.topBarHeight,
             fill: this.color,
             stroke: this.color,
             'stroke-width': '2'
@@ -64,9 +65,9 @@
     drawStrings(svg) {
         for (let i = 0; i < 6; i++) {
             const line = this.createSVGElement('line', {
-                x1: 30 + i * 25, y1: this.topSpacing + 20,
+                x1: 30 + i * 25, y1: this.topSpacing + 13,
                 x2: 30 + i * 25, y2: 140 + this.topSpacing,
-                stroke: this.color, 'stroke-width': '2'
+                stroke: this.color, 'stroke-width': ((6 - i) / 3) + 1
             });
             svg.appendChild(line);
         }
@@ -165,7 +166,7 @@
         const barreWidth = this.barreSize * 25 - 15;
         const barreHeight = 10;
         const barreX = 25 + index * 25 - 5;
-        const barreY = 25+(7.5-barreHeight/2) + this.topSpacing;
+        const barreY = 25 + (7.5 - barreHeight / 2) + this.topSpacing;
 
         const rect = this.createSVGElement('rect', {
             x: barreX, y: barreY,
