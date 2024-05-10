@@ -3,7 +3,7 @@ import { parseNotes, removeDuplicateArrays } from './utils.js';
 import { ChordVoicing } from './chordvoicing.js';
 
 
-export class Chord {
+export class ChordFactory {
   constructor(notes, root, startWithRoot = true, tuning = STANDARD_TUNING) {
     this.notes = parseNotes(notes);
     this.startWithRoot = startWithRoot
