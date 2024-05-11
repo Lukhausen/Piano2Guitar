@@ -6,6 +6,3 @@ export const NOTE_INDEX_MAP = {
   'A#': 10, 'B': 11
 };
 export const BARRE_RATING = 1
-
-module.exports.NOTE_INDEX_MAP = NOTE_INDEX_MAP
-module.exports.STANDARD_TUNING = STANDARD_TUNING

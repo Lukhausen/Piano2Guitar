@@ -25,7 +25,7 @@ if (lastPlayChords && lastPlayChords.length > 0) {
     lastPlayChords.sort((a, b) => a.rating - b.rating);
 }
 
-lastPlayChords.forEach((chord) => console.log(chord.voicing));
+lastPlayChords.forEach((chord) => console.log(chord));
 
 // Calculate the average time
 const averageTime = totalDuration / repetitions;
