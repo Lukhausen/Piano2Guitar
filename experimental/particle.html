@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particle Effect Demo</title>
+    <style>
+        #particleContainer {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            background-color: #333;
+            margin: 50px auto;
+            border: 2px solid #555;
+        }
+    </style>
+</head>
+<body>
+    <div id="particleContainer"></div>
+    <script>
+        class ParticleEffect {
+            constructor(targetElement, options) {
+                this.targetElement = targetElement;
+                this.options = options;
+                this.particles = [];
+
+                this.init();
+            }
+
+            init() {
+                this.createParticles();
+                this.animateParticles();
+            }
+
+            createParticles() {
+                const { numberOfParticles, colors } = this.options;
+
+                for (let i = 0; i < numberOfParticles; i++) {
+                    const particle = document.createElement('div');
+                    particle.style.position = 'absolute';
+                    particle.style.width = '5px';
+                    particle.style.height = '5px';
+                    particle.style.backgroundColor = colors[i % colors.length];
+                    particle.style.borderRadius = '50%';
+                    particle.style.left = `${Math.random() * this.targetElement.offsetWidth}px`;
+                    particle.style.top = `${Math.random() * this.targetElement.offsetHeight}px`;
+                    this.targetElement.appendChild(particle);
+                    this.particles.push(particle);
+                }
+            }
+
+            animateParticles() {
+                this.particles.forEach(particle => {
+                    const speed = Math.random() * 2 + 1; // Speed between 1 and 3
+                    const directionX = Math.random() < 0.5 ? -1 : 1;
+                    const directionY = Math.random() < 0.5 ? -1 : 1;
+
+                    setInterval(() => {
+                        const currentTop = parseInt(particle.style.top, 10);
+                        const currentLeft = parseInt(particle.style.left, 10);
+                        particle.style.top = `${currentTop + directionY * speed}px`;
+                        particle.style.left = `${currentLeft + directionX * speed}px`;
+                    }, 20);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const target = document.getElementById('particleContainer');
+            const options = {
+                numberOfParticles: 100,
+                colors: ['red', 'blue', 'green', 'yellow', 'white']
+            };
+            new ParticleEffect(target, options);
+        });
+    </script>
+</body>
+</html>

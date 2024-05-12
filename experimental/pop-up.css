@@ -1,0 +1,32 @@
+
+.popup {
+    display: none;
+    position: fixed;
+    font-size: x-large;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #343434;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 90px rgba(0, 0, 0, 0.982);
+    z-index: 999;
+    transition: 0.2s;
+    color: rgb(236, 236, 236);
+  }
+  
+  .popup-content {
+    text-align: center;
+  }
+  
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  #popup-text {
+    margin: 5px;
+  }

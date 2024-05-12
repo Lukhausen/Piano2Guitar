@@ -1,0 +1,9 @@
+{
+  "name": "chord-factory",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "author": "",
+  "license": "Closed Source",
+  "type": "module"
+}

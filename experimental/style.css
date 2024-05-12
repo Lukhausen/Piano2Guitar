@@ -1,0 +1,29 @@
+body, html {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    text-align: center;
+}
+
+#noteInput {
+    margin: 20px;
+    padding: 10px;
+    width: 300px;
+}
+
+#chordOutput {
+    margin-top: 20px;
+    font-size: 20px;
+    color: green;
+}
+
+#chordList {
+    margin-top: 20px;
+    text-align: left;
+}
