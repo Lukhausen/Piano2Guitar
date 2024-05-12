@@ -1,14 +1,14 @@
-class Chord {
+export class Chord {
     constructor(rootNote, notes, name, customRoot) {
         this.rootNote = rootNote; // Integer 0-11, where 0 = C, 1 = C#, 2 = D, etc.
         this.notes = notes; // Array of integers representing notes of the chord
         this.name = name; // String representing the full name of the chord, e.g., "Gm", "Asus4"
         this.customRoot = customRoot
-        console.log("Registered Note: " + this.name + " Root: " + this.rootNote + " Notes: " + this.notes)
+        console.log("Constructed Chord: " + this.name + " Root: " + this.rootNote + " Notes: " + this.notes)
     }
 }
 
-class ChordLibrary {
+export class ChordLibrary {
     constructor() {
         this.chords = [];
         this.noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
@@ -195,5 +195,3 @@ class ChordLibrary {
     }
 }
 
-
-export { Chord, ChordLibrary };

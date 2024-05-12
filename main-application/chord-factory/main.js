@@ -1,6 +1,6 @@
 import { STANDARD_TUNING, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
 import { parseNotes, removeDuplicateArrays } from './utils.js';
-import { ChordFactory } from './chord.js';
+import { ChordFactory } from './chordfactory.js';
 
 let totalDuration = 0;
 const repetitions = 50;

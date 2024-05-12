@@ -332,7 +332,7 @@ class DragAndDropList {
     }
 
     updateDisplayArray() {
-        this.displayArray.textContent = `Selected Items: ${this.selectedItemsArray.join(', ')}`;
+        console.log(`Selected Items: ${this.selectedItemsArray.join(', ')}`)
         console.log(this.selectedItemsArray.length);
         if (this.selectedItemsArray.length == 0) {
             if (!this.emptyMessageElement.parentNode) {

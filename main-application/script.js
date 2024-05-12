@@ -2,7 +2,7 @@ import DragAndDropList from './drag-drop/script.js';
 import Piano from './piano/script.js';
 import { Chord, ChordLibrary } from "./chord-library/script.js"
 import MIDIAccessManager from "./midi-integration/script.js"
-import CustomPopup from "./pup-up.js"
+
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -17,11 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Import the MidiManager
     const midiManager = new MIDIAccessManager();
-    const popUp = new CustomPopup()
-
-    window.closePopup = function () {
-        popUp.close()
-    }
 
     var visualPianoOctaves = 3
 

@@ -1,6 +1,6 @@
 import { STANDARD_TUNING, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
 import { parseNotes, removeDuplicateArrays } from './utils.js';
-import { ChordFactory } from './chord.js';
+import { ChordFactory } from './chordfactory.js';
 
 export class ChordVoicing {
     constructor(voicing, barre, fingersUsed, barreSize, minAboveZero) {
