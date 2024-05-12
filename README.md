@@ -10,3 +10,5 @@ Output: Guitar Chords + Difficulty rating
 Advanced Settings: 
 - Exact Mode: Will Take Exactely and Only THe Provided Piano Notes
 - Disable Root Note: Will allow Chords, that dont start with the Root Note
+
+WTF
