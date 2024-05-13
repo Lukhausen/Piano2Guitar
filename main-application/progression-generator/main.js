@@ -2,20 +2,8 @@ import { STANDARD_TUNING, NOTE_INDEX_MAP, BARRE_RATING } from '../chord-factory/
 import { parseNotes, removeDuplicateArrays } from '../chord-factory/utils.js';
 import { ChordFactory } from '../chord-factory/chordfactory.js';
 import { Chord } from '../chord-library/script.js';
+import { TabGenerator } from "../tab-generator/script.js"
 
-
-const chords = new ChordFactory("E, G, B", 4, true, STANDARD_TUNING);
-const playableChords = chords.playableChords
-
-
-if (playableChords && playableChords.length > 0) {
-    playableChords.sort((a, b) => a.rating - b.rating);
-}
-
-for (let i = playableChords.length - 1; i >= 0; i--) {
-    console.log(playableChords[i]);
-}
-console.log(playableChords[0])
 
 export class ProgressionGenerator {
     constructor(initialProgression = [], useRoot = true, tuning = STANDARD_TUNING) {
@@ -32,12 +20,15 @@ export class ProgressionGenerator {
     // Set initial progression with ChordFactory instances for each chord
     setProgression(initialProgression) {
         initialProgression.forEach(chord => {
+            console.log(chord)
             if (chord instanceof Chord) {
                 // Create a ChordFactory for each chord definition = Get All Possible Chords for the Chord
-                let chordFactory = new ChordFactory(chord.notes, chord.root, this.useRoot, this.tuning);
+                console.log("ProgressionGenerator: Trying to get Chordfactroy for", chord)
+
+                let chordFactory = new ChordFactory(chord.notes, chord.rootNote, this.useRoot, this.tuning);
                 this.progression.push(chordFactory);
             } else {
-                console.error('Invalid chord object in initial progression. Each chord must be an instance of Chord.');
+                console.error('ProgressionGenerator: Invalid chord object in initial progression. Each chord must be an instance of Chord.');
             }
         });
     }
@@ -46,9 +37,35 @@ export class ProgressionGenerator {
         if (this.progressionTypes[type]) {
             return this.progressionTypes[type].call(this); // Ensures the method is called with correct this context
         } else {
-            console.error('Invalid progression type requested.');
+            console.error('ProgressionGenerator: Invalid progression type requested.');
             return [];
         }
+    }
+
+    getProgressionHTML(desiredClasses = [], progressionType = "basic", color, fingerNumbers = "belowString", showOpenStrings = true) {
+        // Create an instance of ProgressionGenerator with the given progression and tuning
+        const progression = this.getProgression(progressionType); // Get the basic progression
+
+        const diagramsContainer = document.createElement('div'); // Container for chord diagrams
+        desiredClasses.forEach(desiredClass => {
+            diagramsContainer.classList.add(desiredClass)
+        });
+
+        progression.forEach(chordVoicing => {
+            // Extract first playable chord from each ChordFactory instance
+            if (chordVoicing) {
+                // Assuming TabGenerator takes chord details and returns an SVG element
+                try {
+                    const chordDiagram = new TabGenerator(chordVoicing.fingerPositions, chordVoicing.fingerNumbers, chordVoicing.barreSize, chordVoicing.barre, color, this.invertColor(color), fingerNumbers, showOpenStrings);
+                    const svg = chordDiagram.generateChordSVG();
+                    diagramsContainer.appendChild(svg);
+                } catch (error) {
+                    console.error('Error generating chord diagram:', error);
+                }
+            }
+        });
+
+        return diagramsContainer; // Return the container with all SVGs
     }
 
     getProgressionBasic() {
@@ -60,5 +77,27 @@ export class ProgressionGenerator {
                 return null; // Return null if there are no playable chords available
             }
         }).filter(chord => chord !== null); // Filter out any null entries
+    }
+
+
+    invertColor(hex) {
+        // Remove the hash at the start if it's there
+        hex = hex.startsWith('#') ? hex.slice(1) : hex;
+
+        // Convert hex to RGB
+        let r = parseInt(hex.substr(0, 2), 16);
+        let g = parseInt(hex.substr(2, 2), 16);
+        let b = parseInt(hex.substr(4, 2), 16);
+
+        // Invert each component by subtracting from 255
+        r = 255 - r;
+        g = 255 - g;
+        b = 255 - b;
+
+        // Convert the inverted RGB values back to hex
+        return '#' + [r, g, b].map(x => {
+            const hex = x.toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
+        }).join('');
     }
 }

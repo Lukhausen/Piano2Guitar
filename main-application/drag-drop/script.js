@@ -4,6 +4,8 @@ class DragAndDropList {
         this.items = items;
         this.dropzoneId = dropzoneId;
 
+        this.selectedItemsEvent = new CustomEvent('selectedItemsUpdated', { bubbles: true, detail: { selectedItems: [] } });
+
         this.emptyMessageContainer = document.getElementById(emptyMessage);
         this.itemsContainer = document.getElementById(itemsContainer);
         this.selectedItemsContainer = document.getElementById(selectedItems);
@@ -91,6 +93,7 @@ class DragAndDropList {
                 this.itemsContainer.appendChild(firstElement);
             }
             const itemElement = this.createItemElement(item, true);
+            
             this.itemsContainer.appendChild(itemElement);
 
             // Check if the current index is the last 100% probability index
@@ -187,7 +190,7 @@ class DragAndDropList {
     addSelectedItem(item) {
         const selectedItemElement = this.createSelectedItemElement(item);
         this.selectedItemsContainer.appendChild(selectedItemElement);
-        this.selectedItemsArray.push(item.name); // Store only the name in the array
+        this.selectedItemsArray.push(item);
         this.updateDisplayArray();
     }
 
@@ -268,7 +271,7 @@ class DragAndDropList {
         const droppedItemId = event.dataTransfer.getData('text/plain');
         const droppedItemElement = document.getElementById(droppedItemId);
         if (!droppedItemElement) return;
-
+    
         const targetElement = event.target.closest('.selected-dragDropItem');
         if (targetElement) {
             if (droppedItemElement.classList.contains('selected-dragDropItem')) {
@@ -276,14 +279,31 @@ class DragAndDropList {
             }
         } else {
             if (!droppedItemElement.classList.contains('selected-dragDropItem')) {
-                const newClone = this.createSelectedItemElement(droppedItemElement.textContent);
-                this.selectedItemsContainer.appendChild(newClone);
-                this.selectedItemsArray.push(droppedItemElement.textContent);
+                // Find the Chord object based on dropped item's content
+                const chordName = droppedItemElement.textContent.split(' (')[0]; // Assumes format is "Name (rootNote)"
+                const chord = this.items.find(item => item.name === chordName);
+    
+                if (chord) {
+                    const newClone = this.createSelectedItemElement(chord);
+                    this.selectedItemsContainer.appendChild(newClone);
+                    this.selectedItemsArray.push(chord); // Push the Chord object instead of the text
+                }
             } else {
+                // Handle reordering within selected items
                 this.selectedItemsContainer.appendChild(droppedItemElement);
+                // Update the array to reflect the order of DOM elements
+                this.updateArray();
             }
         }
         this.updateDisplayArray();
+    }
+
+    updateArray() {
+        // Update selectedItemsArray to reflect the current state of the DOM
+        this.selectedItemsArray = Array.from(this.selectedItemsContainer.children).map(el => {
+            const chordName = el.textContent.split(' (')[0];
+            return this.items.find(item => item.name === chordName);
+        });
     }
 
     handleDragEnd(event) {
@@ -300,16 +320,18 @@ class DragAndDropList {
         event.preventDefault();
         const droppedItemId = event.dataTransfer.getData('text/plain');
         const droppedItemElement = document.getElementById(droppedItemId);
-
+    
         if (droppedItemElement && !droppedItemElement.classList.contains('selected-dragDropItem')) {
-            const item = {
-                name: droppedItemElement.textContent,
-                probability: undefined // Probability is not needed in selected items
-            };
-            const newClone = this.createSelectedItemElement(item);
-            this.selectedItemsContainer.appendChild(newClone);
-            this.selectedItemsArray.push(item.name);
-            this.updateDisplayArray();
+            // Find the Chord object based on dropped item's content
+            const chordName = droppedItemElement.textContent.split(' (')[0]; // Assumes format is "Name (rootNote)"
+            const chord = this.items.find(item => item.name === chordName);
+    
+            if (chord) {
+                const newClone = this.createSelectedItemElement(chord);
+                this.selectedItemsContainer.appendChild(newClone);
+                this.selectedItemsArray.push(chord); // Push the Chord object instead of just the name
+                this.updateDisplayArray();
+            }
         }
     }
 
@@ -327,9 +349,14 @@ class DragAndDropList {
     }
 
     updateArray() {
-        this.selectedItemsArray = Array.from(this.selectedItemsContainer.children).map(el => el.textContent);
+        // Update selectedItemsArray to reflect the current state of the DOM, associating DOM elements with Chord objects
+        this.selectedItemsArray = Array.from(this.selectedItemsContainer.children).map(el => {
+            const chordName = el.textContent.split(' (')[0]; // Assuming format is "Name (rootNote)"
+            return this.items.find(item => item.name === chordName);
+        });
         this.updateDisplayArray();
     }
+    
 
     updateDisplayArray() {
         console.log(`Selected Items: ${this.selectedItemsArray.join(', ')}`)
@@ -341,6 +368,9 @@ class DragAndDropList {
         } else {
             this.emptyMessageElement.remove();
         }
+        // Update event details with the current list of selected items
+        this.selectedItemsEvent.detail.selectedItems = [...this.selectedItemsArray];
+        document.dispatchEvent(this.selectedItemsEvent); // Dispatch the event
     }
 
     filterItems() {

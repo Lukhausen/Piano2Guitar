@@ -180,7 +180,7 @@ export class ChordLibrary {
 
     getAllChords() {
         // Return all chord names in a simplified object format
-        return this.chords.map(chord => ({ name: chord.name }));
+        return this.chords;
     }
 
     getChordByName(name) {

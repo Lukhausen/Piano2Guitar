@@ -1,4 +1,20 @@
-export default class TabGenerator {
+/**
+ * Represents a TabGenerator for creating guitar chord diagrams as SVG elements.
+ * This class allows the configuration of various aspects of the diagram, including finger positions,
+ * barre chords, string and note visualization, and color customization.
+ */
+export class TabGenerator {
+    /**
+     * Creates an instance of TabGenerator.
+     * @param {Array<number>} fingerPositions - Array representing finger positions on the frets, with 'x' for muted strings and '0' for open strings.
+     * @param {Array<number>} fingerNumbers - Array representing the finger numbers to use on each string.
+     * @param {number} [barreSize=null] - Size of the barre to be drawn across strings, null if no barre is used.
+     * @param {string} [barre=null] - Specific fret where the barre is placed.
+     * @param {string} [elementColor="#000"] - Color for the diagram elements such as strings, frets, and notes.
+     * @param {string} [textColor="#fff"] - Color for the text used in the diagram.
+     * @param {string} [numberPosition='onNote'] - Position of the numbers, 'onNote' to place them on the note, or any other value to place them separately.
+     * @param {boolean} showOpenStrings - Whether to display open strings in the diagram.
+     */
     constructor(fingerPositions, fingerNumbers, barreSize = null, barre = null, elementColor = "#000", textColor = "#fff", numberPosition = 'onNote', showOpenStrings) {
         this.fingerPositions = fingerPositions;
         this.fingerNumbers = fingerNumbers;
@@ -14,7 +30,7 @@ export default class TabGenerator {
         this.textColor = textColor
     }
 
-    generateChordDiagram() {
+    generateChordSVG() {
         const svgAttributes = {
             width: '200',
             height: '200',
@@ -22,7 +38,6 @@ export default class TabGenerator {
         };
         const svg = this.createSVGElement('svg', svgAttributes);
         this.drawDiagramComponents(svg);
-
         return svg;
     }
 

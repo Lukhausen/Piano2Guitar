@@ -2,9 +2,12 @@ import DragAndDropList from './drag-drop/script.js';
 import Piano from './piano/script.js';
 import { Chord, ChordLibrary } from "./chord-library/script.js"
 import MIDIAccessManager from "./midi-integration/script.js"
+import { ProgressionGenerator } from './progression-generator/main.js';
+import { STANDARD_TUNING } from './chord-factory/constants.js';
 
 
 document.addEventListener('DOMContentLoaded', () => {
+
 
     //Make Settings Button functional
     window.toggleSettings = function () {
@@ -206,9 +209,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const searchResults = chordLibrary.searchChords(notes, rootNote, 100);
             if (searchResults.length > 0) {
                 const chord = searchResults[0];
-                dragAndDropList.addSelectedItem({ name: chord.name });
+                dragAndDropList.addSelectedItem(chord);
                 //popUp.open("Added: " +chord.name, { autoClose: true, duration: 1000 });
             }
         }
     });
+
+
+    let progressionGenerator = new ProgressionGenerator()
+
+    document.addEventListener('selectedItemsUpdated', function(event) {
+        console.log('Updated Selected Items:', event.detail.selectedItems);
+        console.log(typeof(event.detail.selectedItems[0]))
+        progressionGenerator = new ProgressionGenerator(event.detail.selectedItems, true, STANDARD_TUNING)
+        let progressionHTML = progressionGenerator.getProgressionHTML([], "basic", "#ffffff", "belowString", true)
+        document.getElementById("outputWrapper").appendChild(progressionHTML)
+    });
+    
 });
