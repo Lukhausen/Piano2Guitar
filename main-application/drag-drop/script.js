@@ -1,7 +1,24 @@
-class DragAndDropList {
+import { Chord } from "../chord-library/script.js";
+
+export class DragAndDropItem extends Chord {
+    constructor(chord, probability = -1) {
+        super(chord)
+        this.rootNote = chord.rootNote; // Integer 0-11, where 0 = C, 1 = C#, 2 = D, etc.
+        this.notes = chord.notes; // Array of integers representing notes of the chord
+        this.name = chord.name; // String representing the full name of the chord, e.g., "Gm", "Asus4"
+        this.customRoot = chord.customRoot
+        this.probability = probability
+    }
+}
+
+export default class DragAndDropList {
     constructor(items, dropzoneId, itemsContainer, itemSearch, selectedItems, emptyMessage) {
+        this.items = []
         this.idCounter = 0;
-        this.items = items;
+        items.forEach(item => {
+            this.items.push(new DragAndDropItem(item))
+        })
+
         this.dropzoneId = dropzoneId;
 
         this.selectedItemsEvent = new CustomEvent('selectedItemsUpdated', { bubbles: true, detail: { selectedItems: [] } });
@@ -10,36 +27,28 @@ class DragAndDropList {
         this.itemsContainer = document.getElementById(itemsContainer);
         this.selectedItemsContainer = document.getElementById(selectedItems);
         this.itemFilterInput = document.getElementById(itemSearch);
-        this.displayArray = document.createElement('div');
-        this.displayArray.id = 'displayArray';
-        document.body.appendChild(this.displayArray);
         this.selectedItemsArray = [];
 
         this.addEventListeners();
         this.populateItemsList();
 
-        this.emptyMessage = "Click on chords to add"; // Placeholder for the input string
+        this.emptyMessage = "Click on chords to add";
         this.emptyMessageElement = document.createElement('div');
         this.emptyMessageElement.id = "DragAndDrop-EmptyMessage";
 
-        // Split the input message by spaces to get individual words
         const words = this.emptyMessage.split(' ');
 
-        // Create a base element to clone from
-        const baseElement = this.createItemElement("Sample Word"); // Replace "Sample Word" with any sample text
+        const baseElement = this.createItemElement({ name: "Sample Word" });
         baseElement.draggable = false;
         baseElement.isSelectable = false;
 
-        // Loop through each word and append a cloned element to the emptyMessageElement
         words.forEach(word => {
             const clone = baseElement.cloneNode(true);
-            clone.innerHTML = word; // Set the innerHTML to the current word
+            clone.innerHTML = word;
             this.emptyMessageElement.appendChild(clone);
         });
 
         this.selectedItemsContainer.appendChild(this.emptyMessageElement);
-
-
     }
 
     addEventListeners() {
@@ -48,7 +57,6 @@ class DragAndDropList {
         this.selectedItemsContainer.addEventListener('dragover', this.allowDrop.bind(this));
         this.selectedItemsContainer.addEventListener('drop', this.handleDropOnContainer.bind(this));
         this.itemFilterInput.addEventListener('input', this.filterItems.bind(this));
-        //this.itemsContainer.addEventListener('drop', this.handleDropOnItemList.bind(this));
     }
 
     handleWindowDragOver(e) {
@@ -68,7 +76,7 @@ class DragAndDropList {
     last100PercentItemIndex() {
         let lastIndex = -1;
         for (let i = 0; i < this.items.length; i++) {
-            if (this.items[i].probability == 100) {
+            if (this.items[i].probability === 100) {
                 lastIndex = i;
             }
         }
@@ -77,36 +85,31 @@ class DragAndDropList {
 
     populateItemsList() {
         const lastIndex100Percent = this.last100PercentItemIndex();
-        var first100Percent = false;
+        let first100Percent = false;
         this.items.forEach((item, index) => {
-            if (item.probability == 100 && first100Percent == false) {
-                first100Percent = true
-                // Create and insert a First element
+            if (item.probability === 100 && !first100Percent) {
+                first100Percent = true;
                 const firstElement = document.createElement('div');
                 firstElement.style.width = "100%";
-                firstElement.innerHTML = "BEST MATCHES FOUND:"
-                firstElement.style.backgroundColor = "#ffffff00"
-                firstElement.style.color = "var(--light3)"
-                firstElement.style.fontSize = "small"
-                firstElement.style.marginBottom = "var(--padding)"
+                firstElement.innerHTML = "BEST MATCHES FOUND:";
+                firstElement.style.backgroundColor = "#ffffff00";
+                firstElement.style.color = "var(--light3)";
+                firstElement.style.fontSize = "small";
+                firstElement.style.marginBottom = "var(--padding)";
 
                 this.itemsContainer.appendChild(firstElement);
             }
             const itemElement = this.createItemElement(item, true);
-            
             this.itemsContainer.appendChild(itemElement);
 
-            // Check if the current index is the last 100% probability index
             if (index === lastIndex100Percent) {
-                // Create and insert a break element
                 const breakElement = document.createElement('div');
                 breakElement.style.width = "100%";
-                breakElement.style.height = "2px"; // Adjust the height as necessary
-                breakElement.style.backgroundColor = "var(--dark1)"
-                breakElement.style.marginTop = "var(--padding)"
-                breakElement.style.marginBottom = "var(--padding)"
-                breakElement.style.boxShadow = "var(--padding) 0px 0px 0px var(--dark1), calc(var(--padding)*-1) 0px 0px 0px var(--dark1)"
-
+                breakElement.style.height = "2px";
+                breakElement.style.backgroundColor = "var(--dark1)";
+                breakElement.style.marginTop = "var(--padding)";
+                breakElement.style.marginBottom = "var(--padding)";
+                breakElement.style.boxShadow = "var(--padding) 0px 0px 0px var(--dark1), calc(var(--padding)*-1) 0px 0px 0px var(--dark1)";
 
                 this.itemsContainer.appendChild(breakElement);
             }
@@ -115,28 +118,23 @@ class DragAndDropList {
 
     createItemElement(item, isSelectable = false) {
         const itemElement = document.createElement('div');
-        itemElement.textContent = item.name; // Assuming item is an object with 'name' and 'probability'
+        itemElement.textContent = item.name;
+
         itemElement.className = 'dragDropItem';
-        //itemElement.draggable = true;
         itemElement.id = `dragDropItem-${this.idCounter++}`;
 
-        if (item.probability !== undefined) {
+        if (item.probability >0) {
             const probabilitySpan = document.createElement('span');
             probabilitySpan.textContent = `(${item.probability}%)`;
             probabilitySpan.style.backgroundColor = this.getBackgroundColor(item.probability);
-            if (item.probability == 100) {
+            if (item.probability === 100) {
                 itemElement.style.boxShadow = '0px 0px 13px 0px rgba(0,255,0)';
-                itemElement.style.fontWeight = "800"
-                //itemElement.style.marginRight = "100%"
-                //itemElement.style.marginBottom = "100%"
-                //itemElement.style.filter ="contrast(1.2)"
+                itemElement.style.fontWeight = "800";
             }
 
             itemElement.appendChild(probabilitySpan);
         }
 
-        //itemElement.addEventListener('dragstart', this.handleDragStart.bind(this));
-        //itemElement.addEventListener('dragend', this.handleDragEnd.bind(this));
         if (isSelectable) {
             itemElement.addEventListener('click', () => this.addSelectedItem(item));
         }
@@ -144,35 +142,31 @@ class DragAndDropList {
     }
 
     getBackgroundColor(probability) {
-        const startColor = [255, 130, 130]; // #ddd
-        const endColor = [230, 230, 30]; // #3f3
-        const winnerColor = [150, 200, 0]
+        const startColor = [255, 130, 130];
+        const endColor = [230, 230, 30];
+        const winnerColor = [150, 200, 0];
 
-        // Ensure probability is within the new range of 50 to 100
         probability = Math.max(50, Math.min(100, probability));
 
-        // Transforming probability to start changing from 50 to 100
         const scaledProbability = (probability - 50) / 50;
 
-        // Adjusting the probability scale logarithmically from 0.0 at probability 50 to 1.0 at probability 100
-        const adjustedProbability = Math.log10(1 + 9 * scaledProbability); // Logarithmic scale from 0 to 1
+        const adjustedProbability = Math.log10(1 + 9 * scaledProbability);
 
         let blendedColor = startColor.map((component, index) => {
             return Math.round(component + (endColor[index] - component) * adjustedProbability);
         });
-        if (probability == 100) {
-            blendedColor = winnerColor
+        if (probability === 100) {
+            blendedColor = winnerColor;
         }
         return `rgb(${blendedColor.join(',')})`;
     }
-
 
     createSelectedItemElement(item) {
         const selectedItemElement = document.createElement('div');
         selectedItemElement.className = 'selected-dragDropItem dragDropItem';
         selectedItemElement.draggable = true;
         selectedItemElement.id = `selected-dragDropItem-${this.idCounter++}`;
-        selectedItemElement.textContent = item.name; // Assuming item is an object with 'name'
+        selectedItemElement.textContent = item.name;
         selectedItemElement.addEventListener('dragstart', this.handleDragStart.bind(this));
         selectedItemElement.addEventListener('dragover', this.handleDragOver.bind(this));
         selectedItemElement.addEventListener('drop', this.handleDropReorder.bind(this));
@@ -182,8 +176,8 @@ class DragAndDropList {
         return selectedItemElement;
     }
 
-    removeSelectedItem(item) {
-        item.target.remove();
+    removeSelectedItem(event) {
+        event.target.remove();
         this.updateArray();
     }
 
@@ -194,42 +188,27 @@ class DragAndDropList {
         this.updateDisplayArray();
     }
 
-    ceateAndInsertElement(item) {
-        const element = this.createSelectedItemElement(item)
-        this.addSelectedItem(element)
-    }
     updateItems(newItems) {
-        console.log("Updating Library...")
-        // Clear existing items from the display and internal storage
-        this.clearList()
+        console.log("Updating Library...");
+        this.clearList();
         this.items = newItems;
-
-        // Repopulate the items list with new items
         this.populateItemsList();
     }
 
     clearList() {
-        // Clear the internal items array
         this.items = [];
-
-        // Remove all child elements of the items container
         while (this.itemsContainer.firstChild) {
             this.itemsContainer.removeChild(this.itemsContainer.firstChild);
         }
     }
 
     clearSelectedList() {
-        // Clear the internal items array
         this.selectedItemsArray = [];
-
-        // Remove all child elements of the items container
         while (this.selectedItemsContainer.firstChild) {
             this.selectedItemsContainer.removeChild(this.selectedItemsContainer.firstChild);
         }
         this.updateDisplayArray();
-
     }
-
 
     handleDropOnItemList(event) {
         event.preventDefault();
@@ -271,7 +250,7 @@ class DragAndDropList {
         const droppedItemId = event.dataTransfer.getData('text/plain');
         const droppedItemElement = document.getElementById(droppedItemId);
         if (!droppedItemElement) return;
-    
+
         const targetElement = event.target.closest('.selected-dragDropItem');
         if (targetElement) {
             if (droppedItemElement.classList.contains('selected-dragDropItem')) {
@@ -279,19 +258,16 @@ class DragAndDropList {
             }
         } else {
             if (!droppedItemElement.classList.contains('selected-dragDropItem')) {
-                // Find the Chord object based on dropped item's content
-                const chordName = droppedItemElement.textContent.split(' (')[0]; // Assumes format is "Name (rootNote)"
+                const chordName = droppedItemElement.textContent.split(' (')[0];
                 const chord = this.items.find(item => item.name === chordName);
-    
+
                 if (chord) {
                     const newClone = this.createSelectedItemElement(chord);
                     this.selectedItemsContainer.appendChild(newClone);
-                    this.selectedItemsArray.push(chord); // Push the Chord object instead of the text
+                    this.selectedItemsArray.push(chord);
                 }
             } else {
-                // Handle reordering within selected items
                 this.selectedItemsContainer.appendChild(droppedItemElement);
-                // Update the array to reflect the order of DOM elements
                 this.updateArray();
             }
         }
@@ -299,7 +275,6 @@ class DragAndDropList {
     }
 
     updateArray() {
-        // Update selectedItemsArray to reflect the current state of the DOM
         this.selectedItemsArray = Array.from(this.selectedItemsContainer.children).map(el => {
             const chordName = el.textContent.split(' (')[0];
             return this.items.find(item => item.name === chordName);
@@ -320,22 +295,19 @@ class DragAndDropList {
         event.preventDefault();
         const droppedItemId = event.dataTransfer.getData('text/plain');
         const droppedItemElement = document.getElementById(droppedItemId);
-    
+
         if (droppedItemElement && !droppedItemElement.classList.contains('selected-dragDropItem')) {
-            // Find the Chord object based on dropped item's content
-            const chordName = droppedItemElement.textContent.split(' (')[0]; // Assumes format is "Name (rootNote)"
+            const chordName = droppedItemElement.textContent.split(' (')[0];
             const chord = this.items.find(item => item.name === chordName);
-    
+
             if (chord) {
                 const newClone = this.createSelectedItemElement(chord);
                 this.selectedItemsContainer.appendChild(newClone);
-                this.selectedItemsArray.push(chord); // Push the Chord object instead of just the name
+                this.selectedItemsArray.push(chord);
                 this.updateDisplayArray();
             }
         }
-    }
-
-    insertAtCorrectPosition(droppedItemElement, targetElement) {
+    } insertAtCorrectPosition(droppedItemElement, targetElement) {
         const droppedIndex = Array.from(this.selectedItemsContainer.children).indexOf(droppedItemElement);
         const targetIndex = Array.from(this.selectedItemsContainer.children).indexOf(targetElement);
 
@@ -348,29 +320,18 @@ class DragAndDropList {
         this.updateArray();
     }
 
-    updateArray() {
-        // Update selectedItemsArray to reflect the current state of the DOM, associating DOM elements with Chord objects
-        this.selectedItemsArray = Array.from(this.selectedItemsContainer.children).map(el => {
-            const chordName = el.textContent.split(' (')[0]; // Assuming format is "Name (rootNote)"
-            return this.items.find(item => item.name === chordName);
-        });
-        this.updateDisplayArray();
-    }
-    
-
     updateDisplayArray() {
-        console.log(`Selected Items: ${this.selectedItemsArray.join(', ')}`)
+        console.log(`Selected Items: ${this.selectedItemsArray.map(item => item.name).join(', ')}`);
         console.log(this.selectedItemsArray.length);
-        if (this.selectedItemsArray.length == 0) {
+        if (this.selectedItemsArray.length === 0) {
             if (!this.emptyMessageElement.parentNode) {
                 this.selectedItemsContainer.appendChild(this.emptyMessageElement);
             }
         } else {
             this.emptyMessageElement.remove();
         }
-        // Update event details with the current list of selected items
         this.selectedItemsEvent.detail.selectedItems = [...this.selectedItemsArray];
-        document.dispatchEvent(this.selectedItemsEvent); // Dispatch the event
+        document.dispatchEvent(this.selectedItemsEvent);
     }
 
     filterItems() {
@@ -386,5 +347,3 @@ class DragAndDropList {
         return [...this.selectedItemsArray];
     }
 }
-
-export default DragAndDropList 

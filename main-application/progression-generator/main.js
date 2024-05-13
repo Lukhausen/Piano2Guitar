@@ -2,7 +2,7 @@ import { STANDARD_TUNING, NOTE_INDEX_MAP, BARRE_RATING } from '../chord-factory/
 import { parseNotes, removeDuplicateArrays } from '../chord-factory/utils.js';
 import { ChordFactory } from '../chord-factory/chordfactory.js';
 import { Chord } from '../chord-library/script.js';
-import { TabGenerator } from "../tab-generator/script.js"
+import TabGenerator from "../tab-generator/script.js"
 
 
 export class ProgressionGenerator {
@@ -22,10 +22,9 @@ export class ProgressionGenerator {
         initialProgression.forEach(chord => {
             console.log(chord)
             if (chord instanceof Chord) {
-                // Create a ChordFactory for each chord definition = Get All Possible Chords for the Chord
-                console.log("ProgressionGenerator: Trying to get Chordfactroy for", chord)
-
+                // Create a ChordFactory for each chord definition = Get All Possible Chords for the Chord                
                 let chordFactory = new ChordFactory(chord.notes, chord.rootNote, this.useRoot, this.tuning);
+                console.log(chordFactory)
                 this.progression.push(chordFactory);
             } else {
                 console.error('ProgressionGenerator: Invalid chord object in initial progression. Each chord must be an instance of Chord.');
@@ -56,7 +55,7 @@ export class ProgressionGenerator {
             if (chordVoicing) {
                 // Assuming TabGenerator takes chord details and returns an SVG element
                 try {
-                    const chordDiagram = new TabGenerator(chordVoicing.fingerPositions, chordVoicing.fingerNumbers, chordVoicing.barreSize, chordVoicing.barre, color, this.invertColor(color), fingerNumbers, showOpenStrings);
+                    const chordDiagram = new TabGenerator(chordVoicing.voicing, chordVoicing.fingerPositions, chordVoicing.barreSize, chordVoicing.barre, color, this.invertColor(color), fingerNumbers, showOpenStrings);
                     const svg = chordDiagram.generateChordSVG();
                     diagramsContainer.appendChild(svg);
                 } catch (error) {

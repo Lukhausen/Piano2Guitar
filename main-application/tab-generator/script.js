@@ -3,7 +3,7 @@
  * This class allows the configuration of various aspects of the diagram, including finger positions,
  * barre chords, string and note visualization, and color customization.
  */
-export class TabGenerator {
+class TabGenerator {
     /**
      * Creates an instance of TabGenerator.
      * @param {Array<number>} fingerPositions - Array representing finger positions on the frets, with 'x' for muted strings and '0' for open strings.
@@ -16,6 +16,32 @@ export class TabGenerator {
      * @param {boolean} showOpenStrings - Whether to display open strings in the diagram.
      */
     constructor(fingerPositions, fingerNumbers, barreSize = null, barre = null, elementColor = "#000", textColor = "#fff", numberPosition = 'onNote', showOpenStrings) {
+
+        if (!Array.isArray(fingerPositions) || fingerPositions.length !== 6) {
+            console.error("Error: fingerPositions must be an array of length 6.");
+        }
+        if (fingerNumbers && (!Array.isArray(fingerNumbers) || fingerNumbers.length !== 6)) {
+            console.error("Error: fingerNumbers must be an array of length 6 or null.");
+        }
+        if (barreSize !== null && (typeof barreSize !== 'number' || barreSize < 1 || barreSize > 6)) {
+            console.error("Error: barreSize must be a number between 1 and 6 or null.");
+        }
+        if (barre !== null && (typeof barre !== 'number' || !/^\d+$/.test(barre))) {
+            console.error("Error: barre must be a string representing a number or null.");
+        }
+        if (typeof elementColor !== 'string') {
+            console.error("Error: elementColor must be a string.");
+        }
+        if (typeof textColor !== 'string') {
+            console.error("Error: textColor must be a string.");
+        }
+        if (numberPosition !== 'onNote' && numberPosition !== 'belowString') {
+            console.error("Error: numberPosition must be either 'onNote' or 'belowString'.");
+        }
+        if (typeof showOpenStrings !== 'boolean') {
+            console.error("Error: showOpenStrings must be a boolean.");
+        }
+
         this.fingerPositions = fingerPositions;
         this.fingerNumbers = fingerNumbers;
         this.barreSize = barreSize;
@@ -136,7 +162,7 @@ export class TabGenerator {
         const ofsetY = -15 + this.indicatorTopSpacing;
         const strokeLength = 13;
         for (let i = 0; i < 6; i++) {
-            if (this.fingerPositions[i] === 'x') {
+            if (this.fingerPositions[i] == -1) {
                 const halfStroke = strokeLength / 2;
                 const line1 = this.createSVGElement('line', {
                     x1: 30 + i * 25 - halfStroke + ofsetX,
@@ -197,9 +223,10 @@ export class TabGenerator {
                 'font-family': 'Arial', 'font-size': '20', fill: this.color,
                 'text-anchor': 'left'
             });
-            text.textContent = this.barre + "";
+            text.textContent = this.barre + "fr";
             svg.appendChild(text);
         }
     }
 }
 
+export default TabGenerator;

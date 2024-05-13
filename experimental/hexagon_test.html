@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Hexagon Grid</title>
+    <style>
+        :root {
+            --hex-width: 100px;
+            --hex-height: calc(var(--hex-width) * 0.866);
+            --hex-margin-horizontal: calc(var(--hex-width) * 0.5);
+            --hex-margin-vertical: calc(var(--hex-height) * 0.5);
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .hexagon-grid {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1000px;
+            margin: calc(-1 * var(--hex-margin-vertical)) 0 0 calc(-1 * var(--hex-margin-horizontal));
+        }
+
+        .hexagon {
+            width: var(--hex-width);
+            height: var(--hex-height);
+            background-color: #ccc;
+            background-size: cover;
+            background-position: center;
+            margin: var(--hex-margin-vertical) 0 0 var(--hex-margin-horizontal);
+            position: relative;
+        }
+
+        .hexagon:before,
+        .hexagon:after {
+            content: "";
+            position: absolute;
+            width: 0;
+            border-left: calc(var(--hex-width) / 2) solid transparent;
+            border-right: calc(var(--hex-width) / 2) solid transparent;
+        }
+
+        .hexagon:before {
+            bottom: 100%;
+            border-bottom: calc(var(--hex-height) / 2) solid #ccc;
+        }
+
+        .hexagon:after {
+            top: 100%;
+            border-top: calc(var(--hex-height) / 2) solid #ccc;
+        }
+
+        @media (max-width: 600px) {
+            :root {
+                --hex-width: 80px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            :root {
+                --hex-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hexagon-grid" id="hexagon-grid">
+        <div class="hexagon" style="background-image: url('your-image-url.jpg');"></div>
+    </div>
+    <button id="add-hexagon">Add Hexagon</button>
+    <script>
+        document.getElementById('add-hexagon').addEventListener('click', function() {
+            const hexagonGrid = document.getElementById('hexagon-grid');
+            const newHexagon = document.createElement('div');
+            newHexagon.className = 'hexagon';
+            newHexagon.style.backgroundImage = 'url("your-image-url.jpg")';
+            hexagonGrid.appendChild(newHexagon);
+        });
+    </script>
+</body>
+</html>

@@ -63,6 +63,9 @@ body {
     box-shadow: 0 0 10vw rgba(6, 6, 6, 0.552);
     box-sizing: border-box;
     width: 80vw;
+    height:90vh;
+    display: flex;
+    flex-direction: column;
 }
 
 #settings {
@@ -95,8 +98,7 @@ body {
 .inputWrapper {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: 50vh;
+    width: 100%;flex:1;
     background-color: var(--dark1);
     gap: var(--padding);
     padding: var(--padding);

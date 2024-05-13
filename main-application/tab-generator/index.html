@@ -29,7 +29,7 @@
 
         try {
             const chordDiagram = new TabGenerator(fingerPositions, fingerNumbers, barreSize, barre, color, textColor, 'belowString', showOpenStrings);
-            const svg = chordDiagram.generateChordDiagram();
+            const svg = chordDiagram.generateChordSVG();
             document.getElementById('diagram').appendChild(svg);
         } catch (error) {
             console.error('Error generating chord diagram:', error);

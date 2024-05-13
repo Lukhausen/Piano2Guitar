@@ -5,6 +5,7 @@ import { ChordVoicing } from './chordvoicing.js';
 
 export class ChordFactory {
   constructor(notes, root, startWithRoot = true, tuning = STANDARD_TUNING) {
+    console.log("ChordFactory Recieved Notes: ",notes)
     this.notes = notes;
     this.startWithRoot = startWithRoot
     this.root = root
@@ -16,13 +17,15 @@ export class ChordFactory {
   }
 
   calculateFingerPositions() {
-    const chordIndices = this.notes.map(note => NOTE_INDEX_MAP[note]);
+    const chordIndices = this.notes;
     const tuningIndices = this.tuning.map(note => NOTE_INDEX_MAP[note]);
     return tuningIndices.map(stringIndex => {
-      return chordIndices.reduce((positions, chordIndex) => {
-        positions.push(...this.getValidFretPositionsForNote(chordIndex, stringIndex));
-        return positions;
+      const positions = chordIndices.reduce((accumulatedPositions, chordIndex) => {
+        accumulatedPositions.push(...this.getValidFretPositionsForNote(chordIndex, stringIndex));
+        return accumulatedPositions;
       }, []);
+      positions.push(-1); // Add -1 once for each string index
+      return positions;
     });
   }
 

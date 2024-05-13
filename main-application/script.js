@@ -222,8 +222,10 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Updated Selected Items:', event.detail.selectedItems);
         console.log(typeof(event.detail.selectedItems[0]))
         progressionGenerator = new ProgressionGenerator(event.detail.selectedItems, true, STANDARD_TUNING)
-        let progressionHTML = progressionGenerator.getProgressionHTML([], "basic", "#ffffff", "belowString", true)
-        document.getElementById("outputWrapper").appendChild(progressionHTML)
+        let progressionHTML = progressionGenerator.getProgressionHTML([], "basic", "#ffffff", "onNote", true)
+        console.log(progressionHTML)
+        document.getElementById("progressionWrappers").innerHTML = ""
+        document.getElementById("progressionWrappers").appendChild(progressionHTML)
     });
     
 });

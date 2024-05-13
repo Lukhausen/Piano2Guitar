@@ -1,9 +1,11 @@
+import { DragAndDropItem } from "../drag-drop/script.js";
+
 export class Chord {
     constructor(rootNote, notes, name, customRoot) {
         this.rootNote = rootNote; // Integer 0-11, where 0 = C, 1 = C#, 2 = D, etc.
         this.notes = notes; // Array of integers representing notes of the chord
         this.name = name; // String representing the full name of the chord, e.g., "Gm", "Asus4"
-        this.customRoot = customRoot
+        this.customRoot = customRoot 
         console.log("Constructed Chord: " + this.name + " Root: " + this.rootNote + " Notes: " + this.notes)
     }
 }
@@ -167,10 +169,9 @@ export class ChordLibrary {
 
 
             if (matchPercentage >= threshold) {
-                results.push({
-                    name: chord.name,
-                    probability: parseFloat(matchPercentage.toFixed(2))
-                });
+                results.push(
+                    new DragAndDropItem(chord, parseFloat(matchPercentage.toFixed(2)))
+                );
             }
         });
 
