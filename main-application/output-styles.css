@@ -11,20 +11,22 @@
 }
 
 .outputWrapper {
-    height: 50vh;
     background-color: var(--dark1);
     flex: 1;
     padding: var(--padding);
+    flex-basis: 0px;
+    overflow-y: auto;
 }
 
 .progression {
     display: flex;
     justify-content: space-between;
     border-radius: var(--rounding);
-    padding: var(--padding);
 }
 
 .progressionInfo {
-    background-color: var(--dark3);
+    background-color: var(--dark2);
     padding: var(--padding);
+    background: linear-gradient(90deg, rgba(141, 141, 141, 0) 0%, var(--dark2) 100%);
+    border-radius: 0 var(--rounding) var(--rounding) 0;
 }
