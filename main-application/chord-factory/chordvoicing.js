@@ -6,8 +6,6 @@ export class ChordVoicing {
   constructor(voicing, barre, fingersUsed, barreSize, minAboveZero, chordFactoryNotes, chordFactoryRoot) {
     this.voicing = voicing;
     this.barre = barre;
-    this.rating = 0;
-    this.soundQualityRating = 0; // New property to store sound quality rating
 
     this.fingersUsed = fingersUsed
     this.barreSize = barreSize
@@ -20,13 +18,21 @@ export class ChordVoicing {
 
     for (let i = 0; i < 6; i++) {
       if (this.voicing[i] >= 0) {
-        this.actuallyPlayedNotes[i] = (this.voicing[i] + TUNING[i]) %12
-      } else{
+        this.actuallyPlayedNotes[i] = (this.voicing[i] + TUNING[i]) % 12
+      } else {
         this.actuallyPlayedNotes[i] = this.voicing[i]
       }
     }
 
+    this.playabilityRating = 0;
+    this.soundQualityRating = 0; // New property to store sound quality rating
+
+
+    this.calculateChordSpacing()
+    this.calculateFingerPosition()
+
     this.rateSoundQuality()
+    this.ratePlayability()
 
     //Send From ChordFactory over
 
@@ -89,7 +95,7 @@ export class ChordVoicing {
     return;
   }
 
-  rateVoicing() {
+  ratePlayability() {
     let rating = 0;
     /*
         // Chord spacing difficulty
@@ -121,7 +127,7 @@ export class ChordVoicing {
     // Calculate detailed finger position difficulty
     rating += this.calculateFingerPositionDifficulty();
 
-    this.rating = rating;
+    this.playabilityRating = rating;
     return rating;
   }
 
@@ -169,12 +175,13 @@ export class ChordVoicing {
   rateSoundQuality() {
     let totalScore = (
       //Check How Many of the Notes in the Desired Chord Are Present in the Guitar Chord
-      this.assessHarmonicCompleteness() + 
+      this.assessHarmonicCompleteness() +
       this.assessOpenStrings() +
-      this.assessPlayedStrings()
-    ) / 3;
-    if(totalScore<0||totalScore>1){
-      console.error("ChordVoicing.rateSoundQuality: Unusual Rating Output: "+totalScore+" from Object: ",this)
+      this.assessPlayedStrings() +
+      this.assessFretBoardHeight()
+    ) / 4;
+    if (totalScore < 0 || totalScore > 1) {
+      console.error("ChordVoicing.rateSoundQuality: Unusual Rating Output: " + totalScore + " from Object: ", this)
     }
     this.soundQualityRating = totalScore;
     return;
@@ -183,7 +190,7 @@ export class ChordVoicing {
   assessHarmonicCompleteness() {
     // Get desired notes as a Set to ensure uniqueness
     const uniqueDesiredNotes = new Set(this.chordFactoryNotes);
-  
+
     // Calculate the number of overlapping notes
     let overlapCount = 0;
     uniqueDesiredNotes.forEach(note => {
@@ -191,7 +198,7 @@ export class ChordVoicing {
         overlapCount++;
       }
     });
-  
+
     // Calculate harmonic completeness score
     const completenessScore = overlapCount / uniqueDesiredNotes.size;
     return completenessScore;
@@ -199,94 +206,101 @@ export class ChordVoicing {
 
   assessOpenStrings() {
     let openStrings = 0;
-  
+
     for (let i = 0; i < this.voicing.length; i++) {
       if (this.voicing[i] === 0) {
         openStrings++;
       }
     }
-  
-    return openStrings / this.voicing.length	;
+
+    return openStrings / this.voicing.length;
   }
 
-  assessPlayedStrings(){
+  assessPlayedStrings() {
     let playedStrings = 0;
-  
+
     for (let i = 0; i < this.voicing.length; i++) {
       if (this.voicing[i] >= 0) {
         playedStrings++;
       }
     }
-  
-    return playedStrings / this.voicing.length	;
+
+    return playedStrings / this.voicing.length;
   }
 
-  assessVoicingRange(){
-    //TODO: Asses, The Difference Between the Lowest and the highest Played note. Find a Way to normalize the output between 0 (small difference) and 1
+  assessFretBoardHeight() {
+    return Math.max(0, (1 - (this.minAboveZero / 12)))
   }
 
+}
 
-  assessTonalBalance() {
-    const noteFrequencies = this.voicing.map((fret, string) =>
-      fret !== -1 ? (STANDARD_TUNING[string] + fret) % 12 : null
-    ).filter(note => note !== null);
+/*
+assessVoicingRange(){
+  //TODO: Asses, The Difference Between the Lowest and the highest Played note. Find a Way to normalize the output between 0 (small difference) and 1
+}
 
-    const lowNotes = noteFrequencies.filter(note => note < 5).length;
-    const midNotes = noteFrequencies.filter(note => note >= 5 && note < 9).length;
-    const highNotes = noteFrequencies.filter(note => note >= 9).length;
 
-    const balance = Math.min(lowNotes, midNotes, highNotes);
-    return balance / 3 * 10;
+assessTonalBalance() {
+  const noteFrequencies = this.voicing.map((fret, string) =>
+    fret !== -1 ? (STANDARD_TUNING[string] + fret) % 12 : null
+  ).filter(note => note !== null);
+
+  const lowNotes = noteFrequencies.filter(note => note < 5).length;
+  const midNotes = noteFrequencies.filter(note => note >= 5 && note < 9).length;
+  const highNotes = noteFrequencies.filter(note => note >= 9).length;
+
+  const balance = Math.min(lowNotes, midNotes, highNotes);
+  return balance / 3 * 10;
+}
+
+
+
+assessVoicingRange() {
+  const frets = this.voicing.filter(fret => fret !== -1);
+  const range = Math.max(...frets) - Math.min(...frets);
+  return range > 5 ? 0 : (5 - range) / 5 * 10;
+}
+
+assessDissonance() {
+  const intervals = [];
+  const frets = this.voicing.filter(fret => fret !== -1);
+
+  for (let i = 0; i < frets.length; i++) {
+    for (let j = i + 1; j < frets.length; j++) {
+      const interval = Math.abs(frets[i] - frets[j]);
+      intervals.push(interval);
+    }
   }
 
+  const dissonantIntervals = intervals.filter(interval => [1, 2, 6, 10].includes(interval));
+  return 10 - dissonantIntervals.length * 2;
+}
 
+assessResonanceAndSustain() {
+  const openStrings = this.voicing.filter(fret => fret === 0).length;
+  return openStrings * 2;
+}
 
-  assessVoicingRange() {
-    const frets = this.voicing.filter(fret => fret !== -1);
-    const range = Math.max(...frets) - Math.min(...frets);
-    return range > 5 ? 0 : (5 - range) / 5 * 10;
-  }
+assessChordClarity() {
+  const clearNotes = this.voicing.filter(fret => fret !== -1 && fret !== 0);
+  return clearNotes.length / 6 * 10;
+}
 
-  assessDissonance() {
-    const intervals = [];
-    const frets = this.voicing.filter(fret => fret !== -1);
-
-    for (let i = 0; i < frets.length; i++) {
-      for (let j = i + 1; j < frets.length; j++) {
-        const interval = Math.abs(frets[i] - frets[j]);
-        intervals.push(interval);
+assessContextualFit(contextChords) {
+  const similarityScores = contextChords.map(contextChord => {
+    let score = 0;
+    for (let i = 0; i < 6; i++) {
+      if (contextChord.voicing[i] === this.voicing[i]) {
+        score++;
       }
     }
+    return score;
+  });
 
-    const dissonantIntervals = intervals.filter(interval => [1, 2, 6, 10].includes(interval));
-    return 10 - dissonantIntervals.length * 2;
-  }
-
-  assessResonanceAndSustain() {
-    const openStrings = this.voicing.filter(fret => fret === 0).length;
-    return openStrings * 2;
-  }
-
-  assessChordClarity() {
-    const clearNotes = this.voicing.filter(fret => fret !== -1 && fret !== 0);
-    return clearNotes.length / 6 * 10;
-  }
-
-  assessContextualFit(contextChords) {
-    const similarityScores = contextChords.map(contextChord => {
-      let score = 0;
-      for (let i = 0; i < 6; i++) {
-        if (contextChord.voicing[i] === this.voicing[i]) {
-          score++;
-        }
-      }
-      return score;
-    });
-
-    const maxSimilarity = Math.max(...similarityScores);
-    return maxSimilarity / 6 * 10;
-  }
+  const maxSimilarity = Math.max(...similarityScores);
+  return maxSimilarity / 6 * 10;
 }
+}*/
 
 /*
 Start at Index Finger, represented by fingerPositions 1.

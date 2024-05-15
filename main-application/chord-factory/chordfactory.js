@@ -5,7 +5,7 @@ import { ChordVoicing } from './chordvoicing.js';
 
 export class ChordFactory {
   constructor(notes, root, startWithRoot = true, tuning = STANDARD_TUNING) {
-    console.log("ChordFactory Recieved Notes: ",notes)
+    console.log("ChordFactory Recieved Notes: ", notes)
     this.notes = notes;
     this.startWithRoot = startWithRoot
     this.root = root
@@ -13,7 +13,7 @@ export class ChordFactory {
     this.fingerPositions = this.calculateFingerPositions();
     this.allChords = this.generateAllChordCombinations()
     this.playableChords = this.filterPlayableChords(this.allChords, this.root, this.startWithRoot)
-    this.sortPlayableChordsByRating() 
+    this.sortPlayableChordsByCombinedRating(1)
   }
 
   calculateFingerPositions() {
@@ -70,7 +70,21 @@ export class ChordFactory {
           }
         }
       }
-      const minAboveZero = Math.min(...chord.filter(fret => fret > 0));
+
+      //Faster Way to Calculate the MinaboveZero
+      let minAboveZero = Infinity;
+
+      for (let i = 0; i < chord.length; i++) {
+        if (chord[i] > 0 && chord[i] < minAboveZero) {
+          minAboveZero = chord[i];
+        }
+      }
+
+      if (minAboveZero === Infinity) {
+        minAboveZero = 0;
+      }
+
+
       let fingersUsed = 0;
       let barreStop = false;
       let barreUseFingers = 0;
@@ -89,17 +103,14 @@ export class ChordFactory {
         }
       }
       if (barreUseFingers)
-      if (barreUseFingers >= 2 && barreAddFingers > 3) {
-        return null;
-      } else if (barreUseFingers < 2) {
-        fingersUsed = chord.filter(fret => fret >= minAboveZero).length;
-        barreUseFingers = 0
-      }
+        if (barreUseFingers >= 2 && barreAddFingers > 3) {
+          return null;
+        } else if (barreUseFingers < 2) {
+          fingersUsed = chord.filter(fret => fret >= minAboveZero).length;
+          barreUseFingers = 0
+        }
       if (fingersUsed <= 4) {
         let voicing = new ChordVoicing(chord, barreUseFingers > 0 ? minAboveZero : null, barreUseFingers > 0 ? barreAddFingers : fingersUsed, barreUseFingers, minAboveZero, this.notes, this.startWithRoot ? this.root : -1)
-        voicing.calculateFingerPosition();
-        voicing.calculateChordSpacing();
-        voicing.rateVoicing(chord);
 
         return voicing;
       }
@@ -111,5 +122,35 @@ export class ChordFactory {
 
   sortPlayableChordsByRating() {
     this.playableChords.sort((a, b) => a.rating - b.rating);
+  }
+
+  /**
+   * Sorts the playable chords by a combined rating based on sound quality and 
+   * playability. The combined rating is calculated using a weighted sum of 
+   * the sound quality rating and the playability rating.
+   * 
+   * @param {number} soundWeight - A value between 0 and 1 that determines the weight 
+   * given to the sound quality rating. The weight given to the playability rating 
+   * will be (1 - soundWeight).
+   * 
+   * Usage example:
+   * ```javascript
+   * const chordFactory = new ChordFactory(notes, root, startWithRoot, tuning);
+   * chordFactory.sortPlayableChordsByCombinedRating(0.7);
+   * console.log(chordFactory.playableChords); // Sorted chords based on the combined rating
+   * ```
+   * 
+   * @throws {Error} If `soundWeight` is not a number between 0 and 1.
+   */
+  sortPlayableChordsByCombinedRating(soundWeight = 0) {
+    if (typeof soundWeight !== 'number' || soundWeight < 0 || soundWeight > 1) {
+      throw new Error("soundWeight must be a number between 0 and 1.");
+    }
+    console.log("Sorting...")
+    this.playableChords.sort((a, b) => {
+      let aCombinedRating = (a.soundQualityRating * soundWeight) + (a.playabilityRating * (1 - soundWeight));
+      let bCombinedRating = (b.soundQualityRating * soundWeight) + (b.playabilityRating * (1 - soundWeight));
+      return bCombinedRating -aCombinedRating;
+    });
   }
 }

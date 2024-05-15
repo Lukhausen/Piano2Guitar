@@ -6,8 +6,11 @@ import TabGenerator from "../tab-generator/script.js"
 
 
 export class ProgressionGenerator {
-    constructor(initialProgression = [], useRoot = true, tuning = STANDARD_TUNING) {
+    constructor(initialProgression = [], useRoot = true, tuning = STANDARD_TUNING, color, fingerNumbers = "belowString", showOpenStrings = true) {
         this.tuning = tuning;
+        this.color = color;
+        this.fingerNumbers = fingerNumbers;
+        this.showOpenStrings = showOpenStrings;
         this.progression = [];
         this.useRoot = useRoot; // This flag determines if the root note should be the starting note
         this.setProgression(initialProgression);
@@ -19,6 +22,7 @@ export class ProgressionGenerator {
 
     // Set initial progression with ChordFactory instances for each chord
     setProgression(initialProgression) {
+        this.progression = [];
         initialProgression.forEach(chord => {
             console.log(chord)
             if (chord instanceof Chord) {
@@ -41,7 +45,7 @@ export class ProgressionGenerator {
         }
     }
 
-    getProgressionHTML(desiredClasses = [], progressionType = "basic", color, fingerNumbers = "belowString", showOpenStrings = true) {
+    getProgressionHTML(desiredClasses = [], progressionType = "basic") {
         // Create an instance of ProgressionGenerator with the given progression and tuning
         const progression = this.getProgression(progressionType); // Get the basic progression
 
@@ -55,7 +59,7 @@ export class ProgressionGenerator {
             if (chordVoicing) {
                 // Assuming TabGenerator takes chord details and returns an SVG element
                 try {
-                    const chordDiagram = new TabGenerator(chordVoicing.voicing, chordVoicing.fingerPositions, chordVoicing.barreSize, chordVoicing.barre, color, this.invertColor(color), fingerNumbers, showOpenStrings);
+                    const chordDiagram = new TabGenerator(chordVoicing.voicing, chordVoicing.fingerPositions, chordVoicing.barreSize, chordVoicing.barre, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
                     const svg = chordDiagram.generateChordSVG();
                     diagramsContainer.appendChild(svg);
                 } catch (error) {
@@ -78,6 +82,33 @@ export class ProgressionGenerator {
         }).filter(chord => chord !== null); // Filter out any null entries
     }
 
+
+    getProgressionDynamicHTML(soundQuality = 0.5) {
+        // Iterate over each entry in the progression, sort by combined rating, and get the first playable chord
+        this.progression.forEach(chordFactory => {
+            chordFactory.sortPlayableChordsByCombinedRating(soundQuality);
+        });
+
+        let diagramsContainer = document.createElement('div'); // Container for chord diagrams
+
+
+
+        this.progression.forEach(chordFactory => {
+            // Extract first playable chord from each ChordFactory instance
+            if (chordFactory.playableChords[0]) {
+                // Assuming TabGenerator takes chord details and returns an SVG element
+                try {
+                    const chordDiagram = new TabGenerator(chordFactory.playableChords[0].voicing, chordFactory.playableChords[0].fingerPositions, chordFactory.playableChords[0].barreSize, chordFactory.playableChords[0].barre, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
+                    const svg = chordDiagram.generateChordSVG();
+                    diagramsContainer.appendChild(svg);
+                } catch (error) {
+                    console.error('Error generating chord diagram:', error);
+                }
+            }
+        });
+
+        return diagramsContainer; // Return the container with all SVGs
+    }
 
     invertColor(hex) {
         // Remove the hash at the start if it's there

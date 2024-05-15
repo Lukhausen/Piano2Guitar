@@ -216,16 +216,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    let progressionGenerator = new ProgressionGenerator()
+    let progressionGenerator = new ProgressionGenerator([], true, STANDARD_TUNING , "#ffffff", "onNote", true)
 
     document.addEventListener('selectedItemsUpdated', function(event) {
         console.log('Updated Selected Items:', event.detail.selectedItems);
         console.log(typeof(event.detail.selectedItems[0]))
-        progressionGenerator = new ProgressionGenerator(event.detail.selectedItems, true, STANDARD_TUNING)
-        let progressionHTML = progressionGenerator.getProgressionHTML([], "basic", "#ffffff", "onNote", true)
+        progressionGenerator.setProgression(event.detail.selectedItems) 
+        let progressionHTML = progressionGenerator.getProgressionHTML([], "basic")
         console.log(progressionHTML)
         document.getElementById("progressionWrappers").innerHTML = ""
         document.getElementById("progressionWrappers").appendChild(progressionHTML)
+    });
+
+
+    const soundQualitySlider = document.getElementById("soundQualitySlider");
+
+    soundQualitySlider.addEventListener('input', (e) => {
+        const soundQualityValue = e.target.value / 100;
+        console.log("Slider Value:", soundQualityValue);
+
+        let progressionHTML = progressionGenerator.getProgressionDynamicHTML(soundQualityValue);
+        document.getElementById("progressionWrappers").innerHTML = "";
+        document.getElementById("progressionWrappers").appendChild(progressionHTML);
     });
     
 });
