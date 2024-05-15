@@ -14,6 +14,7 @@ export class ChordVoicing {
     this.minAboveZero = minAboveZero
     this.fingerPositions = [0, 0, 0, 0, 0, 0]
     this.chordSpacing = 0
+    this.rateSoundQuality()
   }
 
   calculateChordSpacing() {
@@ -150,8 +151,8 @@ export class ChordVoicing {
   }
 
 
-  rateSoundQuality(notes, contextChords) {
-    const harmonicCompletenessScore = this.assessHarmonicCompleteness(notes);
+  rateSoundQuality() {
+    const harmonicCompletenessScore = this.assessHarmonicCompleteness(this.voicing);
     const noteDistributionScore = this.assessNoteDistribution();
     const tonalBalanceScore = this.assessTonalBalance();
     const openStringsScore = this.assessOpenStrings();
@@ -159,7 +160,6 @@ export class ChordVoicing {
     const dissonanceScore = this.assessDissonance();
     const resonanceAndSustainScore = this.assessResonanceAndSustain();
     const chordClarityScore = this.assessChordClarity();
-    const contextualFitScore = this.assessContextualFit(contextChords);
 
     const totalScore = (
       harmonicCompletenessScore +
@@ -169,8 +169,7 @@ export class ChordVoicing {
       voicingRangeScore +
       dissonanceScore +
       resonanceAndSustainScore +
-      chordClarityScore +
-      contextualFitScore
+      chordClarityScore 
     ) / 10;
 
     this.soundQualityRating = totalScore;

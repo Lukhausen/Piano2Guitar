@@ -25,8 +25,8 @@
 }
 
 .progressionInfo {
-    background-color: var(--dark2);
+    /*background-color: var(--dark2);*/
     padding: var(--padding);
-    background: linear-gradient(90deg, rgba(141, 141, 141, 0) 0%, var(--dark2) 100%);
+    /*background: linear-gradient(90deg, rgba(141, 141, 141, 0) 0%, var(--dark2) 100%);*/
     border-radius: 0 var(--rounding) var(--rounding) 0;
 }
