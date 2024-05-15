@@ -33,7 +33,7 @@ import { ChordVoicing } from './chordvoicing.js';
 
 export class ChordFactory {
   constructor(notes, root, startWithRoot = true, tuning = STANDARD_TUNING) {
-    console.log("ChordFactory Recieved Notes: ",notes)
+    console.log("ChordFactory Recieved Notes: ", notes)
     this.notes = notes;
     this.startWithRoot = startWithRoot
     this.root = root
@@ -41,7 +41,7 @@ export class ChordFactory {
     this.fingerPositions = this.calculateFingerPositions();
     this.allChords = this.generateAllChordCombinations()
     this.playableChords = this.filterPlayableChords(this.allChords, this.root, this.startWithRoot)
-    this.sortPlayableChordsByRating() 
+    this.sortPlayableChordsByCombinedRating(1)
   }
 
   calculateFingerPositions() {
@@ -98,7 +98,21 @@ export class ChordFactory {
           }
         }
       }
-      const minAboveZero = Math.min(...chord.filter(fret => fret > 0));
+
+      //Faster Way to Calculate the MinaboveZero
+      let minAboveZero = Infinity;
+
+      for (let i = 0; i < chord.length; i++) {
+        if (chord[i] > 0 && chord[i] < minAboveZero) {
+          minAboveZero = chord[i];
+        }
+      }
+
+      if (minAboveZero === Infinity) {
+        minAboveZero = 0;
+      }
+
+
       let fingersUsed = 0;
       let barreStop = false;
       let barreUseFingers = 0;
@@ -117,17 +131,14 @@ export class ChordFactory {
         }
       }
       if (barreUseFingers)
-      if (barreUseFingers >= 2 && barreAddFingers > 3) {
-        return null;
-      } else if (barreUseFingers < 2) {
-        fingersUsed = chord.filter(fret => fret >= minAboveZero).length;
-        barreUseFingers = 0
-      }
+        if (barreUseFingers >= 2 && barreAddFingers > 3) {
+          return null;
+        } else if (barreUseFingers < 2) {
+          fingersUsed = chord.filter(fret => fret >= minAboveZero).length;
+          barreUseFingers = 0
+        }
       if (fingersUsed <= 4) {
-        let voicing = new ChordVoicing(chord, barreUseFingers > 0 ? minAboveZero : null, barreUseFingers > 0 ? barreAddFingers : fingersUsed, barreUseFingers, minAboveZero)
-        voicing.calculateFingerPosition();
-        voicing.calculateChordSpacing();
-        voicing.rateVoicing(chord);
+        let voicing = new ChordVoicing(chord, barreUseFingers > 0 ? minAboveZero : null, barreUseFingers > 0 ? barreAddFingers : fingersUsed, barreUseFingers, minAboveZero, this.notes, this.startWithRoot ? this.root : -1)
 
         return voicing;
       }
@@ -140,27 +151,79 @@ export class ChordFactory {
   sortPlayableChordsByRating() {
     this.playableChords.sort((a, b) => a.rating - b.rating);
   }
+
+  /**
+   * Sorts the playable chords by a combined rating based on sound quality and 
+   * playability. The combined rating is calculated using a weighted sum of 
+   * the sound quality rating and the playability rating.
+   * 
+   * @param {number} soundWeight - A value between 0 and 1 that determines the weight 
+   * given to the sound quality rating. The weight given to the playability rating 
+   * will be (1 - soundWeight).
+   * 
+   * Usage example:
+   * ```javascript
+   * const chordFactory = new ChordFactory(notes, root, startWithRoot, tuning);
+   * chordFactory.sortPlayableChordsByCombinedRating(0.7);
+   * console.log(chordFactory.playableChords); // Sorted chords based on the combined rating
+   * ```
+   * 
+   * @throws {Error} If `soundWeight` is not a number between 0 and 1.
+   */
+  sortPlayableChordsByCombinedRating(soundWeight = 0) {
+    if (typeof soundWeight !== 'number' || soundWeight < 0 || soundWeight > 1) {
+      throw new Error("soundWeight must be a number between 0 and 1.");
+    }
+    console.log("Sorting...")
+    this.playableChords.sort((a, b) => {
+      let aCombinedRating = (a.soundQualityRating * soundWeight) + (a.playabilityRating * (1 - soundWeight));
+      let bCombinedRating = (b.soundQualityRating * soundWeight) + (b.playabilityRating * (1 - soundWeight));
+      return bCombinedRating -aCombinedRating;
+    });
+  }
 }
 
 
 File: chordvoicing.js
 
-import { STANDARD_TUNING, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
+import { STANDARD_TUNING, TUNING, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
 import { parseNotes, removeDuplicateArrays } from './utils.js';
 import { ChordFactory } from './chordfactory.js';
 
 export class ChordVoicing {
-  constructor(voicing, barre, fingersUsed, barreSize, minAboveZero) {
+  constructor(voicing, barre, fingersUsed, barreSize, minAboveZero, chordFactoryNotes, chordFactoryRoot) {
     this.voicing = voicing;
     this.barre = barre;
-    this.rating = 0;
-    this.soundQualityRating = 0; // New property to store sound quality rating
 
     this.fingersUsed = fingersUsed
     this.barreSize = barreSize
     this.minAboveZero = minAboveZero
     this.fingerPositions = [0, 0, 0, 0, 0, 0]
     this.chordSpacing = 0
+    this.chordFactoryNotes = chordFactoryNotes
+    this.chordFactoryRoot = chordFactoryRoot
+    this.actuallyPlayedNotes = [0, 0, 0, 0, 0, 0]
+
+    for (let i = 0; i < 6; i++) {
+      if (this.voicing[i] >= 0) {
+        this.actuallyPlayedNotes[i] = (this.voicing[i] + TUNING[i]) % 12
+      } else {
+        this.actuallyPlayedNotes[i] = this.voicing[i]
+      }
+    }
+
+    this.playabilityRating = 0;
+    this.soundQualityRating = 0; // New property to store sound quality rating
+
+
+    this.calculateChordSpacing()
+    this.calculateFingerPosition()
+
+    this.rateSoundQuality()
+    this.ratePlayability()
+
+    //Send From ChordFactory over
+
   }
 
   calculateChordSpacing() {
@@ -220,7 +283,7 @@ export class ChordVoicing {
     return;
   }
 
-  rateVoicing() {
+  ratePlayability() {
     let rating = 0;
     /*
         // Chord spacing difficulty
@@ -252,7 +315,7 @@ export class ChordVoicing {
     // Calculate detailed finger position difficulty
     rating += this.calculateFingerPositionDifficulty();
 
-    this.rating = rating;
+    this.playabilityRating = rating;
     return rating;
   }
 
@@ -297,111 +360,135 @@ export class ChordVoicing {
   }
 
 
-  rateSoundQuality(notes, contextChords) {
-    const harmonicCompletenessScore = this.assessHarmonicCompleteness(notes);
-    const noteDistributionScore = this.assessNoteDistribution();
-    const tonalBalanceScore = this.assessTonalBalance();
-    const openStringsScore = this.assessOpenStrings();
-    const voicingRangeScore = this.assessVoicingRange();
-    const dissonanceScore = this.assessDissonance();
-    const resonanceAndSustainScore = this.assessResonanceAndSustain();
-    const chordClarityScore = this.assessChordClarity();
-    const contextualFitScore = this.assessContextualFit(contextChords);
-
-    const totalScore = (
-      harmonicCompletenessScore +
-      noteDistributionScore +
-      tonalBalanceScore +
-      openStringsScore +
-      voicingRangeScore +
-      dissonanceScore +
-      resonanceAndSustainScore +
-      chordClarityScore +
-      contextualFitScore
-    ) / 10;
-
+  rateSoundQuality() {
+    let totalScore = (
+      //Check How Many of the Notes in the Desired Chord Are Present in the Guitar Chord
+      this.assessHarmonicCompleteness() +
+      this.assessOpenStrings() +
+      this.assessPlayedStrings() +
+      this.assessFretBoardHeight()
+    ) / 4;
+    if (totalScore < 0 || totalScore > 1) {
+      console.error("ChordVoicing.rateSoundQuality: Unusual Rating Output: " + totalScore + " from Object: ", this)
+    }
     this.soundQualityRating = totalScore;
-    return totalScore;
+    return;
   }
 
-  assessHarmonicCompleteness(notes) {
-    const voicingNotes = this.voicing.map((fret, string) =>
-      fret !== -1 ? (STANDARD_TUNING[string] + fret) % 12 : null
-    ).filter(note => note !== null);
+  assessHarmonicCompleteness() {
+    // Get desired notes as a Set to ensure uniqueness
+    const uniqueDesiredNotes = new Set(this.chordFactoryNotes);
 
-    const missingNotes = notes.filter(note => !voicingNotes.includes(note));
-    return missingNotes.length === 0 ? 10 : (10 - missingNotes.length * 2);
-  }
+    // Calculate the number of overlapping notes
+    let overlapCount = 0;
+    uniqueDesiredNotes.forEach(note => {
+      if (this.actuallyPlayedNotes.includes(note)) {
+        overlapCount++;
+      }
+    });
 
-  assessNoteDistribution() {
-    const stringsUsed = this.voicing.filter(fret => fret !== -1).length;
-    return stringsUsed / 6 * 10;
-  }
-
-  assessTonalBalance() {
-    const noteFrequencies = this.voicing.map((fret, string) =>
-      fret !== -1 ? (STANDARD_TUNING[string] + fret) % 12 : null
-    ).filter(note => note !== null);
-
-    const lowNotes = noteFrequencies.filter(note => note < 5).length;
-    const midNotes = noteFrequencies.filter(note => note >= 5 && note < 9).length;
-    const highNotes = noteFrequencies.filter(note => note >= 9).length;
-
-    const balance = Math.min(lowNotes, midNotes, highNotes);
-    return balance / 3 * 10;
+    // Calculate harmonic completeness score
+    const completenessScore = overlapCount / uniqueDesiredNotes.size;
+    return completenessScore;
   }
 
   assessOpenStrings() {
-    const openStrings = this.voicing.filter(fret => fret === 0).length;
-    return openStrings / 6 * 10;
-  }
+    let openStrings = 0;
 
-  assessVoicingRange() {
-    const frets = this.voicing.filter(fret => fret !== -1);
-    const range = Math.max(...frets) - Math.min(...frets);
-    return range > 5 ? 0 : (5 - range) / 5 * 10;
-  }
-
-  assessDissonance() {
-    const intervals = [];
-    const frets = this.voicing.filter(fret => fret !== -1);
-
-    for (let i = 0; i < frets.length; i++) {
-      for (let j = i + 1; j < frets.length; j++) {
-        const interval = Math.abs(frets[i] - frets[j]);
-        intervals.push(interval);
+    for (let i = 0; i < this.voicing.length; i++) {
+      if (this.voicing[i] === 0) {
+        openStrings++;
       }
     }
 
-    const dissonantIntervals = intervals.filter(interval => [1, 2, 6, 10].includes(interval));
-    return 10 - dissonantIntervals.length * 2;
+    return openStrings / this.voicing.length;
   }
 
-  assessResonanceAndSustain() {
-    const openStrings = this.voicing.filter(fret => fret === 0).length;
-    return openStrings * 2;
-  }
+  assessPlayedStrings() {
+    let playedStrings = 0;
 
-  assessChordClarity() {
-    const clearNotes = this.voicing.filter(fret => fret !== -1 && fret !== 0);
-    return clearNotes.length / 6 * 10;
-  }
-
-  assessContextualFit(contextChords) {
-    const similarityScores = contextChords.map(contextChord => {
-      let score = 0;
-      for (let i = 0; i < 6; i++) {
-        if (contextChord.voicing[i] === this.voicing[i]) {
-          score++;
-        }
+    for (let i = 0; i < this.voicing.length; i++) {
+      if (this.voicing[i] >= 0) {
+        playedStrings++;
       }
-      return score;
-    });
+    }
 
-    const maxSimilarity = Math.max(...similarityScores);
-    return maxSimilarity / 6 * 10;
+    return playedStrings / this.voicing.length;
   }
+
+  assessFretBoardHeight() {
+    return Math.max(0, (1 - (this.minAboveZero / 12)))
+  }
+
 }
+
+/*
+assessVoicingRange(){
+  //TODO: Asses, The Difference Between the Lowest and the highest Played note. Find a Way to normalize the output between 0 (small difference) and 1
+}
+
+
+assessTonalBalance() {
+  const noteFrequencies = this.voicing.map((fret, string) =>
+    fret !== -1 ? (STANDARD_TUNING[string] + fret) % 12 : null
+  ).filter(note => note !== null);
+
+  const lowNotes = noteFrequencies.filter(note => note < 5).length;
+  const midNotes = noteFrequencies.filter(note => note >= 5 && note < 9).length;
+  const highNotes = noteFrequencies.filter(note => note >= 9).length;
+
+  const balance = Math.min(lowNotes, midNotes, highNotes);
+  return balance / 3 * 10;
+}
+
+
+
+assessVoicingRange() {
+  const frets = this.voicing.filter(fret => fret !== -1);
+  const range = Math.max(...frets) - Math.min(...frets);
+  return range > 5 ? 0 : (5 - range) / 5 * 10;
+}
+
+assessDissonance() {
+  const intervals = [];
+  const frets = this.voicing.filter(fret => fret !== -1);
+
+  for (let i = 0; i < frets.length; i++) {
+    for (let j = i + 1; j < frets.length; j++) {
+      const interval = Math.abs(frets[i] - frets[j]);
+      intervals.push(interval);
+    }
+  }
+
+  const dissonantIntervals = intervals.filter(interval => [1, 2, 6, 10].includes(interval));
+  return 10 - dissonantIntervals.length * 2;
+}
+
+assessResonanceAndSustain() {
+  const openStrings = this.voicing.filter(fret => fret === 0).length;
+  return openStrings * 2;
+}
+
+assessChordClarity() {
+  const clearNotes = this.voicing.filter(fret => fret !== -1 && fret !== 0);
+  return clearNotes.length / 6 * 10;
+}
+
+assessContextualFit(contextChords) {
+  const similarityScores = contextChords.map(contextChord => {
+    let score = 0;
+    for (let i = 0; i < 6; i++) {
+      if (contextChord.voicing[i] === this.voicing[i]) {
+        score++;
+      }
+    }
+    return score;
+  });
+
+  const maxSimilarity = Math.max(...similarityScores);
+  return maxSimilarity / 6 * 10;
+}
+}*/
 
 /*
 Start at Index Finger, represented by fingerPositions 1.
@@ -419,6 +506,7 @@ File: constants.js
 
 // constants.js
 export const STANDARD_TUNING = ['E', 'A', 'D', 'G', 'B', 'E'];
+export const TUNING = [4, 9, 2, 7, 11, 4];
 export const NOTE_INDEX_MAP = {
   'C': 0, 'C#': 1, 'D': 2, 'D#': 3, 'E': 4,
   'F': 5, 'F#': 6, 'G': 7, 'G#': 8, 'A': 9,
@@ -1209,7 +1297,7 @@ File: index.html
 
 
             <div id="progressionWrappers"></div>
-            <div class="progressionInfo">DYNAMIC<br>Capo: 0 <input type="range" min="0" max="100" value="50">
+            <div class="progressionInfo">DYNAMIC<br>Capo: 0 <input id="soundQualitySlider" type="range" min="0" max="100" value="50">
             </div>
 
         </div>
@@ -1588,8 +1676,11 @@ import TabGenerator from "../tab-generator/script.js"
 
 
 export class ProgressionGenerator {
-    constructor(initialProgression = [], useRoot = true, tuning = STANDARD_TUNING) {
+    constructor(initialProgression = [], useRoot = true, tuning = STANDARD_TUNING, color, fingerNumbers = "belowString", showOpenStrings = true) {
         this.tuning = tuning;
+        this.color = color;
+        this.fingerNumbers = fingerNumbers;
+        this.showOpenStrings = showOpenStrings;
         this.progression = [];
         this.useRoot = useRoot; // This flag determines if the root note should be the starting note
         this.setProgression(initialProgression);
@@ -1601,6 +1692,7 @@ export class ProgressionGenerator {
 
     // Set initial progression with ChordFactory instances for each chord
     setProgression(initialProgression) {
+        this.progression = [];
         initialProgression.forEach(chord => {
             console.log(chord)
             if (chord instanceof Chord) {
@@ -1623,7 +1715,7 @@ export class ProgressionGenerator {
         }
     }
 
-    getProgressionHTML(desiredClasses = [], progressionType = "basic", color, fingerNumbers = "belowString", showOpenStrings = true) {
+    getProgressionHTML(desiredClasses = [], progressionType = "basic") {
         // Create an instance of ProgressionGenerator with the given progression and tuning
         const progression = this.getProgression(progressionType); // Get the basic progression
 
@@ -1637,7 +1729,7 @@ export class ProgressionGenerator {
             if (chordVoicing) {
                 // Assuming TabGenerator takes chord details and returns an SVG element
                 try {
-                    const chordDiagram = new TabGenerator(chordVoicing.voicing, chordVoicing.fingerPositions, chordVoicing.barreSize, chordVoicing.barre, color, this.invertColor(color), fingerNumbers, showOpenStrings);
+                    const chordDiagram = new TabGenerator(chordVoicing.voicing, chordVoicing.fingerPositions, chordVoicing.barreSize, chordVoicing.barre, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
                     const svg = chordDiagram.generateChordSVG();
                     diagramsContainer.appendChild(svg);
                 } catch (error) {
@@ -1660,6 +1752,33 @@ export class ProgressionGenerator {
         }).filter(chord => chord !== null); // Filter out any null entries
     }
 
+
+    getProgressionDynamicHTML(soundQuality = 0.5) {
+        // Iterate over each entry in the progression, sort by combined rating, and get the first playable chord
+        this.progression.forEach(chordFactory => {
+            chordFactory.sortPlayableChordsByCombinedRating(soundQuality);
+        });
+
+        let diagramsContainer = document.createElement('div'); // Container for chord diagrams
+
+
+
+        this.progression.forEach(chordFactory => {
+            // Extract first playable chord from each ChordFactory instance
+            if (chordFactory.playableChords[0]) {
+                // Assuming TabGenerator takes chord details and returns an SVG element
+                try {
+                    const chordDiagram = new TabGenerator(chordFactory.playableChords[0].voicing, chordFactory.playableChords[0].fingerPositions, chordFactory.playableChords[0].barreSize, chordFactory.playableChords[0].barre, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
+                    const svg = chordDiagram.generateChordSVG();
+                    diagramsContainer.appendChild(svg);
+                } catch (error) {
+                    console.error('Error generating chord diagram:', error);
+                }
+            }
+        });
+
+        return diagramsContainer; // Return the container with all SVGs
+    }
 
     invertColor(hex) {
         // Remove the hash at the start if it's there
@@ -1903,16 +2022,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    let progressionGenerator = new ProgressionGenerator()
+    let progressionGenerator = new ProgressionGenerator([], true, STANDARD_TUNING , "#ffffff", "onNote", true)
 
     document.addEventListener('selectedItemsUpdated', function(event) {
         console.log('Updated Selected Items:', event.detail.selectedItems);
         console.log(typeof(event.detail.selectedItems[0]))
-        progressionGenerator = new ProgressionGenerator(event.detail.selectedItems, true, STANDARD_TUNING)
-        let progressionHTML = progressionGenerator.getProgressionHTML([], "basic", "#ffffff", "onNote", true)
+        progressionGenerator.setProgression(event.detail.selectedItems) 
+        let progressionHTML = progressionGenerator.getProgressionHTML([], "basic")
         console.log(progressionHTML)
         document.getElementById("progressionWrappers").innerHTML = ""
         document.getElementById("progressionWrappers").appendChild(progressionHTML)
+    });
+
+
+    const soundQualitySlider = document.getElementById("soundQualitySlider");
+
+    soundQualitySlider.addEventListener('input', (e) => {
+        const soundQualityValue = e.target.value / 100;
+        console.log("Slider Value:", soundQualityValue);
+
+        let progressionHTML = progressionGenerator.getProgressionDynamicHTML(soundQualityValue);
+        document.getElementById("progressionWrappers").innerHTML = "";
+        document.getElementById("progressionWrappers").appendChild(progressionHTML);
     });
     
 });
