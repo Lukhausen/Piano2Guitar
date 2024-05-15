@@ -96,7 +96,7 @@ export class ChordFactory {
         barreUseFingers = 0
       }
       if (fingersUsed <= 4) {
-        let voicing = new ChordVoicing(chord, barreUseFingers > 0 ? minAboveZero : null, barreUseFingers > 0 ? barreAddFingers : fingersUsed, barreUseFingers, minAboveZero)
+        let voicing = new ChordVoicing(chord, barreUseFingers > 0 ? minAboveZero : null, barreUseFingers > 0 ? barreAddFingers : fingersUsed, barreUseFingers, minAboveZero, this.notes, this.startWithRoot ? this.root : -1)
         voicing.calculateFingerPosition();
         voicing.calculateChordSpacing();
         voicing.rateVoicing(chord);

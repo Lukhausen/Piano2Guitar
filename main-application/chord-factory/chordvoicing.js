@@ -1,9 +1,9 @@
-import { STANDARD_TUNING, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
+import { STANDARD_TUNING, TUNING, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
 import { parseNotes, removeDuplicateArrays } from './utils.js';
 import { ChordFactory } from './chordfactory.js';
 
 export class ChordVoicing {
-  constructor(voicing, barre, fingersUsed, barreSize, minAboveZero) {
+  constructor(voicing, barre, fingersUsed, barreSize, minAboveZero, chordFactoryNotes, chordFactoryRoot) {
     this.voicing = voicing;
     this.barre = barre;
     this.rating = 0;
@@ -14,7 +14,22 @@ export class ChordVoicing {
     this.minAboveZero = minAboveZero
     this.fingerPositions = [0, 0, 0, 0, 0, 0]
     this.chordSpacing = 0
+    this.chordFactoryNotes = chordFactoryNotes
+    this.chordFactoryRoot = chordFactoryRoot
+    this.actuallyPlayedNotes = [0, 0, 0, 0, 0, 0]
+
+    for (let i = 0; i < 6; i++) {
+      if (this.voicing[i] >= 0) {
+        this.actuallyPlayedNotes[i] = (this.voicing[i] + TUNING[i]) %12
+      } else{
+        this.actuallyPlayedNotes[i] = this.voicing[i]
+      }
+    }
+
     this.rateSoundQuality()
+
+    //Send From ChordFactory over
+
   }
 
   calculateChordSpacing() {
@@ -152,43 +167,64 @@ export class ChordVoicing {
 
 
   rateSoundQuality() {
-    const harmonicCompletenessScore = this.assessHarmonicCompleteness(this.voicing);
-    const noteDistributionScore = this.assessNoteDistribution();
-    const tonalBalanceScore = this.assessTonalBalance();
-    const openStringsScore = this.assessOpenStrings();
-    const voicingRangeScore = this.assessVoicingRange();
-    const dissonanceScore = this.assessDissonance();
-    const resonanceAndSustainScore = this.assessResonanceAndSustain();
-    const chordClarityScore = this.assessChordClarity();
-
-    const totalScore = (
-      harmonicCompletenessScore +
-      noteDistributionScore +
-      tonalBalanceScore +
-      openStringsScore +
-      voicingRangeScore +
-      dissonanceScore +
-      resonanceAndSustainScore +
-      chordClarityScore 
-    ) / 10;
-
+    let totalScore = (
+      //Check How Many of the Notes in the Desired Chord Are Present in the Guitar Chord
+      this.assessHarmonicCompleteness() + 
+      this.assessOpenStrings() +
+      this.assessPlayedStrings()
+    ) / 3;
+    if(totalScore<0||totalScore>1){
+      console.error("ChordVoicing.rateSoundQuality: Unusual Rating Output: "+totalScore+" from Object: ",this)
+    }
     this.soundQualityRating = totalScore;
-    return totalScore;
+    return;
   }
 
-  assessHarmonicCompleteness(notes) {
-    const voicingNotes = this.voicing.map((fret, string) =>
-      fret !== -1 ? (STANDARD_TUNING[string] + fret) % 12 : null
-    ).filter(note => note !== null);
-
-    const missingNotes = notes.filter(note => !voicingNotes.includes(note));
-    return missingNotes.length === 0 ? 10 : (10 - missingNotes.length * 2);
+  assessHarmonicCompleteness() {
+    // Get desired notes as a Set to ensure uniqueness
+    const uniqueDesiredNotes = new Set(this.chordFactoryNotes);
+  
+    // Calculate the number of overlapping notes
+    let overlapCount = 0;
+    uniqueDesiredNotes.forEach(note => {
+      if (this.actuallyPlayedNotes.includes(note)) {
+        overlapCount++;
+      }
+    });
+  
+    // Calculate harmonic completeness score
+    const completenessScore = overlapCount / uniqueDesiredNotes.size;
+    return completenessScore;
   }
 
-  assessNoteDistribution() {
-    const stringsUsed = this.voicing.filter(fret => fret !== -1).length;
-    return stringsUsed / 6 * 10;
+  assessOpenStrings() {
+    let openStrings = 0;
+  
+    for (let i = 0; i < this.voicing.length; i++) {
+      if (this.voicing[i] === 0) {
+        openStrings++;
+      }
+    }
+  
+    return openStrings / this.voicing.length	;
   }
+
+  assessPlayedStrings(){
+    let playedStrings = 0;
+  
+    for (let i = 0; i < this.voicing.length; i++) {
+      if (this.voicing[i] >= 0) {
+        playedStrings++;
+      }
+    }
+  
+    return playedStrings / this.voicing.length	;
+  }
+
+  assessVoicingRange(){
+    //TODO: Asses, The Difference Between the Lowest and the highest Played note. Find a Way to normalize the output between 0 (small difference) and 1
+  }
+
 
   assessTonalBalance() {
     const noteFrequencies = this.voicing.map((fret, string) =>
@@ -203,10 +239,7 @@ export class ChordVoicing {
     return balance / 3 * 10;
   }
 
-  assessOpenStrings() {
-    const openStrings = this.voicing.filter(fret => fret === 0).length;
-    return openStrings / 6 * 10;
-  }
+
 
   assessVoicingRange() {
     const frets = this.voicing.filter(fret => fret !== -1);
