@@ -2,7 +2,7 @@
 !define DOMElement class
 
 ' Entry Point
-class "index.html" {
+class "Webpage" {
   Entry point and orchestrator.
   Initializes components and handles user interactions.
   Manages event flow and coordinates different parts of the application.
@@ -24,7 +24,6 @@ class Piano {
   +activateKey(note)
   +deactivateKey(note)
   +setRootNote()
-  +clearRootNote()
 }
 
 ' Chord Repository
@@ -32,6 +31,7 @@ class ChordLibrary {
   Stores predefined chords.
   Provides search functionality for chords.
   +searchChords(noteArray, rootNote, threshold)
+  +getAllChords()
 }
 
 ' User Interaction Manager
@@ -40,6 +40,7 @@ class DragAndDropList {
   Updates selected chord progression.
   +updateItems(newItems)
   +addSelectedItem(item)
+  +clearSelectedList()
 }
 
 ' Chord Progression Generator
@@ -50,22 +51,49 @@ class ProgressionGenerator {
   +getProgression(type)
   +getProgressionHTML(classes, type)
   +getProgressionDynamicHTML(soundQuality)
+  +setProgression(initialProgression)
 }
 
 ' Diagram Creator
 class TabGenerator {
   Creates visual chord diagrams.
   Generates SVG diagrams based on data from ProgressionGenerator.
+  +generateChordSVG()
+  +drawDiagramComponents(svg)
+  +createSVGElement(tag, attributes)
+}
+
+' Chord Representation
+class Chord {
+  Represents a chord with root note, notes, name, and custom root.
+  +Chord(rootNote, notes, name, customRoot)
+}
+
+' Drag-and-Drop Item
+class DragAndDropItem extends Chord {
+  Represents a chord in the drag-and-drop interface.
+  +DragAndDropItem(chord, probability = -1)
 }
 
 ' Chord Generation and Evaluation
 class ChordFactory {
   Generates possible chord voicings.
   Evaluates playability and sound quality.
+  +ChordFactory(notes, root, startWithRoot = true, tuning = STANDARD_TUNING)
+  +calculateFingerPositions()
+  +generateAllChordCombinations()
+  +filterPlayableChords(allChords, rootNote, startWithRoot)
+  +sortPlayableChordsByCombinedRating(soundWeight = 0)
 }
 
+' Chord Voicing Representation
 class ChordVoicing {
   Represents and evaluates individual chord voicings.
+  +ChordVoicing(voicing, barre, fingersUsed, barreSize, minAboveZero, chordFactoryNotes, chordFactoryRoot)
+  +calculateChordSpacing()
+  +calculateFingerPosition()
+  +ratePlayability()
+  +rateSoundQuality()
 }
 
 ' Utilities and Constants
@@ -79,24 +107,18 @@ class Constants {
   Stores static constants used across the application.
 }
 
-' Drag-and-Drop Item
-class DragAndDropItem {
-  Represents a chord in the drag-and-drop interface.
-}
-
 ' Dependencies and Interactions
-"index.html" --> Piano : "Initializes and listens to events"
-"index.html" --> MIDIAccessManager : "Initializes and handles MIDI events"
-"index.html" --> ChordLibrary : "Initializes and searches chords"
-"index.html" --> DragAndDropList : "Initializes and manages drag/drop"
-"index.html" --> ProgressionGenerator : "Initializes and generates progressions"
-"index.html" --> TabGenerator : "Generates chord diagrams"
-"index.html" --> Constants : "Uses static constants"
+"Webpage" --> Piano : "Initializes and listens to events"
+"Webpage" --> MIDIAccessManager : "Initializes and handles MIDI events"
+"Webpage" --> ChordLibrary : "Initializes and searches chords"
+"Webpage" --> DragAndDropList : "Initializes and manages drag/drop"
+"Webpage" --> ProgressionGenerator : "Initializes and generates progressions"
+"Webpage" --> TabGenerator : "Generates chord diagrams"
+"Webpage" --> Constants : "Uses static constants"
 
 MIDIAccessManager --> Piano : "Sends note events"
 MIDIAccessManager --> MIDIAccessManager : "Searches MIDI Devices"
-
-MIDIAccessManager --> DragAndDropList : "If Chord is detected, put Chord into Selection"
+MIDIAccessManager --> DragAndDropList : "If Chord is detected, put Chord into selectedItems"
 Piano --> DragAndDropList: "Update Displayed Chords"
 ProgressionGenerator --> ChordFactory : "Generates chords"
 ProgressionGenerator --> TabGenerator : "Generates diagrams"
@@ -111,31 +133,31 @@ ChordFactory --> Constants : "Uses constants"
 TabGenerator --> Constants : "Uses constants"
 
 ' HTML created elements and their interactions
-DOMElement "volumeIcon" as volumeIcon {
+DOMElement "DOM: volumeIcon" as volumeIcon {
   User input to toggle volume.
 }
-DOMElement "playPiano" as playPiano {
-  User input to play piano.
+DOMElement "DOM: playPiano" as playPiano { 
+  User input to play currently displayed notes.
 }
-DOMElement "clearPiano" as clearPiano {
+DOMElement "DOM: clearPiano" as clearPiano {
   User input to clear played notes.
 }
-DOMElement "clearProgression" as clearProgression {
+DOMElement "DOM: clearProgression" as clearProgression {
   User input to clear selected chords.
 }
-DOMElement "itemSearch" as itemSearch {
+DOMElement "DOM: itemSearch" as itemSearch {
   User input for searching chords.
 }
-DOMElement "selectedItems" as selectedItems {
+DOMElement "DOM: selectedItems" as selectedItems {
   Container for selected chords.
 }
-DOMElement "itemsContainer" as itemsContainer {
+DOMElement "DOM: itemsContainer" as itemsContainer {
   Container for displaying all chords.
 }
-DOMElement "MIDIStatusDiv" as MIDIStatusDiv {
+DOMElement "DOM: MIDIStatusDiv" as MIDIStatusDiv {
   Displays MIDI connection status.
 }
-DOMElement "soundQualitySlider" as soundQualitySlider {
+DOMElement "DOM: soundQualitySlider" as soundQualitySlider {
   Slider to adjust the sound quality rating.
 }
 
@@ -149,6 +171,4 @@ volumeIcon --> Piano : "Toggles volume"
 playPiano --> Piano : "Plays piano chord"
 clearPiano --> Piano : "Clears played notes"
 clearProgression --> DragAndDropList : "Clears selected chords"
-ProgressionGenerator --> "generateChordSVG()" : "Generates chord diagram"
-TabGenerator --> "generateChordSVG()" : "Generates chord diagram"
 @enduml
