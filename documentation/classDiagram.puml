@@ -1,0 +1,253 @@
+@startuml
+
+class "constants.js" {
+  Object NOTE_INDEX_MAP
+  string[] STANDARD_TUNING
+  number BARRE_RATING 
+  int[] TUNING
+}
+
+class "utils.js" {
+  + parseNotes(input: string): string[]
+  + removeDuplicateArrays(arrays: any[][]): any[][]
+}
+
+class Chord {
+  - rootNote : int
+  - notes : int[]
+  - name : string
+  - customRoot : bool
+  + Chord(rootNote: int, notes: int[], name: string, customRoot: bool)
+}
+
+class ChordStructure {
+  - notes : int[]
+  - root : int <<optional>> 
+}
+
+class ChordLibrary {
+  - chords : Chord[]
+  - noteNames : string[]
+  - chordStructures: Map<string, ChordStructure>
+  + ChordLibrary()
+  + generateChords()
+  + searchChords(noteArray: int[], rootNote: int, threshold: number): DragAndDropItem[]
+  + getAllChords(): Chord[]
+  + getChordByName(name: string): Chord
+}
+
+ChordLibrary --o DragAndDropList
+ChordLibrary ..> "constants.js"
+
+class DragAndDropItem {
+  - probability : number
+  + DragAndDropItem(chord: Chord, probability: number)
+}
+
+Chord <|-- DragAndDropItem
+DragAndDropItem --o DragAndDropList
+
+class DragAndDropList {
+  - items : DragAndDropItem[]
+  - idCounter : number
+  - dropzoneId : string
+  - selectedItemsEvent : CustomEvent
+  - emptyMessageContainer : HTMLElement
+  - itemsContainer : HTMLElement
+  - selectedItemsContainer : HTMLElement
+  - itemFilterInput : HTMLElement
+  - selectedItemsArray : DragAndDropItem[]
+  - emptyMessage : string
+  - emptyMessageElement : HTMLElement
+  + DragAndDropList(items: Chord[], dropzoneId: string, itemsContainer: string, itemSearch: string, selectedItems: string, emptyMessage: string)
+  + addEventListeners()
+  - handleWindowDragOver(e: Event)
+  - handleWindowDrop(e: Event)
+  - last100PercentItemIndex(): number
+  - populateItemsList()
+  - createItemElement(item: DragAndDropItem, isSelectable: boolean): HTMLElement
+  - getBackgroundColor(probability: number): string
+  - createSelectedItemElement(item: DragAndDropItem): HTMLElement
+  - removeSelectedItem(event: Event)
+  + addSelectedItem(item: DragAndDropItem)
+  + updateItems(newItems: DragAndDropItem[])
+  + clearList()
+  + clearSelectedList()
+  - handleDropOnItemList(event: Event)
+  - handleDragStart(event: Event)
+  - handleDragOver(event: Event)
+  - handleDragLeave(event: Event)
+  - handleDropReorder(event: Event)
+  - updateArray()
+  - handleDragEnd(event: Event)
+  - allowDrop(event: Event)
+  - handleDropOnContainer(event: Event)
+  - insertAtCorrectPosition(droppedItemElement: HTMLElement, targetElement: HTMLElement)
+  - updateDisplayArray()
+  - filterItems()
+  + getArray(): DragAndDropItem[]
+}
+
+DragAndDropList ..> HTMLElement
+DragAndDropList ..> CustomEvent
+
+class ChordFactory {
+  - notes : int[]
+  - startWithRoot : bool
+  - root : int
+  - tuning : string[]
+  - fingerPositions : number[][]
+  - allChords : number[][]
+  - playableChords : ChordVoicing[]
+  + ChordFactory(notes: string, root: number, startWithRoot: bool, tuning: string[])
+  - calculateFingerPositions(): number[][]
+  - getValidFretPositionsForNote(noteIndex: number, stringIndex: number): number[]
+  - generateAllChordCombinations(): number[][]
+  # filterPlayableChords(allChords: number[][], rootNote: number, startWithRoot: bool): ChordVoicing[]
+  + sortPlayableChordsByRating()
+  + sortPlayableChordsByCombinedRating(soundWeight: number)
+}
+
+ChordFactory ..> "constants.js"
+ChordFactory ..> "utils.js"
+ChordFactory --o ProgressionGenerator
+ChordVoicing --o ChordFactory 
+
+class ChordVoicing {
+  - voicing : number[]
+  - barre : number
+  - fingersUsed : number
+  - barreSize : number
+  - minAboveZero : number
+  - fingerPositions : number[]
+  - chordSpacing : number
+  - chordFactoryNotes : int[]
+  - chordFactoryRoot : number
+  - actuallyPlayedNotes : number[]
+  - playabilityRating : number
+  - soundQualityRating : number
+  + ChordVoicing(voicing: number[], barre: number, fingersUsed: number, barreSize: number, minAboveZero: number, chordFactoryNotes: int[], chordFactoryRoot: number)
+  - calculateChordSpacing()
+  - calculateFingerPosition()
+  - ratePlayability(): number
+  - calculateFingerPositionDifficulty(): number
+  - isClusteredVoicing(): boolean
+  - rateSoundQuality()
+  - assessHarmonicCompleteness(): number
+  - assessOpenStrings(): number
+  - assessPlayedStrings(): number
+  - assessFretBoardHeight(): number
+}
+
+ChordVoicing ..> "constants.js" 
+
+class Piano {
+  - container : HTMLElement
+  - updatePlayedNotesDebounced : function
+  - octaves : number
+  - playedNotes : number[]
+  - rootNote : number
+  - lastClickTime : number
+  - clickDelay : number
+  - layout : number[]
+  - keysPerOctave : number
+  - whiteKeyCount : number
+  - whiteKeyWidth : number
+  - blackKeyWidth : number
+  - blackKeyHeight : number
+  - totalKeys : number
+  - audioElements : HTMLAudioElement[]
+  - volume : boolean
+  - globalVolume : number
+  + Piano(containerSelector: string, options: Object)
+  + volumeOff()
+  + volumeOn()
+  + updateVolume()
+  - createPiano()
+  - addKeyListeners()
+  - debounce(func: function, delay: number): function
+  - playSoundLong(index: number, localVolume: number)
+  + playChord()
+  + activateKey(index: number)
+  + deactivateKey(index: number)
+  + setRootNote(note: number)
+  + clearRootNote()
+  + updatePlayedNotes()
+  + clearPiano()
+  + setOctaves(newOctaves: number) 
+}
+
+Piano --> ChordLibrary
+Piano ..> HTMLElement
+Piano ..> HTMLAudioElement
+MIDIAccessManager --> Piano
+
+class ProgressionGenerator {
+  - tuning : string[]
+  - color : string
+  - fingerNumbers : string
+  - showOpenStrings : boolean
+  - progression : ChordFactory[]
+  - useRoot : boolean
+  - progressionTypes : Object
+  + ProgressionGenerator(initialProgression: Chord[], useRoot: boolean, tuning: string[], color: string, fingerNumbers: string, showOpenStrings: boolean)
+  + setProgression(initialProgression: Chord[])
+  + getProgression(type: string): ChordVoicing[]
+  + getProgressionHTML(desiredClasses: string[], progressionType: string): HTMLElement
+  - getProgressionBasic(): ChordVoicing[]
+  + getProgressionDynamicHTML(soundQuality: number): HTMLElement
+  - invertColor(hex: string): string
+}
+
+ProgressionGenerator --> TabGenerator
+ProgressionGenerator ..> "constants.js"
+
+class MIDIAccessManager {
+  - retryCount : number
+  - maxRetries : number
+  - notesPlayed : Set<number>
+  - activeNotes : Set<number>
+  + MIDIAccessManager()
+  - attemptMIDIAccess()
+  - onMIDISuccess(midiAccess: MIDIAccess)
+  - onMIDIFailure()
+  - handleRetry(err: Error)
+  - onMIDIMessage(message: MIDIMessageEvent)
+  - outputNotes()
+  - updateStatus(message: string)
+  - updateDeviceState(event: MIDIConnectionEvent)
+}
+
+MIDIAccessManager ..> MIDIAccess
+MIDIAccessManager ..> MIDIConnectionEvent
+MIDIAccessManager ..> MIDIMessageEvent
+
+class TabGenerator {
+  - fingerPositions : Array<number>
+  - fingerNumbers : Array<number>
+  - barreSize : number
+  - barre : number
+  - numberPosition : string
+  - showOpenStrings : boolean
+  - topSpacing : number
+  - indicatorTopSpacing : number
+  - textTopSpacing : number
+  - topBarHeight : number
+  - color : string
+  - textColor : string
+  + TabGenerator(fingerPositions: Array<number>, fingerNumbers: Array<number>, barreSize: number, barre: number, elementColor: string, textColor: string, numberPosition: string, showOpenStrings: boolean)
+  + generateChordSVG(): SVGSVGElement
+  - drawDiagramComponents(svg: SVGSVGElement)
+  - createSVGElement(tag: string, attributes: Object): SVGElement
+  - drawTopBar(svg: SVGSVGElement)
+  - drawStrings(svg: SVGSVGElement)
+  - drawFrets(svg: SVGSVGElement)
+  - drawNotes(svg: SVGSVGElement)
+  - drawMuteIndicators(svg: SVGSVGElement)
+  - drawOpenStrings(svg: SVGSVGElement)
+  - drawBarre(svg: SVGSVGElement)
+}
+
+TabGenerator ..> SVGSVGElement
+TabGenerator ..> SVGElement
+@enduml

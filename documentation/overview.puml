@@ -32,6 +32,7 @@ class ChordLibrary {
   Provides search functionality for chords.
   +searchChords(noteArray, rootNote, threshold)
   +getAllChords()
+  +getChordByName(name)
 }
 
 ' User Interaction Manager
@@ -123,7 +124,7 @@ Piano --> DragAndDropList: "Update Displayed Chords"
 ProgressionGenerator --> ChordFactory : "Generates chords"
 ProgressionGenerator --> TabGenerator : "Generates diagrams"
 ChordFactory --> ChordVoicing : "Creates voicings"
-DragAndDropList --> ChordLibrary : "Searches chords"
+
 DragAndDropList --> ProgressionGenerator : "Updates Progression"
 
 ChordLibrary --> DragAndDropList: "Provides List of Chords"
@@ -171,4 +172,5 @@ volumeIcon --> Piano : "Toggles volume"
 playPiano --> Piano : "Plays piano chord"
 clearPiano --> Piano : "Clears played notes"
 clearProgression --> DragAndDropList : "Clears selected chords"
+DragAndDropList --> ChordLibrary : "Searches chords"
 @enduml
