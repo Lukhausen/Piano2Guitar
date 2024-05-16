@@ -1,0 +1,122 @@
+@startuml
+!define DOMElement class
+
+' Entry Point
+class "index.html" {
+  Entry point and orchestrator.
+  Initializes components and handles user interactions.
+  Manages event flow and coordinates different parts of the application.
+}
+
+' MIDI Event Handler
+class MIDIAccessManager {
+  Manages MIDI devices and processes MIDI events.
+  Sends MIDI note events to the Piano component.
+}
+
+' Virtual Piano
+class Piano {
+  Provides a virtual piano interface.
+  Allows users to play notes.
+  Interacts with ChordLibrary to find matching chords.
+}
+
+' Chord Repository
+class ChordLibrary {
+  Stores predefined chords.
+  Provides search functionality for chords.
+}
+
+' User Interaction Manager
+class DragAndDropList {
+  Manages drag-and-drop functionality for chords.
+  Updates selected chord progression.
+}
+
+' Chord Progression Generator
+class ProgressionGenerator {
+  Generates and visualizes chord progressions.
+  Uses ChordFactory for chord generation.
+  Uses TabGenerator for visualizing progressions.
+}
+
+' Diagram Creator
+class TabGenerator {
+  Creates visual chord diagrams.
+  Generates SVG diagrams based on data from ProgressionGenerator.
+}
+
+' Chord Generation and Evaluation
+class ChordFactory {
+  Generates possible chord voicings.
+  Evaluates playability and sound quality.
+}
+
+class ChordVoicing {
+  Represents and evaluates individual chord voicings.
+}
+
+' Utilities and Constants
+class Utils {
+  Provides helper functions.
+}
+
+class Constants {
+  Stores static constants used across the application.
+}
+
+' Drag-and-Drop Item
+class DragAndDropItem {
+  Represents a chord in the drag-and-drop interface.
+}
+
+' Dependencies and Interactions
+"index.html" --> Piano : "Initializes and listens to events"
+"index.html" --> MIDIAccessManager : "Initializes and handles MIDI events"
+"index.html" --> ChordLibrary : "Initializes and searches chords"
+"index.html" --> DragAndDropList : "Initializes and manages drag/drop"
+"index.html" --> ProgressionGenerator : "Initializes and generates progressions"
+"index.html" --> TabGenerator : "Generates chord diagrams"
+"index.html" --> Constants : "Uses static constants"
+
+MIDIAccessManager --> Piano : "Sends note events"
+MIDIAccessManager --> MIDIAccessManager : "Searches MIDI Devices"
+
+MIDIAccessManager --> DragAndDropList : "If Chord is detected, put Chord into Selection"
+Piano --> DragAndDropList: "Update Displayed Chords"
+ProgressionGenerator --> ChordFactory : "Generates chords"
+ProgressionGenerator --> TabGenerator : "Generates diagrams"
+ChordFactory --> ChordVoicing : "Creates voicings"
+DragAndDropList --> ChordLibrary : "Searches chords"
+DragAndDropList --> ProgressionGenerator : "Updates Progression"
+
+ChordLibrary --> DragAndDropList: "Provides List of Chords"
+ChordLibrary --> DragAndDropItem : "Uses and Displays"
+ChordVoicing --> Utils : "Uses helper functions"
+ChordFactory --> Constants : "Uses constants"
+TabGenerator --> Constants : "Uses constants"
+
+' HTML created elements and their interactions
+DOMElement "itemSearch" as itemSearch {
+  User input for searching chords.
+}
+DOMElement "selectedItems" as selectedItems {
+  Container for selected chords.
+}
+DOMElement "itemsContainer" as itemsContainer {
+  Container for displaying all chords.
+}
+DOMElement "MIDIStatusDiv" as MIDIStatusDiv {
+  Displays MIDI connection status.
+}
+DOMElement "soundQualitySlider" as soundQualitySlider {
+  Slider to adjust the sound quality rating.
+}
+
+itemSearch --> DragAndDropList : "Filters displayed chords based on user input"
+selectedItems --> DragAndDropList : "Contains selected chords for progression"
+itemsContainer --> DragAndDropList : "Displays all chords"
+MIDIAccessManager --> MIDIStatusDiv: "Updates status based on MIDI events"
+soundQualitySlider --> ProgressionGenerator : "Adjusts sound quality rating for chord generation"
+
+@enduml
