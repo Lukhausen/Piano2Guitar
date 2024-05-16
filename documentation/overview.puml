@@ -19,18 +19,27 @@ class Piano {
   Provides a virtual piano interface.
   Allows users to play notes.
   Interacts with ChordLibrary to find matching chords.
+  +volumeOn()
+  +volumeOff()
+  +activateKey(note)
+  +deactivateKey(note)
+  +setRootNote()
+  +clearRootNote()
 }
 
 ' Chord Repository
 class ChordLibrary {
   Stores predefined chords.
   Provides search functionality for chords.
+  +searchChords(noteArray, rootNote, threshold)
 }
 
 ' User Interaction Manager
 class DragAndDropList {
   Manages drag-and-drop functionality for chords.
   Updates selected chord progression.
+  +updateItems(newItems)
+  +addSelectedItem(item)
 }
 
 ' Chord Progression Generator
@@ -38,6 +47,9 @@ class ProgressionGenerator {
   Generates and visualizes chord progressions.
   Uses ChordFactory for chord generation.
   Uses TabGenerator for visualizing progressions.
+  +getProgression(type)
+  +getProgressionHTML(classes, type)
+  +getProgressionDynamicHTML(soundQuality)
 }
 
 ' Diagram Creator
@@ -59,6 +71,8 @@ class ChordVoicing {
 ' Utilities and Constants
 class Utils {
   Provides helper functions.
+  +parseNotes(input)
+  +removeDuplicateArrays(arrays)
 }
 
 class Constants {
@@ -97,6 +111,18 @@ ChordFactory --> Constants : "Uses constants"
 TabGenerator --> Constants : "Uses constants"
 
 ' HTML created elements and their interactions
+DOMElement "volumeIcon" as volumeIcon {
+  User input to toggle volume.
+}
+DOMElement "playPiano" as playPiano {
+  User input to play piano.
+}
+DOMElement "clearPiano" as clearPiano {
+  User input to clear played notes.
+}
+DOMElement "clearProgression" as clearProgression {
+  User input to clear selected chords.
+}
 DOMElement "itemSearch" as itemSearch {
   User input for searching chords.
 }
@@ -119,4 +145,10 @@ itemsContainer --> DragAndDropList : "Displays all chords"
 MIDIAccessManager --> MIDIStatusDiv: "Updates status based on MIDI events"
 soundQualitySlider --> ProgressionGenerator : "Adjusts sound quality rating for chord generation"
 
+volumeIcon --> Piano : "Toggles volume"
+playPiano --> Piano : "Plays piano chord"
+clearPiano --> Piano : "Clears played notes"
+clearProgression --> DragAndDropList : "Clears selected chords"
+ProgressionGenerator --> "generateChordSVG()" : "Generates chord diagram"
+TabGenerator --> "generateChordSVG()" : "Generates chord diagram"
 @enduml
