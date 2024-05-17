@@ -133,44 +133,7 @@ ChordVoicing --> Utils : "Uses helper functions"
 ChordFactory --> Constants : "Uses constants"
 TabGenerator --> Constants : "Uses constants"
 
-' HTML created elements and their interactions
-DOMElement "DOM: volumeIcon" as volumeIcon {
-  User input to toggle volume.
-}
-DOMElement "DOM: playPiano" as playPiano { 
-  User input to play currently displayed notes.
-}
-DOMElement "DOM: clearPiano" as clearPiano {
-  User input to clear played notes.
-}
-DOMElement "DOM: clearProgression" as clearProgression {
-  User input to clear selected chords.
-}
-DOMElement "DOM: itemSearch" as itemSearch {
-  User input for searching chords.
-}
-DOMElement "DOM: selectedItems" as selectedItems {
-  Container for selected chords.
-}
-DOMElement "DOM: itemsContainer" as itemsContainer {
-  Container for displaying all chords.
-}
-DOMElement "DOM: MIDIStatusDiv" as MIDIStatusDiv {
-  Displays MIDI connection status.
-}
-DOMElement "DOM: soundQualitySlider" as soundQualitySlider {
-  Slider to adjust the sound quality rating.
-}
 
-itemSearch --> DragAndDropList : "Filters displayed chords based on user input"
-selectedItems --> DragAndDropList : "Contains selected chords for progression"
-itemsContainer --> DragAndDropList : "Displays all chords"
-MIDIAccessManager --> MIDIStatusDiv: "Updates status based on MIDI events"
-soundQualitySlider --> ProgressionGenerator : "Adjusts sound quality rating for chord generation"
 
-volumeIcon --> Piano : "Toggles volume"
-playPiano --> Piano : "Plays piano chord"
-clearPiano --> Piano : "Clears played notes"
-clearProgression --> DragAndDropList : "Clears selected chords"
 DragAndDropList --> ChordLibrary : "Searches chords"
 @enduml

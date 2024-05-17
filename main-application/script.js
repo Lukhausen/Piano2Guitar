@@ -3,7 +3,7 @@ import Piano from './piano/script.js';
 import { Chord, ChordLibrary } from "./chord-library/script.js"
 import MIDIAccessManager from "./midi-integration/script.js"
 import { ProgressionGenerator } from './progression-generator/main.js';
-import { STANDARD_TUNING } from './chord-factory/constants.js';
+import { TUNING } from './chord-factory/constants.js';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    let progressionGenerator = new ProgressionGenerator([], true, STANDARD_TUNING , "#ffffff", "onNote", true)
+    let progressionGenerator = new ProgressionGenerator([], true, TUNING , "#ffffff", "onNote", true)
 
     document.addEventListener('selectedItemsUpdated', function(event) {
         console.log('Updated Selected Items:', event.detail.selectedItems);

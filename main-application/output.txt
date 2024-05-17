@@ -1,6 +1,7 @@
 audio/
 chord-factory/
   chordfactory.js
+  chordrating.js
   chordvoicing.js
   constants.js
   main.js
@@ -26,13 +27,13 @@ tab-generator/
 
 File: chordfactory.js
 
-import { STANDARD_TUNING, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
+import { STANDARD_TUNING, NOTE_INDEX_MAP, TUNING, FINGER_FRET_RANGE, BARRE_RATING } from './constants.js';
 import { parseNotes, removeDuplicateArrays } from './utils.js';
 import { ChordVoicing } from './chordvoicing.js';
 
 
 export class ChordFactory {
-  constructor(notes, root, startWithRoot = true, tuning = STANDARD_TUNING) {
+  constructor(notes, root, startWithRoot = true, tuning = TUNING) {
     console.log("ChordFactory Recieved Notes: ", notes)
     this.notes = notes;
     this.startWithRoot = startWithRoot
@@ -40,59 +41,82 @@ export class ChordFactory {
     this.tuning = tuning;
     this.fingerPositions = this.calculateFingerPositions();
     this.allChords = this.generateAllChordCombinations()
-    this.playableChords = this.filterPlayableChords(this.allChords, this.root, this.startWithRoot)
+    this.playableChords = this.filterPlayableChords(this.allChords)
     this.sortPlayableChordsByCombinedRating(1)
   }
 
   calculateFingerPositions() {
-    const chordIndices = this.notes;
-    const tuningIndices = this.tuning.map(note => NOTE_INDEX_MAP[note]);
-    return tuningIndices.map(stringIndex => {
-      const positions = chordIndices.reduce((accumulatedPositions, chordIndex) => {
-        accumulatedPositions.push(...this.getValidFretPositionsForNote(chordIndex, stringIndex));
-        return accumulatedPositions;
-      }, []);
+    const fingerPositions = [];
+  
+    for (let stringIndex of this.tuning) {
+      const positions = [];
+      for (let chordIndex of this.notes) {
+        const validPositions = this.getValidFretPositionsForNote(chordIndex, stringIndex % 12);
+        positions.push(...validPositions);
+      }
       positions.push(-1); // Add -1 once for each string index
-      return positions;
-    });
+      positions.sort((a, b) => a - b); // Sort the positions from lowest to highest
+      fingerPositions.push(positions);
+    }
+  
+    return fingerPositions;
+  }
+  
+  getValidFretPositionsForNote(noteIndex, stringIndex) {
+    const baseFret = (noteIndex - stringIndex +120) % 12;
+    return [baseFret, baseFret + 12];
   }
 
-  getValidFretPositionsForNote(noteIndex, stringIndex) {
-    const baseFret = (noteIndex - stringIndex + 12) % 12;
-    return [baseFret, baseFret + 12];
+  cartesianProduct(arrays) {
+    return arrays.reduce((acc, curr) => {
+      return acc.flatMap(a => curr.map(b => [...a, b]));
+    }, [[]]);
   }
 
   generateAllChordCombinations() {
     const chords = [];
-
-    const generateCombinations = (currentChord, stringIndex, minFret, maxFret) => {
-      if (stringIndex === this.fingerPositions.length) {
-        chords.push([...currentChord]);
-        return;
-      }
-
-      for (const fret of this.fingerPositions[stringIndex]) {
-        const newMinFret = fret !== 0 ? Math.min(minFret, fret) : minFret;
-        const newMaxFret = fret !== 0 ? Math.max(maxFret, fret) : maxFret;
-
-        if (newMaxFret - newMinFret <= 3) {
-          currentChord[stringIndex] = fret;
-          generateCombinations(currentChord, stringIndex + 1, newMinFret, newMaxFret);
+    // All 12 Frets
+    for (let startFret = 0; startFret <= 12; startFret++) {
+      let positionsInRange = []
+      let endFret = startFret + FINGER_FRET_RANGE - 1
+      for (let string = 0; string < 6; string++) {
+        let possibleStringPlacements = []
+        //Push -1 to every String Because it could be muted
+        possibleStringPlacements.push(-1)
+        // As The First Index of The this.fingerPositions[string] String Array ALLWAYS is 1 -1, we can skip it and add it separately
+        //THis is why we start a t 1
+        for (let finger = 1; finger < this.fingerPositions[string].length; finger++) {
+          // As the this.fingerPositions[string][finger] Array is sorted, we can break out, once we hit a higher position than endFret
+          if (this.fingerPositions[string][finger] > endFret) {
+            break;
+          } else if (this.fingerPositions[string][finger] == endFret) {
+            possibleStringPlacements.push(this.fingerPositions[string][finger])
+            break;
+          } else if (this.fingerPositions[string][finger] >= startFret) {
+            possibleStringPlacements.push(this.fingerPositions[string][finger])
+          } else if (this.fingerPositions[string][finger] == 0) {
+            possibleStringPlacements.push(this.fingerPositions[string][finger])
+          }
         }
+        positionsInRange[string] = possibleStringPlacements
       }
-    };
+      chords.push(...this.cartesianProduct(positionsInRange))
 
-    generateCombinations([], 0, Infinity, 0);
+    }
+
     return chords;
   }
 
 
-  filterPlayableChords(allChords, rootNote = 0, startWithRoot = true) {
-    const playableChords = allChords.map(chord => {
-      if (startWithRoot) {
-        for (let i = 0; i <= 5; i++) {
-          if (((chord[i] + NOTE_INDEX_MAP[this.tuning[i]] - rootNote) % 12) !== 0) {
-            chord[i] = -1;
+  filterPlayableChords(allChords) {
+    const playableChords = allChords.map(voicing => {
+      if (this.startWithRoot) {
+        for (let string = 0; string <= 5; string++) {
+          if (voicing[string] == -1) {
+            continue;
+          }
+          else if (((voicing[string] + this.tuning[string]) % 12) == this.root) {
+            voicing[string] = -1;
           } else {
             break;
           }
@@ -102,9 +126,9 @@ export class ChordFactory {
       //Faster Way to Calculate the MinaboveZero
       let minAboveZero = Infinity;
 
-      for (let i = 0; i < chord.length; i++) {
-        if (chord[i] > 0 && chord[i] < minAboveZero) {
-          minAboveZero = chord[i];
+      for (let i = 0; i < voicing.length; i++) {
+        if (voicing[i] > 0 && voicing[i] < minAboveZero) {
+          minAboveZero = voicing[i];
         }
       }
 
@@ -118,15 +142,15 @@ export class ChordFactory {
       let barreUseFingers = 0;
       let barreAddFingers = 0;
       for (let i = 5; i >= 0; i--) {
-        if (chord[i] <= 0) {
+        if (voicing[i] <= 0) {
           barreStop = true;
         }
-        if (chord[i] >= minAboveZero && barreStop == false) {
+        if (voicing[i] >= minAboveZero && barreStop == false) {
           barreUseFingers++;
-          if (chord[i] > minAboveZero) {
+          if (voicing[i] > minAboveZero) {
             barreAddFingers++;
           }
-        } else if (chord[i] > 0 && chord[i] !== "x") {
+        } else if (voicing[i] > 0 && voicing[i] !== "x") {
           barreAddFingers++;
         }
       }
@@ -134,13 +158,13 @@ export class ChordFactory {
         if (barreUseFingers >= 2 && barreAddFingers > 3) {
           return null;
         } else if (barreUseFingers < 2) {
-          fingersUsed = chord.filter(fret => fret >= minAboveZero).length;
+          fingersUsed = voicing.filter(fret => fret >= minAboveZero).length;
           barreUseFingers = 0
         }
       if (fingersUsed <= 4) {
-        let voicing = new ChordVoicing(chord, barreUseFingers > 0 ? minAboveZero : null, barreUseFingers > 0 ? barreAddFingers : fingersUsed, barreUseFingers, minAboveZero, this.notes, this.startWithRoot ? this.root : -1)
+        let newVoicing = new ChordVoicing(voicing, barreUseFingers > 0 ? minAboveZero : null, barreUseFingers > 0 ? barreAddFingers : fingersUsed, barreUseFingers, minAboveZero, this.notes, this.startWithRoot ? this.root : -1)
 
-        return voicing;
+        return newVoicing;
       }
       return null;
     }
@@ -178,17 +202,169 @@ export class ChordFactory {
     this.playableChords.sort((a, b) => {
       let aCombinedRating = (a.soundQualityRating * soundWeight) + (a.playabilityRating * (1 - soundWeight));
       let bCombinedRating = (b.soundQualityRating * soundWeight) + (b.playabilityRating * (1 - soundWeight));
-      return bCombinedRating -aCombinedRating;
+      return bCombinedRating - aCombinedRating;
     });
   }
 }
 
 
+File: chordrating.js
+
+import { STANDARD_TUNING, TUNING, FINGER_FRET_RANGE, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
+
+
+export class ChordRating {
+    constructor(chordVoicing) {
+      this.chordVoicing = chordVoicing;
+      this.playabilityRating = 0;
+      this.soundQualityRating = 0;
+  
+      this.ratePlayability();
+      this.rateSoundQuality();
+    }
+  
+    ratePlayability() {
+      let totalScore = (
+        this.assessPlayabilityFingersUsed() +
+        this.assessPlayabilityFingerSpread() +
+        this.assessPlayabilityMuttedAmmount()
+      ) / 3;
+      
+      if (totalScore < 0 || totalScore > 1) {
+        console.error("ChordRating.ratePlayability: Unusual Rating Output: " + totalScore + " from Object: ", this.chordVoicing)
+      }
+  
+      this.playabilityRating = totalScore;
+      return;
+    }
+  
+    assessPlayabilityFingersUsed() {
+      let maxUsableFingers = 4;
+      let usedFingers = 0;
+      for (let i = 0; i < 6; i++) {
+        if (this.chordVoicing.fingerPositions[i] > usedFingers) {
+          usedFingers = this.chordVoicing.fingerPositions[i];
+        }
+      }
+      let rating = 1 - (usedFingers / maxUsableFingers);
+      return rating;
+    }
+  
+    assessPlayabilityFingerSpread() {
+      let maxFret = this.chordVoicing.minAboveZero;
+      for (let i = 0; i < 6; i++) {
+        if (this.chordVoicing.voicing[i] > this.chordVoicing.minAboveZero) {
+          maxFret = this.chordVoicing.voicing[i];
+        }
+      }
+      return 1 - ((maxFret - this.chordVoicing.minAboveZero) / FINGER_FRET_RANGE);
+    }
+  
+    assessPlayabilityMuttedAmmount() {
+      let mutedCount = 0;
+      for (let i = 0; i < 6; i++) {
+        if (this.chordVoicing.voicing[i] == -1) {
+          mutedCount++;
+        }
+      }
+      return 1 - (mutedCount / 6);
+    }
+  
+    rateSoundQuality() {
+      let totalScore = (
+        this.assessSoundHarmonicCompleteness() +
+        this.assessSoundOpenStrings() +
+        this.assessSoundPlayedStrings() * 2 +
+        this.assessSoundFretBoardHeight() +
+        this.assessSoundVoicingRange() +
+        this.assessSoundDoubleNotes()
+      ) / 7;
+      
+      if (totalScore < 0 || totalScore > 1) {
+        console.error("ChordRating.rateSoundQuality: Unusual Rating Output: " + totalScore + " from Object: ", this.chordVoicing)
+      }
+      this.soundQualityRating = totalScore;
+      return;
+    }
+  
+    assessSoundHarmonicCompleteness() {
+      const uniqueDesiredNotes = new Set(this.chordVoicing.chordFactoryNotes);
+      let overlapCount = 0;
+      uniqueDesiredNotes.forEach(note => {
+        if (this.chordVoicing.actuallyPlayedNotes.includes(note)) {
+          overlapCount++;
+        }
+      });
+      const completenessScore = overlapCount / uniqueDesiredNotes.size;
+      return completenessScore;
+    }
+  
+    assessSoundOpenStrings() {
+      let openStrings = 0;
+      for (let i = 0; i < this.chordVoicing.voicing.length; i++) {
+        if (this.chordVoicing.voicing[i] == 0) {
+          openStrings++;
+        }
+      }
+      return openStrings / this.chordVoicing.voicing.length;
+    }
+  
+    assessSoundPlayedStrings() {
+      let playedStrings = 0;
+      for (let i = 0; i < this.chordVoicing.voicing.length; i++) {
+        if (this.chordVoicing.voicing[i] >= 0) {
+          playedStrings++;
+        }
+      }
+      return playedStrings / this.chordVoicing.voicing.length;
+    }
+  
+    assessSoundFretBoardHeight() {
+      return Math.max(0, (1 - (this.chordVoicing.minAboveZero / 12)));
+    }
+  
+    assessSoundVoicingRange() {
+      let minIndex = -1;
+      let maxIndex = -1;
+      for (let i = 0; i < 6; i++) {
+        if (this.chordVoicing.voicing[i] != -1) {
+          minIndex = i;
+          break;
+        }
+      }
+      if (minIndex < 0) {
+        return 0;
+      }
+      for (let i = 5; i >= 0; i--) {
+        if (this.chordVoicing.voicing[i] != -1) {
+          maxIndex = i;
+          break;
+        }
+      }
+      let spacing = this.chordVoicing.actuallyPlayedNotes[maxIndex] - this.chordVoicing.actuallyPlayedNotes[minIndex];
+      let maxSpacing = TUNING[5] + this.chordVoicing.minAboveZero + FINGER_FRET_RANGE - TUNING[0] + this.chordVoicing.minAboveZero;
+      let spacingRatio = spacing / maxSpacing;
+      return spacingRatio;
+    }
+  
+    assessSoundDoubleNotes() {
+      let doubleNotes = 0;
+      for (let i = 0; i < 5; i++) {
+        if (this.chordVoicing.actuallyPlayedNotes[i] == this.chordVoicing.actuallyPlayedNotes[i + 1]) {
+          doubleNotes++;
+        }
+      }
+      return 1 - (doubleNotes / 5);
+    }
+  }
+  
+
 File: chordvoicing.js
 
-import { STANDARD_TUNING, TUNING, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
+import { STANDARD_TUNING, TUNING, FINGER_FRET_RANGE, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
 import { parseNotes, removeDuplicateArrays } from './utils.js';
 import { ChordFactory } from './chordfactory.js';
+import { ChordRating } from './chordrating.js';
 
 export class ChordVoicing {
   constructor(voicing, barre, fingersUsed, barreSize, minAboveZero, chordFactoryNotes, chordFactoryRoot) {
@@ -206,21 +382,21 @@ export class ChordVoicing {
 
     for (let i = 0; i < 6; i++) {
       if (this.voicing[i] >= 0) {
-        this.actuallyPlayedNotes[i] = (this.voicing[i] + TUNING[i]) % 12
+        this.actuallyPlayedNotes[i] = (this.voicing[i] + TUNING[i])
       } else {
         this.actuallyPlayedNotes[i] = this.voicing[i]
       }
     }
 
-    this.playabilityRating = 0;
-    this.soundQualityRating = 0; // New property to store sound quality rating
+    this.rating = new ChordRating(this); // Initialize ChordRating
 
+    // Use ratings from ChordRating
+    this.playabilityRating = this.rating.playabilityRating;
+    this.soundQualityRating = this.rating.soundQualityRating;
 
     this.calculateChordSpacing()
     this.calculateFingerPosition()
 
-    this.rateSoundQuality()
-    this.ratePlayability()
 
     //Send From ChordFactory over
 
@@ -282,241 +458,24 @@ export class ChordVoicing {
 
     return;
   }
-
-  ratePlayability() {
-    let rating = 0;
-    /*
-        // Chord spacing difficulty
-        rating += this.chordSpacing;
-    
-        // Smaller barres are harder than full 6-string barres
-        rating += this.barreSize * 4;
-    
-        // Exponential muted strings
-        let mutedCount = 0;
-        this.voicing.forEach((note) => {
-          if (note == -1) {
-            mutedCount++;
-          }
-        });
-        rating += Math.pow(3, mutedCount);
-    
-        // More fingers used, more difficult
-        rating += (this.fingersUsed + this.barreSize) * 2;
-    
-        // Higher up the fretboard, more difficult
-        rating += this.minAboveZero;
-    
-        // Wider the fingers are spread, more difficult
-        let spread = this.minAboveZero - Math.max(...this.voicing);
-        rating += spread * spread;
-        */
-
-    // Calculate detailed finger position difficulty
-    rating += this.calculateFingerPositionDifficulty();
-
-    this.playabilityRating = rating;
-    return rating;
-  }
-
-  calculateFingerPositionDifficulty() {
-    let difficulty = 0;
-
-    // Thumb position (not used in this example)
-    // if thumb used, add difficulty accordingly
-
-    // Evaluate the physical stretch required between the fingers
-    let maxFret = Math.max(...this.voicing.filter(fret => fret > 0));
-    let minFret = Math.min(...this.voicing.filter(fret => fret > 0));
-    let stretch = maxFret - minFret;
-    difficulty += stretch > 3 ? 3 : stretch;
-
-    // Adjacent fingers on the same fret
-    let sameFretAdjacent = this.voicing.reduce((acc, fret, index, arr) => {
-      if (index > 0 && fret === arr[index - 1] && fret !== 0) acc++;
-      return acc;
-    }, 0);
-    difficulty += sameFretAdjacent;
-
-    // Open strings
-    let openStrings = this.voicing.filter(fret => fret === 0).length;
-    difficulty -= openStrings;
-
-    // Hand size (subjective, minimal stretch considered)
-    difficulty += stretch > 2 ? 2 : stretch;
-
-    // Chord inversion and voicing
-    difficulty += this.isClusteredVoicing() ? -1 : 1;
-
-    return difficulty;
-  }
-
-  isClusteredVoicing() {
-    // Check if the voicing is clustered (fingers close together)
-    let activeFrets = this.voicing.filter(fret => fret > 0);
-    let maxFret = Math.max(...activeFrets);
-    let minFret = Math.min(...activeFrets);
-    return (maxFret - minFret) <= 2;
-  }
-
-
-  rateSoundQuality() {
-    let totalScore = (
-      //Check How Many of the Notes in the Desired Chord Are Present in the Guitar Chord
-      this.assessHarmonicCompleteness() +
-      this.assessOpenStrings() +
-      this.assessPlayedStrings() +
-      this.assessFretBoardHeight()
-    ) / 4;
-    if (totalScore < 0 || totalScore > 1) {
-      console.error("ChordVoicing.rateSoundQuality: Unusual Rating Output: " + totalScore + " from Object: ", this)
-    }
-    this.soundQualityRating = totalScore;
-    return;
-  }
-
-  assessHarmonicCompleteness() {
-    // Get desired notes as a Set to ensure uniqueness
-    const uniqueDesiredNotes = new Set(this.chordFactoryNotes);
-
-    // Calculate the number of overlapping notes
-    let overlapCount = 0;
-    uniqueDesiredNotes.forEach(note => {
-      if (this.actuallyPlayedNotes.includes(note)) {
-        overlapCount++;
-      }
-    });
-
-    // Calculate harmonic completeness score
-    const completenessScore = overlapCount / uniqueDesiredNotes.size;
-    return completenessScore;
-  }
-
-  assessOpenStrings() {
-    let openStrings = 0;
-
-    for (let i = 0; i < this.voicing.length; i++) {
-      if (this.voicing[i] === 0) {
-        openStrings++;
-      }
-    }
-
-    return openStrings / this.voicing.length;
-  }
-
-  assessPlayedStrings() {
-    let playedStrings = 0;
-
-    for (let i = 0; i < this.voicing.length; i++) {
-      if (this.voicing[i] >= 0) {
-        playedStrings++;
-      }
-    }
-
-    return playedStrings / this.voicing.length;
-  }
-
-  assessFretBoardHeight() {
-    return Math.max(0, (1 - (this.minAboveZero / 12)))
-  }
-
 }
-
-/*
-assessVoicingRange(){
-  //TODO: Asses, The Difference Between the Lowest and the highest Played note. Find a Way to normalize the output between 0 (small difference) and 1
-}
-
-
-assessTonalBalance() {
-  const noteFrequencies = this.voicing.map((fret, string) =>
-    fret !== -1 ? (STANDARD_TUNING[string] + fret) % 12 : null
-  ).filter(note => note !== null);
-
-  const lowNotes = noteFrequencies.filter(note => note < 5).length;
-  const midNotes = noteFrequencies.filter(note => note >= 5 && note < 9).length;
-  const highNotes = noteFrequencies.filter(note => note >= 9).length;
-
-  const balance = Math.min(lowNotes, midNotes, highNotes);
-  return balance / 3 * 10;
-}
-
-
-
-assessVoicingRange() {
-  const frets = this.voicing.filter(fret => fret !== -1);
-  const range = Math.max(...frets) - Math.min(...frets);
-  return range > 5 ? 0 : (5 - range) / 5 * 10;
-}
-
-assessDissonance() {
-  const intervals = [];
-  const frets = this.voicing.filter(fret => fret !== -1);
-
-  for (let i = 0; i < frets.length; i++) {
-    for (let j = i + 1; j < frets.length; j++) {
-      const interval = Math.abs(frets[i] - frets[j]);
-      intervals.push(interval);
-    }
-  }
-
-  const dissonantIntervals = intervals.filter(interval => [1, 2, 6, 10].includes(interval));
-  return 10 - dissonantIntervals.length * 2;
-}
-
-assessResonanceAndSustain() {
-  const openStrings = this.voicing.filter(fret => fret === 0).length;
-  return openStrings * 2;
-}
-
-assessChordClarity() {
-  const clearNotes = this.voicing.filter(fret => fret !== -1 && fret !== 0);
-  return clearNotes.length / 6 * 10;
-}
-
-assessContextualFit(contextChords) {
-  const similarityScores = contextChords.map(contextChord => {
-    let score = 0;
-    for (let i = 0; i < 6; i++) {
-      if (contextChord.voicing[i] === this.voicing[i]) {
-        score++;
-      }
-    }
-    return score;
-  });
-
-  const maxSimilarity = Math.max(...similarityScores);
-  return maxSimilarity / 6 * 10;
-}
-}*/
-
-/*
-Start at Index Finger, represented by fingerPositions 1.
-Count the String changes on the Same Fret with the middle finger so if the middle finger is 2 stings below, add 2 to the evalutaion 
-if the middle finger is on the next fret over the minAboveZero, add 0, and only add 1 for each string it moved down or upward relative to the index finger
-if the index finger is on the same fret as the middle finger, but the index finger is not also on the fret where the ring finger is, add the string count distance between the middle and ring finger 
-if the index finger is on one fret more thatn the middle finger, but the middle and the index finger are on the fret below, add only the distance between the ring and the middle finger
-if the index finger is on one fret, the middle finger is on +1 fret and the ring finger is on #1 fret, add 3 to the difficulty
-if the small finger is on the same fret as the ring finger, but no other finger is on that fret, only add the string distance between the ring and the small finger.
-
-
-*/
 
 File: constants.js
 
 // constants.js
 export const STANDARD_TUNING = ['E', 'A', 'D', 'G', 'B', 'E'];
-export const TUNING = [4, 9, 2, 7, 11, 4];
+export const TUNING = [40, 45, 50, 55, 59, 64];
 export const NOTE_INDEX_MAP = {
   'C': 0, 'C#': 1, 'D': 2, 'D#': 3, 'E': 4,
   'F': 5, 'F#': 6, 'G': 7, 'G#': 8, 'A': 9,
   'A#': 10, 'B': 11
 };
 export const BARRE_RATING = 1
+export const FINGER_FRET_RANGE = 4
 
 File: main.js
 
-import { STANDARD_TUNING, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
+import { STANDARD_TUNING,TUNING, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
 import { parseNotes, removeDuplicateArrays } from './utils.js';
 import { ChordFactory } from './chordfactory.js';
 
@@ -527,7 +486,7 @@ let lastPlayChords;
 for (let i = 0; i < repetitions; i++) {
     const startTime = performance.now();
     
-    const chord = new ChordFactory("E, G, B", 4, true, STANDARD_TUNING);
+    const chord = new ChordFactory("E, G, B", 4, true, TUNING);
     const playableChords = chord.playableChords
     
     if (i === repetitions - 1) { // Only save the last result
@@ -1668,7 +1627,7 @@ export default Piano;
 
 File: main.js
 
-import { STANDARD_TUNING, NOTE_INDEX_MAP, BARRE_RATING } from '../chord-factory/constants.js';
+import { TUNING, NOTE_INDEX_MAP, BARRE_RATING } from '../chord-factory/constants.js';
 import { parseNotes, removeDuplicateArrays } from '../chord-factory/utils.js';
 import { ChordFactory } from '../chord-factory/chordfactory.js';
 import { Chord } from '../chord-library/script.js';
@@ -1676,7 +1635,7 @@ import TabGenerator from "../tab-generator/script.js"
 
 
 export class ProgressionGenerator {
-    constructor(initialProgression = [], useRoot = true, tuning = STANDARD_TUNING, color, fingerNumbers = "belowString", showOpenStrings = true) {
+    constructor(initialProgression = [], useRoot = true, tuning = TUNING, color, fingerNumbers = "belowString", showOpenStrings = true) {
         this.tuning = tuning;
         this.color = color;
         this.fingerNumbers = fingerNumbers;
@@ -1760,7 +1719,7 @@ export class ProgressionGenerator {
         });
 
         let diagramsContainer = document.createElement('div'); // Container for chord diagrams
-
+console.log(this.progression)
 
 
         this.progression.forEach(chordFactory => {
@@ -1809,7 +1768,7 @@ import Piano from './piano/script.js';
 import { Chord, ChordLibrary } from "./chord-library/script.js"
 import MIDIAccessManager from "./midi-integration/script.js"
 import { ProgressionGenerator } from './progression-generator/main.js';
-import { STANDARD_TUNING } from './chord-factory/constants.js';
+import { TUNING } from './chord-factory/constants.js';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -2022,7 +1981,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    let progressionGenerator = new ProgressionGenerator([], true, STANDARD_TUNING , "#ffffff", "onNote", true)
+    let progressionGenerator = new ProgressionGenerator([], true, TUNING , "#ffffff", "onNote", true)
 
     document.addEventListener('selectedItemsUpdated', function(event) {
         console.log('Updated Selected Items:', event.detail.selectedItems);

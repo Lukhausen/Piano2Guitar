@@ -1,4 +1,4 @@
-import { STANDARD_TUNING, NOTE_INDEX_MAP, BARRE_RATING } from '../chord-factory/constants.js';
+import { TUNING, NOTE_INDEX_MAP, BARRE_RATING } from '../chord-factory/constants.js';
 import { parseNotes, removeDuplicateArrays } from '../chord-factory/utils.js';
 import { ChordFactory } from '../chord-factory/chordfactory.js';
 import { Chord } from '../chord-library/script.js';
@@ -6,7 +6,7 @@ import TabGenerator from "../tab-generator/script.js"
 
 
 export class ProgressionGenerator {
-    constructor(initialProgression = [], useRoot = true, tuning = STANDARD_TUNING, color, fingerNumbers = "belowString", showOpenStrings = true) {
+    constructor(initialProgression = [], useRoot = true, tuning = TUNING, color, fingerNumbers = "belowString", showOpenStrings = true) {
         this.tuning = tuning;
         this.color = color;
         this.fingerNumbers = fingerNumbers;
@@ -90,7 +90,7 @@ export class ProgressionGenerator {
         });
 
         let diagramsContainer = document.createElement('div'); // Container for chord diagrams
-
+console.log(this.progression)
 
 
         this.progression.forEach(chordFactory => {

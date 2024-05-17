@@ -1,4 +1,4 @@
-import { STANDARD_TUNING, TUNING, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
+import { STANDARD_TUNING, TUNING, FINGER_FRET_RANGE, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
 import { parseNotes, removeDuplicateArrays } from './utils.js';
 import { ChordFactory } from './chordfactory.js';
 
@@ -18,7 +18,7 @@ export class ChordVoicing {
 
     for (let i = 0; i < 6; i++) {
       if (this.voicing[i] >= 0) {
-        this.actuallyPlayedNotes[i] = (this.voicing[i] + TUNING[i]) % 12
+        this.actuallyPlayedNotes[i] = (this.voicing[i] + TUNING[i])
       } else {
         this.actuallyPlayedNotes[i] = this.voicing[i]
       }
@@ -27,6 +27,24 @@ export class ChordVoicing {
     this.playabilityRating = 0;
     this.soundQualityRating = 0; // New property to store sound quality rating
 
+    this.ratingDetails = {
+      playability: {
+        fingersUsed: 0,
+        fingerSpread: 0,
+        mutedAmount: 0,
+        fretHeight: 0,
+        total: 0,
+      },
+      soundQuality: {
+        harmonicCompleteness: 0,
+        openStrings: 0,
+        playedStrings: 0,
+        fretBoardHeight: 0,
+        voicingRange: 0,
+        doubleNotes: 0,
+        total: 0,
+      }
+    };
 
     this.calculateChordSpacing()
     this.calculateFingerPosition()
@@ -95,116 +113,97 @@ export class ChordVoicing {
     return;
   }
 
+  // 0 is Badly Playable and 1 Is good PLayability
   ratePlayability() {
-    let rating = 0;
-    /*
-        // Chord spacing difficulty
-        rating += this.chordSpacing;
-    
-        // Smaller barres are harder than full 6-string barres
-        rating += this.barreSize * 4;
-    
-        // Exponential muted strings
-        let mutedCount = 0;
-        this.voicing.forEach((note) => {
-          if (note == -1) {
-            mutedCount++;
-          }
-        });
-        rating += Math.pow(3, mutedCount);
-    
-        // More fingers used, more difficult
-        rating += (this.fingersUsed + this.barreSize) * 2;
-    
-        // Higher up the fretboard, more difficult
-        rating += this.minAboveZero;
-    
-        // Wider the fingers are spread, more difficult
-        let spread = this.minAboveZero - Math.max(...this.voicing);
-        rating += spread * spread;
-        */
+    const details = this.ratingDetails.playability;
+    details.fingersUsed = this.assessPlayabilityFingersUsed();
+    details.fingerSpread = this.assessPlayabilityFingerSpread();
+    details.mutedAmount = this.assessPlayabilityMuttedAmount();
+    details.fretHeight = this.assessPlayabilityFretHeight();
+    details.total = (details.fingersUsed + details.fingerSpread + details.mutedAmount + details.fretHeight) / 4;
 
-    // Calculate detailed finger position difficulty
-    rating += this.calculateFingerPositionDifficulty();
-
-    this.playabilityRating = rating;
-    return rating;
+    this.playabilityRating = details.total;
   }
 
-  calculateFingerPositionDifficulty() {
-    let difficulty = 0;
-
-    // Thumb position (not used in this example)
-    // if thumb used, add difficulty accordingly
-
-    // Evaluate the physical stretch required between the fingers
-    let maxFret = Math.max(...this.voicing.filter(fret => fret > 0));
-    let minFret = Math.min(...this.voicing.filter(fret => fret > 0));
-    let stretch = maxFret - minFret;
-    difficulty += stretch > 3 ? 3 : stretch;
-
-    // Adjacent fingers on the same fret
-    let sameFretAdjacent = this.voicing.reduce((acc, fret, index, arr) => {
-      if (index > 0 && fret === arr[index - 1] && fret !== 0) acc++;
-      return acc;
-    }, 0);
-    difficulty += sameFretAdjacent;
-
-    // Open strings
-    let openStrings = this.voicing.filter(fret => fret === 0).length;
-    difficulty -= openStrings;
-
-    // Hand size (subjective, minimal stretch considered)
-    difficulty += stretch > 2 ? 2 : stretch;
-
-    // Chord inversion and voicing
-    difficulty += this.isClusteredVoicing() ? -1 : 1;
-
-    return difficulty;
-  }
-
-  isClusteredVoicing() {
-    // Check if the voicing is clustered (fingers close together)
-    let activeFrets = this.voicing.filter(fret => fret > 0);
-    let maxFret = Math.max(...activeFrets);
-    let minFret = Math.min(...activeFrets);
-    return (maxFret - minFret) <= 2;
-  }
-
-
-  rateSoundQuality() {
-    let totalScore = (
-      //Check How Many of the Notes in the Desired Chord Are Present in the Guitar Chord
-      this.assessHarmonicCompleteness() +
-      this.assessOpenStrings() +
-      this.assessPlayedStrings() +
-      this.assessFretBoardHeight()
-    ) / 4;
-    if (totalScore < 0 || totalScore > 1) {
-      console.error("ChordVoicing.rateSoundQuality: Unusual Rating Output: " + totalScore + " from Object: ", this)
+  assessPlayabilityFingersUsed() {
+    // USe FInger Positions because They are MOst realibale and ALgorithmically Safe Way (Becaus of possible future Changes) to asses Finger COunt
+    let maxUsableFingers = 4
+    let usedFingers = 0
+    for (let i = 0; i < 6; i++) {
+      if (this.fingerPositions[i] > usedFingers) {
+        usedFingers = this.fingerPositions[i]
+      }
     }
-    this.soundQualityRating = totalScore;
-    return;
+    // INvert Rating so Many fingers used gets a low score
+    let rating = 1 - (usedFingers / maxUsableFingers)
+    return rating
   }
 
-  assessHarmonicCompleteness() {
-    // Get desired notes as a Set to ensure uniqueness
-    const uniqueDesiredNotes = new Set(this.chordFactoryNotes);
+  assessPlayabilityFingerSpread() {
+    let maxFret = this.minAboveZero
+    for (let i = 0; i < 6; i++) {
+      if (this.voicing[i] > this.minAboveZero) {
+        maxFret = this.voicing[i]
+      }
+    }
+    return 1-((maxFret-this.minAboveZero) / FINGER_FRET_RANGE)
+  }
 
-    // Calculate the number of overlapping notes
+  assessPlayabilityMuttedAmount(){
+    let mutedCount = 0
+    for (let i = 0; i < 6; i++) {
+      if (this.voicing[i] == -1) {
+        mutedCount++
+      }
+    }
+    return 1-(mutedCount/6)
+  }
+
+  assessPlayabilityFretHeight(){
+    return 1-(this.minAboveZero/24)
+  }
+
+
+
+
+
+
+
+  //1 Best SOund, 0 worst sound
+  rateSoundQuality() {
+    const details = this.ratingDetails.soundQuality;
+    details.harmonicCompleteness = this.assessSoundHarmonicCompleteness();
+    details.openStrings = this.assessSoundOpenStrings();
+    details.playedStrings = this.assessSoundPlayedStrings();
+    details.fretBoardHeight = this.assessSoundFretBoardHeight();
+    details.voicingRange = this.assessSoundVoicingRange();
+    details.doubleNotes = this.assessSoundDoubleNotes();
+    details.total = Math.pow((details.harmonicCompleteness * details.openStrings * details.playedStrings * details.fretBoardHeight * details.voicingRange * details.doubleNotes),1/6);
+
+    this.soundQualityRating = details.total;
+  }
+
+  assessSoundHarmonicCompleteness() {
+    // Transform chordFactoryNotes to modulo 12 and store as a Set
+    const uniqueDesiredNotes = new Set(this.chordFactoryNotes.map(note => note % 12));
+  
+    // Transform actuallyPlayedNotes to modulo 12 and store as a Set
+    const playedNotesModuloSet = new Set(this.actuallyPlayedNotes.map(note => note % 12));
+  
+    // Calculate the number of overlapping notes using set intersection
     let overlapCount = 0;
     uniqueDesiredNotes.forEach(note => {
-      if (this.actuallyPlayedNotes.includes(note)) {
+      if (playedNotesModuloSet.has(note)) {
         overlapCount++;
       }
     });
-
+  
     // Calculate harmonic completeness score
     const completenessScore = overlapCount / uniqueDesiredNotes.size;
     return completenessScore;
   }
 
-  assessOpenStrings() {
+  assessSoundOpenStrings() {
     let openStrings = 0;
 
     for (let i = 0; i < this.voicing.length; i++) {
@@ -216,7 +215,7 @@ export class ChordVoicing {
     return openStrings / this.voicing.length;
   }
 
-  assessPlayedStrings() {
+  assessSoundPlayedStrings() {
     let playedStrings = 0;
 
     for (let i = 0; i < this.voicing.length; i++) {
@@ -228,12 +227,50 @@ export class ChordVoicing {
     return playedStrings / this.voicing.length;
   }
 
-  assessFretBoardHeight() {
+  assessSoundFretBoardHeight() {
     return Math.max(0, (1 - (this.minAboveZero / 12)))
   }
 
-}
 
+
+  assessSoundVoicingRange() {
+    let minIndex = -1
+    let maxIndex = -1
+    for (let i = 0; i < 6; i++) {
+      if (this.voicing[i] != -1) {
+        minIndex = i
+        break;
+      }
+    }
+    //Check if one thing is presen
+    if (minIndex < 0) {
+      return 0;
+    }
+
+    for (let i = 5; i >= 0; i--) {
+      if (this.voicing[i] != -1) {
+        maxIndex = i
+        break;
+      }
+    }
+    let spacing = this.actuallyPlayedNotes[maxIndex] - this.actuallyPlayedNotes[minIndex]
+    let maxSpacing = TUNING[5] + this.minAboveZero + FINGER_FRET_RANGE - TUNING[0] + this.minAboveZero
+
+    // The Higher the number, the better So The higher the Spacing archived, the better
+    let spacingRatio = spacing / maxSpacing
+    return spacingRatio
+  }
+
+  assessSoundDoubleNotes() {
+    let doubleNotes = 0
+    for (let i = 0; i < 5; i++) {
+      if (this.actuallyPlayedNotes[i] == this.actuallyPlayedNotes[i + 1]) {
+        doubleNotes++;
+      }
+    }
+    return 1 - (doubleNotes / 5)
+  }
+}
 /*
 assessVoicingRange(){
   //TODO: Asses, The Difference Between the Lowest and the highest Played note. Find a Way to normalize the output between 0 (small difference) and 1
