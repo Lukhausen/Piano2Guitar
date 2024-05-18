@@ -9,7 +9,7 @@ import { TUNING } from './chord-factory/constants.js';
 document.addEventListener('DOMContentLoaded', () => {
     function debounce(func, wait) {
         let timeout;
-        return function() {
+        return function () {
             const context = this, args = arguments;
             clearTimeout(timeout);
             timeout = setTimeout(() => {
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }, wait);
         };
     }
-    
+
 
     //Make Settings Button functional
     window.toggleSettings = function () {
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Toggle a class that controls the visibility and opacity
         settingsScreen.classList.toggle('visible');
     }
-    
+
 
 
     // Import the MidiManager
@@ -175,22 +175,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (actualPressedKeys.size > 0) {
             // Convert actualPressedKeys to an array and sort it
             const sortedNotes = Array.from(actualPressedKeys.keys()).sort((a, b) => a - b);
-    
+
             // Determine if the lowest note should be set as the root note
             const lowestNote = sortedNotes[0];
             const lowestNoteMod12 = lowestNote % 12;
             let setRoot = false;
-    
+
             // Check if the lowest note is doubled in higher octaves
             if (sortedNotes.some(note => note !== lowestNote && note % 12 === lowestNoteMod12)) {
                 setRoot = true;
             }
-    
+
             // Check if the lowest note is 12 interval steps away from the second lowest note
-            if (sortedNotes.length > 1 && (sortedNotes[1] - lowestNote >= 6 )) {
+            if (sortedNotes.length > 1 && (sortedNotes[1] - lowestNote >= 6)) {
                 setRoot = true;
             }
-    
+
             // Set or clear the root note based on the above conditions
             if (setRoot) {
                 const visualKey = mapNoteToVisualKey(lowestNote);
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
             myPiano.clearRootNote();
         }
     }
-    
+
 
     window.addEventListener("statusUpdated", (e) => {
         document.getElementById("MIDIStatusDiv").innerHTML = e.detail
@@ -225,30 +225,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    let progressionGenerator = new ProgressionGenerator([], true, TUNING , "#ffffff", "onNote", true)
+    let soundQualityValue = 1;
+    let progressionGenerator = new ProgressionGenerator([], true, TUNING, "#ffffff", "onNote", true)
 
-    document.addEventListener('selectedItemsUpdated', function(event) {
+    document.addEventListener('selectedItemsUpdated', function (event) {
         console.log('Updated Selected Items:', event.detail.selectedItems);
-        console.log(typeof(event.detail.selectedItems[0]))
-        progressionGenerator.setProgression(event.detail.selectedItems) 
-        let progressionHTML = progressionGenerator.getProgressionHTML([], "basic")
-        console.log(progressionHTML)
-        document.getElementById("dynamicProgressionWrapper").innerHTML = ""
-        document.getElementById("dynamicProgressionWrapper").appendChild(progressionHTML)
+        progressionGenerator.setProgression(event.detail.selectedItems)
+        updateProgressionDynamic(soundQualityValue)
     });
 
 
-
-    //DYNMIC
     const soundQualitySlider = document.getElementById("soundQualitySlider");
-
     soundQualitySlider.addEventListener('input', (e) => {
-        const soundQualityValue = e.target.value / 100;
+        soundQualityValue = e.target.value / 100;
         console.log("Slider Value:", soundQualityValue);
+        updateProgressionDynamic(soundQualityValue)
+    });
 
+    function updateProgressionDynamic(soundQualityValue) {
         let progressionHTML = progressionGenerator.getProgressionDynamicHTML(soundQualityValue);
         document.getElementById("dynamicProgressionWrapper").innerHTML = "";
         document.getElementById("dynamicProgressionWrapper").appendChild(progressionHTML);
-    });
-    
-});
+    };
+
+
+    //Update the Progressions to get the PLaceholders:
+    updateProgressionDynamic(soundQualityValue)
+})

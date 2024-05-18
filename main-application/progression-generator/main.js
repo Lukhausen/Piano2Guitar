@@ -122,6 +122,52 @@ export class ProgressionGenerator {
         }
     }
 
+    getPlaceholderHTML() {
+        const placeholderCount = 4; // Generate 1 to 3 placeholders
+        const diagramsContainer = document.createElement('div'); // Container for chord diagrams
+        diagramsContainer.style.opacity = 0.2
+        diagramsContainer.style.display = "flex"
+
+        for (let i = 0; i < placeholderCount; i++) {
+            // Example placeholder data
+
+
+            let voicing = [0, 0, 0, 0, 0, 0];
+  
+            // Create a set to keep track of chosen indices (to ensure uniqueness)
+            let indices = new Set();
+          
+            // Randomly choose 4 unique indices
+            while (indices.size < 4) {
+                let index = Math.floor(Math.random() * voicing.length);
+                indices.add(index);
+            }
+          
+            // Populate the chosen indices with random numbers between -1 and 4
+            indices.forEach(index => {
+                voicing[index] = Math.floor(Math.random() * 6) - 1; // Generates values from -1 to 4
+            });
+
+            const fingerPositions = [0,0,0,0,0,0]; // Positions for C major
+            const barreSize = 0; // No barre for this example
+
+            // Assuming TabGenerator can handle this static data
+            try {
+                const chordDiagram = new TabGenerator(voicing, fingerPositions, barreSize, null, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
+                const svg = chordDiagram.generateChordSVG();
+                diagramsContainer.appendChild(svg);
+            } catch (error) {
+                console.error('Error generating placeholder chord diagram:', error);
+            }
+        }
+        const textContent = document.createElement('div')
+        textContent.innerHTML = "Search Chords uding the Pinao Keys or the Search Bar. You can also use your MIDI Device."
+        textContent.style.display = "flex"
+        textContent.style.alignItems= "center"
+        diagramsContainer.appendChild(textContent);
+        return diagramsContainer; // Return the container with all placeholder SVGs
+    }
+
     getProgressionHTML(desiredClasses = [], progressionType = "basic") {
         // Create an instance of ProgressionGenerator with the given progression and tuning
         const progression = this.getProgression(progressionType); // Get the basic progression
@@ -162,6 +208,9 @@ export class ProgressionGenerator {
 
     getProgressionDynamicHTML(soundQuality = 0.5) {
         // Iterate over each entry in the progression, sort by combined rating, and get the first playable chord
+        if (this.progression.length<1){
+            return this.getPlaceholderHTML()
+        }
         this.progression.forEach(chordFactory => {
             chordFactory.sortPlayableChordsByCombinedRating(soundQuality);
         });

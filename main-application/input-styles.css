@@ -107,7 +107,7 @@ body {
     box-sizing: border-box;
     position: relative;
     flex-basis: 0px;
-    box-shadow: 0 0 min(5vw,5vh) rgba(0, 0, 0, 0.333);
+    box-shadow: 0 0 min(5vw,5vh) rgba(0, 0, 0, 0.212);
 
 }
 

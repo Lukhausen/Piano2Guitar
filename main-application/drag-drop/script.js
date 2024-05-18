@@ -123,7 +123,7 @@ export default class DragAndDropList {
         itemElement.className = 'dragDropItem';
         itemElement.id = `dragDropItem-${this.idCounter++}`;
 
-        if (item.probability >0) {
+        if (item.probability > 0) {
             const probabilitySpan = document.createElement('span');
             probabilitySpan.textContent = `(${item.probability}%)`;
             probabilitySpan.style.backgroundColor = this.getBackgroundColor(item.probability);
@@ -178,12 +178,11 @@ export default class DragAndDropList {
 
     removeSelectedItem(event) {
         event.target.remove();
-        this.updateArray();
+        this.updateArrayFromList();
     }
 
     addSelectedItem(item) {
-        const selectedItemElement = this.createSelectedItemElement(item);
-        this.selectedItemsContainer.appendChild(selectedItemElement);
+
         this.selectedItemsArray.push(item);
         this.updateDisplayArray();
     }
@@ -217,7 +216,7 @@ export default class DragAndDropList {
 
         if (droppedItemElement && droppedItemElement.classList.contains('selected-dragDropItem')) {
             droppedItemElement.remove();
-            this.updateArray();
+            this.updateDisplayArray();
         }
     }
 
@@ -268,18 +267,12 @@ export default class DragAndDropList {
                 }
             } else {
                 this.selectedItemsContainer.appendChild(droppedItemElement);
-                this.updateArray();
+                this.updateDisplayArray();
             }
         }
         this.updateDisplayArray();
     }
 
-    updateArray() {
-        this.selectedItemsArray = Array.from(this.selectedItemsContainer.children).map(el => {
-            const chordName = el.textContent.split(' (')[0];
-            return this.items.find(item => item.name === chordName);
-        });
-    }
 
     handleDragEnd(event) {
         event.target.classList.remove('dragging');
@@ -307,7 +300,8 @@ export default class DragAndDropList {
                 this.updateDisplayArray();
             }
         }
-    } insertAtCorrectPosition(droppedItemElement, targetElement) {
+    }
+    insertAtCorrectPosition(droppedItemElement, targetElement) {
         const droppedIndex = Array.from(this.selectedItemsContainer.children).indexOf(droppedItemElement);
         const targetIndex = Array.from(this.selectedItemsContainer.children).indexOf(targetElement);
 
@@ -317,21 +311,41 @@ export default class DragAndDropList {
             targetElement.before(droppedItemElement);
         }
         targetElement.classList.remove('over');
-        this.updateArray();
+        this.updateArrayFromList();
+    }
+
+    updateArrayFromList(){
+        this.selectedItemsArray = Array.from(this.selectedItemsContainer.children).map(el => {
+            const chordName = el.textContent.split(' (')[0];
+            return this.items.find(item => item.name === chordName);
+        });
+        this.updateDisplayArray();
+
     }
 
     updateDisplayArray() {
-        console.log(`Selected Items: ${this.selectedItemsArray.map(item => item.name).join(', ')}`);
-        console.log(this.selectedItemsArray.length);
-        if (this.selectedItemsArray.length === 0) {
+
+        this.selectedItemsContainer.innerHTML = ""
+
+        if (this.selectedItemsArray.length == 0) {
             if (!this.emptyMessageElement.parentNode) {
                 this.selectedItemsContainer.appendChild(this.emptyMessageElement);
             }
         } else {
             this.emptyMessageElement.remove();
         }
+
+        this.selectedItemsArray.forEach(item => {
+            const selectedItemElement = this.createSelectedItemElement(item);
+            this.selectedItemsContainer.appendChild(selectedItemElement);
+        })
+
+
         this.selectedItemsEvent.detail.selectedItems = [...this.selectedItemsArray];
         document.dispatchEvent(this.selectedItemsEvent);
+        console.log(`Selected Items: ${this.selectedItemsArray.map(item => item.name).join(', ')}`);
+
+
     }
 
     filterItems() {
