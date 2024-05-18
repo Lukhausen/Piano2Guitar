@@ -178,7 +178,7 @@ export class ChordVoicing {
     details.fretBoardHeight = this.assessSoundFretBoardHeight();
     details.voicingRange = this.assessSoundVoicingRange();
     details.doubleNotes = this.assessSoundDoubleNotes();
-    details.total = Math.pow((details.harmonicCompleteness * details.openStrings * details.playedStrings * details.fretBoardHeight * details.voicingRange * details.doubleNotes),1/6);
+    details.total = ((details.harmonicCompleteness + details.openStrings + details.playedStrings + details.fretBoardHeight + details.voicingRange + details.doubleNotes)/6);
 
     this.soundQualityRating = details.total;
   }

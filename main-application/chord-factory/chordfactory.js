@@ -13,7 +13,37 @@ export class ChordFactory {
     this.fingerPositions = this.calculateFingerPositions();
     this.allChords = this.generateAllChordCombinations2()
     this.playableChords = this.filterPlayableChords(structuredClone(this.allChords))
+    this.sortPlayableChordsByRating(1)
+    //this.getFretSpanStatistics()
+    this.sortPlayableChordsByCombinedRating(1)
   }
+
+  getFretSpanStatistics() {
+    let spanCounts = {};  // Object to store the count of each span
+
+    // Iterate over all chord combinations
+    this.allChords.forEach(chord => {
+      // Filter out muted and open strings, keeping only fretted notes
+      const frets = chord.filter(fret => fret > 0);
+      if (frets.length > 1) { // Ensure there's more than one fretted note to calculate a span
+        const minFret = Math.min(...frets);
+        const maxFret = Math.max(...frets);
+        const span = maxFret - minFret;
+
+        // Update the count for the calculated span
+        if (span in spanCounts) {
+          spanCounts[span] = spanCounts[span] + 1;
+        } else {
+          spanCounts[span] = 1;
+        }
+      }
+    });
+
+    // Log the statistics for review
+    console.log("Fret Span Statistics:", spanCounts);
+    return spanCounts;
+  }
+
 
   calculateFingerPositions() {
     const fingerPositions = [];
@@ -83,27 +113,27 @@ export class ChordFactory {
     const startTime = performance.now();
 
     let chords = [];
-    console.log("Initial chords array:", chords);
+    //console.log("Initial chords array:", chords);
 
     let maskScope = [];
     for (let i = 0; i < 6; i++) {
       maskScope[i] = [-1]; // Each sub-array is separately instantiated
     }
-    console.log("Initial maskScope array:", maskScope);
+    //console.log("Initial maskScope array:", maskScope);
 
     const fingerIndexStorage = Array(6).fill(1);
-    console.log("Initial fingerIndexStorage array:", fingerIndexStorage);
+    //console.log("Initial fingerIndexStorage array:", fingerIndexStorage);
 
     let fingerIndexLength = []
     this.fingerPositions.forEach((element, inndex) => {
       fingerIndexLength[inndex] = element.length - 1
     })
 
-    console.log("Finger index lengths for all strings:", fingerIndexLength);
+    //console.log("Finger index lengths for all strings:", fingerIndexLength);
 
     // As the first entry of the chords is allways -1 we can skip this
     for (let fret = 0; fret < 13; fret++) {
-      console.log("generateAllChordCombinations2 - FRET: ", fret)
+      //console.log("generateAllChordCombinations2 - FRET: ", fret)
 
       for (let string = 0; string < 6; string++) {
 
@@ -119,21 +149,21 @@ export class ChordFactory {
 
 
       }
-      for (let i = 0; i < 6; i++) {
-        console.log("generateAllChordCombinations2 - maskScope: ", i, maskScope[i])
+      //for (let i = 0; i < 6; i++) {
+      //console.log("generateAllChordCombinations2 - maskScope: ", i, maskScope[i])
 
-      }
+      //}
 
       //Now We deleted all old ElementInternals, we can start inserting New elements one by one
       for (let string = 0; string < 6; string++) {
-        console.log("generateAllChordCombinations2 Fret, String", fret, string)
+        //console.log("generateAllChordCombinations2 Fret, String", fret, string)
 
         // Add The New Element, if there is one 
         // First Check If there is a New Element inside the Array
         if (fingerIndexStorage[string] < fingerIndexLength[string]) {
           // CHeck if its in range for Valid CHord, if so add it 
           if (this.fingerPositions[string][fingerIndexStorage[string]] <= fret + FINGER_FRET_RANGE) {
-            console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]])
+            //console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]])
 
             maskScope[string].push(this.fingerPositions[string][fingerIndexStorage[string]])
             //Flag the next index to be looked at later
@@ -152,7 +182,7 @@ export class ChordFactory {
                       newVoicing[(string + 5) % 6] = pos5
 
 
-                      console.log("NEW: ", newVoicing)
+                      //console.log("NEW: ", newVoicing)
                       chords.push([...newVoicing]);
                     }
                   }
@@ -192,7 +222,7 @@ export class ChordFactory {
           if (voicing[string] == -1) {
             continue;
           }
-          else if (((voicing[string] + this.tuning[string]) % 12) == this.root) {
+          else if (((voicing[string] + this.tuning[string]) % 12) != this.root) {
             voicing[string] = -1;
           } else {
             break;

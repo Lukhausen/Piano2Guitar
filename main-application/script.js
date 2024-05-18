@@ -7,7 +7,17 @@ import { TUNING } from './chord-factory/constants.js';
 
 
 document.addEventListener('DOMContentLoaded', () => {
-
+    function debounce(func, wait) {
+        let timeout;
+        return function() {
+            const context = this, args = arguments;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                func.apply(context, args);
+            }, wait);
+        };
+    }
+    
 
     //Make Settings Button functional
     window.toggleSettings = function () {
@@ -96,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.clearProgression = function () {
-        document.getElementById("itemSearch").value = ""
         dragAndDropList.clearSelectedList();
         console.log("Selected Items cleared");
     };
