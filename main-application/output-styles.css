@@ -31,6 +31,9 @@
     background-color: var(--dark1);
     border: 4px solid var(--dark1);
     box-shadow: 0 0 1vw rgba(0, 0, 0, 0.474);
+    padding: var(--padding);
+    gap: var(--padding);
+
 }
 
 .progressionInfo {
@@ -39,7 +42,6 @@
     display: flex;
     flex-direction: column;
     background-color: var(--dark1);
-    padding: var(--padding);
     /*background: linear-gradient(90deg, rgba(141, 141, 141, 0) 0%, var(--dark2) 100%);*/
     border-radius: 0 var(--rounding) var(--rounding) 0;
     max-width: 25%;
@@ -84,9 +86,8 @@
     display: flex;
     flex: 1;
     background-color: var(--dark1);
-    padding: var(--padding);
     align-items: center;
-
+user-select: none;
 }
 
 .progressionWrapper div svg {

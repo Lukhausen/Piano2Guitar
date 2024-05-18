@@ -2,6 +2,7 @@ import { TUNING, NOTE_INDEX_MAP, BARRE_RATING } from '../chord-factory/constants
 import { parseNotes, removeDuplicateArrays } from '../chord-factory/utils.js';
 import { ChordFactory } from '../chord-factory/chordfactory.js';
 import { Chord } from '../chord-library/script.js';
+import { numberToNote } from '../chord-factory/utils.js';
 import TabGenerator from "../tab-generator/script.js"
 
 
@@ -15,6 +16,7 @@ export class ProgressionGenerator {
         this.progression = [];
         this.useRoot = useRoot; // This flag determines if the root note should be the starting note
         this.chordFactoryMap = {}; // HashMap to store ChordFactory instances
+        this.keyAnalysis = []
 
         this.setProgression(initialProgression);
 
@@ -24,65 +26,76 @@ export class ProgressionGenerator {
         };
     }
 
+    addKeyAnalysis(root, keyscale, prob) {
+        // Push a new object to the array with the analysis data
+        this.keyAnalysis.push({
+            rootNote: root,
+            scale: keyscale,
+            probability: prob
+        });
+    }
+    analyzeKey() {
 
-    getKey() {
-        let notesSet = new Set()
+        this.keyAnalysis = []
+        //Define Possible Scales
+        //Higher Prioroty means They get artifically boostes at the Raking
+        const scaleStructures = {
+            'Major': { notes: [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1], priority: 0.01 },  // Major Scale: C, D, E, F, G, A, B
+            'Minor': { notes: [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0], priority: 0.01 },  // Natural Minor Scale: A, B, C, D, E, F, G
+            'Minor Pentatonic': { notes: [1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0], priority: 0 },  // Minor Pentatonic Scale: A, C, D, E, G
+            'Major Pentatonic': { notes: [1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0], priority: 0 },  // Major Pentatonic Scale: C, D, E, G, A
+            'Harmonic Minor': { notes: [1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1], priority: 0 },  // Harmonic Minor Scale: A, B, C, D, E, F, G#
+            'Blues': { notes: [1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0], priority: 0 },  // Blues Scale: A, C, D, D#, E, G
+            'Mixolydian': { notes: [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0], priority: 0 },  // Mixolydian Mode: G, A, B, C, D, E, F
+            'Dorian': { notes: [1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0], priority: 0 }, // Dorian Mode: D, E, F, G, A, B, C
+            'Phrygian': { notes: [1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1], priority: 0 }, // Phrygian Mode: E, F, G, A, B, C, D
+            'Lydian': { notes: [1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1], priority: 0 }, // Lydian Mode: F, G, A, B, C, D, E
+            'Locrian': { notes: [1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0], priority: 0 }  // Locrian Mode: B, C, D, E, F, G, A
+        };
+
+
+        //Generate an Array of Notes and How often They are present
+        let notesSet = Array(12).fill(0);
         this.progression.forEach(element => {
             element.notes.forEach(note => {
-                notesSet.add(note)
+                notesSet[note]++
             })
         })
-        console.log("getKey - Noteset:", notesSet)
-        console.log(this.findKey(notesSet).highestMatch)
-        return notesSet
+        console.log("analyzeKey - notesSet:", notesSet)
+
+
+
+
+
+        //Now GO through The NoteSet and Calucalte A Number for The Probability of the Key
+        notesSet.forEach((scopeNote, index) => {
+
+
+            //Only Look at occuring Notes
+            if (scopeNote != 0) {
+                //Loop Through the scaleStrucurtres and the notes array
+
+                Object.keys(scaleStructures).forEach(key => {
+                    let ammountWeight = 0.01
+                    let rootWeight = 0.01
+                    //DO NOT CHANGE
+                    let distanceToRootWeight = 1
+                    let keyProbability = 0
+                    for (let relativeNote = 0; relativeNote < 11; relativeNote++) {
+                        if ((notesSet[(relativeNote + index) % 12] > 0) && ((scaleStructures[key].notes[relativeNote]) > 0)) {
+                            keyProbability += (1 + (notesSet[(relativeNote + index) % 12]) * ammountWeight) * (1 / (distanceToRootWeight))
+                            distanceToRootWeight += rootWeight
+                        }
+                    }
+                    this.addKeyAnalysis(index, key, keyProbability + scaleStructures[key].priority)
+                })
+
+            }
+        })
+        this.keyAnalysis = this.keyAnalysis.sort((a, b) => b.probability - a.probability);
+        return
     }
 
-    findKey(noteSet) {
-        const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-        const majorScaleIntervals = [2, 2, 1, 2, 2, 2, 1];
-        const minorScaleIntervals = [2, 1, 2, 2, 1, 2, 2];
-
-        function generateScale(rootIndex, intervals) {
-            let scale = [rootIndex];
-            let currentIndex = rootIndex;
-            for (let interval of intervals) {
-                currentIndex = (currentIndex + interval) % 12;
-                scale.push(currentIndex);
-            }
-            return scale;
-        }
-
-        function getMatchPercentage(scale, noteSet) {
-            const matchCount = scale.filter(note => noteSet.has(note)).length;
-            return (matchCount / scale.length) * 100;
-        }
-
-        let keyMatches = [];
-        let highestMatch = { key: null, percentage: 0 };
-
-        notes.forEach((note, index) => {
-            const majorScale = generateScale(index, majorScaleIntervals);
-            const minorScale = generateScale(index, minorScaleIntervals);
-            const majorMatchPercentage = getMatchPercentage(majorScale, noteSet);
-            const minorMatchPercentage = getMatchPercentage(minorScale, noteSet);
-
-            keyMatches.push({ key: `${note} Major`, percentage: majorMatchPercentage });
-            keyMatches.push({ key: `${note} Minor`, percentage: minorMatchPercentage });
-
-            // Update highest match as needed
-            if (majorMatchPercentage > highestMatch.percentage) {
-                highestMatch = { key: `${note} Major`, percentage: majorMatchPercentage };
-            }
-            if (minorMatchPercentage > highestMatch.percentage) {
-                highestMatch = { key: `${note} Minor`, percentage: minorMatchPercentage };
-            }
-        });
-
-        return {
-            highestMatch: highestMatch,
-            allMatches: keyMatches.filter(match => match.percentage > 0) // Filter out 0% matches for brevity
-        };
-    }
 
     // Set initial progression with ChordFactory instances for each chord
     setProgression(initialProgression) {
@@ -110,7 +123,18 @@ export class ProgressionGenerator {
 
         // Populate this.progression with references from the new map
         this.progression = initialProgression.map(chord => this.chordFactoryMap[chord.name]);
-        this.getKey()
+        if (this.progression.length > 1) {
+            this.analyzeKey()
+            console.log("analyzeKey: ", this.keyAnalysis)
+            const event = new CustomEvent('scaleDetected', { detail: { scale: "Scale: <b>" + numberToNote(this.keyAnalysis[0].rootNote) + " " + this.keyAnalysis[0].scale + "</b>" } });
+            console.log("Key Change Event: " + numberToNote(this.keyAnalysis[0].rootNote) + " " + this.keyAnalysis[0].scale)
+            window.dispatchEvent(event);
+        } else {
+            const event = new CustomEvent('scaleDetected', { detail: { scale: "Scale: ..." } });
+            console.log("Key Change Event: none")
+            window.dispatchEvent(event);
+        }
+
     }
 
     getProgression(type = 'basic') {
@@ -133,22 +157,22 @@ export class ProgressionGenerator {
 
 
             let voicing = [0, 0, 0, 0, 0, 0];
-  
+
             // Create a set to keep track of chosen indices (to ensure uniqueness)
             let indices = new Set();
-          
+
             // Randomly choose 4 unique indices
             while (indices.size < 4) {
                 let index = Math.floor(Math.random() * voicing.length);
                 indices.add(index);
             }
-          
+
             // Populate the chosen indices with random numbers between -1 and 4
             indices.forEach(index => {
                 voicing[index] = Math.floor(Math.random() * 6) - 1; // Generates values from -1 to 4
             });
 
-            const fingerPositions = [0,0,0,0,0,0]; // Positions for C major
+            const fingerPositions = [0, 0, 0, 0, 0, 0]; // Positions for C major
             const barreSize = 0; // No barre for this example
 
             // Assuming TabGenerator can handle this static data
@@ -161,9 +185,9 @@ export class ProgressionGenerator {
             }
         }
         const textContent = document.createElement('div')
-        textContent.innerHTML = "Search Chords uding the Pinao Keys or the Search Bar. You can also use your MIDI Device."
+        textContent.innerHTML = "Search for chords using the piano keys, the search bar, or connect your MIDI device."
         textContent.style.display = "flex"
-        textContent.style.alignItems= "center"
+        textContent.style.alignItems = "center"
         diagramsContainer.appendChild(textContent);
         return diagramsContainer; // Return the container with all placeholder SVGs
     }
@@ -208,7 +232,7 @@ export class ProgressionGenerator {
 
     getProgressionDynamicHTML(soundQuality = 0.5) {
         // Iterate over each entry in the progression, sort by combined rating, and get the first playable chord
-        if (this.progression.length<1){
+        if (this.progression.length < 1) {
             return this.getPlaceholderHTML()
         }
         this.progression.forEach(chordFactory => {

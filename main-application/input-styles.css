@@ -132,6 +132,8 @@ body {
     border-radius: var(--rounding);
     gap: calc(var(--padding)/2);
     flex-basis: 10px;
+    box-shadow: inset 0 0 1vw rgba(0, 0, 0, 0.197);
+
 }
 
 .visualPianoIcon {
@@ -155,7 +157,7 @@ body {
     display: flex;
     width: 100%;
     height: 100%;
-    box-shadow: 0 2vw 4vw rgba(7, 0, 53, 0.25);
+    box-shadow: 0 0 1vw rgba(7, 0, 53, 0.25);
     border: none;
     flex: 1;
     border-radius: var(--rounding);
@@ -242,6 +244,17 @@ body {
 
 }
 
+.selectedItemsHeading{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#scaleDisplay{
+    color: var(--light1);
+    font-weight: 100;
+}
+
 .selectedItemsWrapper {
     display: flex;
     flex-direction: row;
@@ -251,6 +264,8 @@ body {
     border-radius: var(--rounding);
     overflow-y: auto;
     max-height: 15%;
+    box-shadow: inset 0 0 1vw rgba(0, 0, 0, 0.197);
+
 }
 
 .selectedItems {

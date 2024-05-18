@@ -1,7 +1,6 @@
 audio/
 chord-factory/
   chordfactory.js
-  chordrating.js
   chordvoicing.js
   constants.js
   main.js
@@ -33,21 +32,50 @@ import { ChordVoicing } from './chordvoicing.js';
 
 
 export class ChordFactory {
-  constructor(notes, root, startWithRoot = true, tuning = TUNING) {
-    console.log("ChordFactory Recieved Notes: ", notes)
-    this.notes = notes;
+  constructor(chord, startWithRoot = true, tuning = TUNING) {
+    console.log("ChordFactory Recieved Notes: ", chord.notes)
+    this.identifier = chord.name
+    this.notes = chord.notes;
     this.startWithRoot = startWithRoot
-    this.root = root
+    this.root = chord.rootNote
     this.tuning = tuning;
     this.fingerPositions = this.calculateFingerPositions();
-    this.allChords = this.generateAllChordCombinations()
-    this.playableChords = this.filterPlayableChords(this.allChords)
+    this.allChords = this.generateAllChordCombinations2()
+    this.playableChords = this.filterPlayableChords(structuredClone(this.allChords))
+    //this.getFretSpanStatistics()
     this.sortPlayableChordsByCombinedRating(1)
   }
 
+  getFretSpanStatistics() {
+    let spanCounts = {};  // Object to store the count of each span
+
+    // Iterate over all chord combinations
+    this.allChords.forEach(chord => {
+      // Filter out muted and open strings, keeping only fretted notes
+      const frets = chord.filter(fret => fret > 0);
+      if (frets.length > 1) { // Ensure there's more than one fretted note to calculate a span
+        const minFret = Math.min(...frets);
+        const maxFret = Math.max(...frets);
+        const span = maxFret - minFret;
+
+        // Update the count for the calculated span
+        if (span in spanCounts) {
+          spanCounts[span] = spanCounts[span] + 1;
+        } else {
+          spanCounts[span] = 1;
+        }
+      }
+    });
+
+    // Log the statistics for review
+    console.log("Fret Span Statistics:", spanCounts);
+    return spanCounts;
+  }
+
+
   calculateFingerPositions() {
     const fingerPositions = [];
-  
+
     for (let stringIndex of this.tuning) {
       const positions = [];
       for (let chordIndex of this.notes) {
@@ -58,12 +86,12 @@ export class ChordFactory {
       positions.sort((a, b) => a - b); // Sort the positions from lowest to highest
       fingerPositions.push(positions);
     }
-  
+
     return fingerPositions;
   }
-  
+
   getValidFretPositionsForNote(noteIndex, stringIndex) {
-    const baseFret = (noteIndex - stringIndex +120) % 12;
+    const baseFret = (noteIndex - stringIndex + 120) % 12;
     return [baseFret, baseFret + 12];
   }
 
@@ -108,14 +136,117 @@ export class ChordFactory {
   }
 
 
-  filterPlayableChords(allChords) {
-    const playableChords = allChords.map(voicing => {
+  generateAllChordCombinations2() {
+
+    const startTime = performance.now();
+
+    let chords = [];
+    //console.log("Initial chords array:", chords);
+
+    let maskScope = [];
+    for (let i = 0; i < 6; i++) {
+      maskScope[i] = [-1]; // Each sub-array is separately instantiated
+    }
+    //console.log("Initial maskScope array:", maskScope);
+
+    const fingerIndexStorage = Array(6).fill(1);
+    //console.log("Initial fingerIndexStorage array:", fingerIndexStorage);
+
+    let fingerIndexLength = []
+    this.fingerPositions.forEach((element, inndex) => {
+      fingerIndexLength[inndex] = element.length - 1
+    })
+
+    //console.log("Finger index lengths for all strings:", fingerIndexLength);
+
+    // As the first entry of the chords is allways -1 we can skip this
+    for (let fret = 0; fret < 13; fret++) {
+      //console.log("generateAllChordCombinations2 - FRET: ", fret)
+
+      for (let string = 0; string < 6; string++) {
+
+        for (let validPosition = 0; validPosition < maskScope[string].length; validPosition++) {
+          // FIrst remove all Non Fitting Elements From Out current maskScope on All Strings.
+          // Exclude The -1 (muted) and 0 (open string) Because they can be used everywhere
+          if (maskScope[string][validPosition] > 0 && maskScope[string][validPosition] < fret) {
+            maskScope[string].splice(validPosition, 1);
+          }
+        }
+      }
+      //for (let i = 0; i < 6; i++) {
+      //console.log("generateAllChordCombinations2 - maskScope: ", i, maskScope[i])
+
+      //}
+
+      //Now We deleted all old ElementInternals, we can start inserting New elements one by one
+      for (let string = 0; string < 6; string++) {
+        //console.log("generateAllChordCombinations2 Fret, String", fret, string)
+
+        // Add The New Element, if there is one 
+        // First Check If there is a New Element inside the Array
+        if (fingerIndexStorage[string] < fingerIndexLength[string]) {
+          // CHeck if its in range for Valid CHord, if so add it 
+          if (this.fingerPositions[string][fingerIndexStorage[string]] <= fret + FINGER_FRET_RANGE) {
+            //console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]])
+
+            maskScope[string].push(this.fingerPositions[string][fingerIndexStorage[string]])
+
+            for (let pos1 of maskScope[(string + 1) % 6]) {
+              for (let pos2 of maskScope[(string + 2) % 6]) {
+                for (let pos3 of maskScope[(string + 3) % 6]) {
+                  for (let pos4 of maskScope[(string + 4) % 6]) {
+                    for (let pos5 of maskScope[(string + 5) % 6]) {
+                      let newVoicing = []
+                      newVoicing[string] = this.fingerPositions[string][fingerIndexStorage[string]]
+                      newVoicing[(string + 1) % 6] = pos1
+                      newVoicing[(string + 2) % 6] = pos2
+                      newVoicing[(string + 3) % 6] = pos3
+                      newVoicing[(string + 4) % 6] = pos4
+                      newVoicing[(string + 5) % 6] = pos5
+
+
+                      //console.log("NEW: ", newVoicing)
+                      chords.push(newVoicing);
+                    }
+                  }
+                }
+              }
+            }
+            //Flag the next index to be looked at later
+
+            fingerIndexStorage[string]++
+
+          } else {
+            //Break because the element found is too big to be inserte into the maskScope
+          }
+        } else {
+          //break because there are no more elments left in the Array
+        }
+
+        //Calculate the Cartesian Product From the Inserted element
+
+        // Add each element to the chords
+      }
+    }
+    // Track end time
+    const endTime = performance.now();
+
+    // Calculate the time taken
+    const timeTaken = endTime - startTime;
+    console.log("generateAllChordCombinations2 - Time taken:", timeTaken, "milliseconds");
+    return chords;
+  }
+
+
+  filterPlayableChords(allChordsCopyCopy) {
+    let allChordsCopy = [...allChordsCopyCopy]
+    const playableChords = allChordsCopy.map(voicing => {
       if (this.startWithRoot) {
         for (let string = 0; string <= 5; string++) {
           if (voicing[string] == -1) {
             continue;
           }
-          else if (((voicing[string] + this.tuning[string]) % 12) == this.root) {
+          else if (((voicing[string] + this.tuning[string]) % 12) != this.root) {
             voicing[string] = -1;
           } else {
             break;
@@ -169,12 +300,9 @@ export class ChordFactory {
       return null;
     }
     ).filter(chordVoicing => chordVoicing !== null);
-    return removeDuplicateArrays(playableChords);
+    return playableChords;
   }
 
-  sortPlayableChordsByRating() {
-    this.playableChords.sort((a, b) => a.rating - b.rating);
-  }
 
   /**
    * Sorts the playable chords by a combined rating based on sound quality and 
@@ -208,163 +336,11 @@ export class ChordFactory {
 }
 
 
-File: chordrating.js
-
-import { STANDARD_TUNING, TUNING, FINGER_FRET_RANGE, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
-
-
-export class ChordRating {
-    constructor(chordVoicing) {
-      this.chordVoicing = chordVoicing;
-      this.playabilityRating = 0;
-      this.soundQualityRating = 0;
-  
-      this.ratePlayability();
-      this.rateSoundQuality();
-    }
-  
-    ratePlayability() {
-      let totalScore = (
-        this.assessPlayabilityFingersUsed() +
-        this.assessPlayabilityFingerSpread() +
-        this.assessPlayabilityMuttedAmmount()
-      ) / 3;
-      
-      if (totalScore < 0 || totalScore > 1) {
-        console.error("ChordRating.ratePlayability: Unusual Rating Output: " + totalScore + " from Object: ", this.chordVoicing)
-      }
-  
-      this.playabilityRating = totalScore;
-      return;
-    }
-  
-    assessPlayabilityFingersUsed() {
-      let maxUsableFingers = 4;
-      let usedFingers = 0;
-      for (let i = 0; i < 6; i++) {
-        if (this.chordVoicing.fingerPositions[i] > usedFingers) {
-          usedFingers = this.chordVoicing.fingerPositions[i];
-        }
-      }
-      let rating = 1 - (usedFingers / maxUsableFingers);
-      return rating;
-    }
-  
-    assessPlayabilityFingerSpread() {
-      let maxFret = this.chordVoicing.minAboveZero;
-      for (let i = 0; i < 6; i++) {
-        if (this.chordVoicing.voicing[i] > this.chordVoicing.minAboveZero) {
-          maxFret = this.chordVoicing.voicing[i];
-        }
-      }
-      return 1 - ((maxFret - this.chordVoicing.minAboveZero) / FINGER_FRET_RANGE);
-    }
-  
-    assessPlayabilityMuttedAmmount() {
-      let mutedCount = 0;
-      for (let i = 0; i < 6; i++) {
-        if (this.chordVoicing.voicing[i] == -1) {
-          mutedCount++;
-        }
-      }
-      return 1 - (mutedCount / 6);
-    }
-  
-    rateSoundQuality() {
-      let totalScore = (
-        this.assessSoundHarmonicCompleteness() +
-        this.assessSoundOpenStrings() +
-        this.assessSoundPlayedStrings() * 2 +
-        this.assessSoundFretBoardHeight() +
-        this.assessSoundVoicingRange() +
-        this.assessSoundDoubleNotes()
-      ) / 7;
-      
-      if (totalScore < 0 || totalScore > 1) {
-        console.error("ChordRating.rateSoundQuality: Unusual Rating Output: " + totalScore + " from Object: ", this.chordVoicing)
-      }
-      this.soundQualityRating = totalScore;
-      return;
-    }
-  
-    assessSoundHarmonicCompleteness() {
-      const uniqueDesiredNotes = new Set(this.chordVoicing.chordFactoryNotes);
-      let overlapCount = 0;
-      uniqueDesiredNotes.forEach(note => {
-        if (this.chordVoicing.actuallyPlayedNotes.includes(note)) {
-          overlapCount++;
-        }
-      });
-      const completenessScore = overlapCount / uniqueDesiredNotes.size;
-      return completenessScore;
-    }
-  
-    assessSoundOpenStrings() {
-      let openStrings = 0;
-      for (let i = 0; i < this.chordVoicing.voicing.length; i++) {
-        if (this.chordVoicing.voicing[i] == 0) {
-          openStrings++;
-        }
-      }
-      return openStrings / this.chordVoicing.voicing.length;
-    }
-  
-    assessSoundPlayedStrings() {
-      let playedStrings = 0;
-      for (let i = 0; i < this.chordVoicing.voicing.length; i++) {
-        if (this.chordVoicing.voicing[i] >= 0) {
-          playedStrings++;
-        }
-      }
-      return playedStrings / this.chordVoicing.voicing.length;
-    }
-  
-    assessSoundFretBoardHeight() {
-      return Math.max(0, (1 - (this.chordVoicing.minAboveZero / 12)));
-    }
-  
-    assessSoundVoicingRange() {
-      let minIndex = -1;
-      let maxIndex = -1;
-      for (let i = 0; i < 6; i++) {
-        if (this.chordVoicing.voicing[i] != -1) {
-          minIndex = i;
-          break;
-        }
-      }
-      if (minIndex < 0) {
-        return 0;
-      }
-      for (let i = 5; i >= 0; i--) {
-        if (this.chordVoicing.voicing[i] != -1) {
-          maxIndex = i;
-          break;
-        }
-      }
-      let spacing = this.chordVoicing.actuallyPlayedNotes[maxIndex] - this.chordVoicing.actuallyPlayedNotes[minIndex];
-      let maxSpacing = TUNING[5] + this.chordVoicing.minAboveZero + FINGER_FRET_RANGE - TUNING[0] + this.chordVoicing.minAboveZero;
-      let spacingRatio = spacing / maxSpacing;
-      return spacingRatio;
-    }
-  
-    assessSoundDoubleNotes() {
-      let doubleNotes = 0;
-      for (let i = 0; i < 5; i++) {
-        if (this.chordVoicing.actuallyPlayedNotes[i] == this.chordVoicing.actuallyPlayedNotes[i + 1]) {
-          doubleNotes++;
-        }
-      }
-      return 1 - (doubleNotes / 5);
-    }
-  }
-  
-
 File: chordvoicing.js
 
 import { STANDARD_TUNING, TUNING, FINGER_FRET_RANGE, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
 import { parseNotes, removeDuplicateArrays } from './utils.js';
 import { ChordFactory } from './chordfactory.js';
-import { ChordRating } from './chordrating.js';
 
 export class ChordVoicing {
   constructor(voicing, barre, fingersUsed, barreSize, minAboveZero, chordFactoryNotes, chordFactoryRoot) {
@@ -388,15 +364,33 @@ export class ChordVoicing {
       }
     }
 
-    this.rating = new ChordRating(this); // Initialize ChordRating
+    this.playabilityRating = 0;
+    this.soundQualityRating = 0; // New property to store sound quality rating
 
-    // Use ratings from ChordRating
-    this.playabilityRating = this.rating.playabilityRating;
-    this.soundQualityRating = this.rating.soundQualityRating;
+    this.ratingDetails = {
+      playability: {
+        fingersUsed: 0,
+        fingerSpread: 0,
+        mutedAmount: 0,
+        fretHeight: 0,
+        total: 0,
+      },
+      soundQuality: {
+        harmonicCompleteness: 0,
+        openStrings: 0,
+        playedStrings: 0,
+        fretBoardHeight: 0,
+        voicingRange: 0,
+        doubleNotes: 0,
+        total: 0,
+      }
+    };
 
     this.calculateChordSpacing()
     this.calculateFingerPosition()
 
+    this.rateSoundQuality()
+    this.ratePlayability()
 
     //Send From ChordFactory over
 
@@ -458,7 +452,244 @@ export class ChordVoicing {
 
     return;
   }
+
+  // 0 is Badly Playable and 1 Is good PLayability
+  ratePlayability() {
+    const details = this.ratingDetails.playability;
+    details.fingersUsed = this.assessPlayabilityFingersUsed();
+    details.fingerSpread = this.assessPlayabilityFingerSpread();
+    details.mutedAmount = this.assessPlayabilityMuttedAmount();
+    details.fretHeight = this.assessPlayabilityFretHeight();
+    details.total = (details.fingersUsed + details.fingerSpread + details.mutedAmount + details.fretHeight) / 4;
+
+    this.playabilityRating = details.total;
+  }
+
+  assessPlayabilityFingersUsed() {
+    // USe FInger Positions because They are MOst realibale and ALgorithmically Safe Way (Becaus of possible future Changes) to asses Finger COunt
+    let maxUsableFingers = 4
+    let usedFingers = 0
+    for (let i = 0; i < 6; i++) {
+      if (this.fingerPositions[i] > usedFingers) {
+        usedFingers = this.fingerPositions[i]
+      }
+    }
+    // INvert Rating so Many fingers used gets a low score
+    let rating = 1 - (usedFingers / maxUsableFingers)
+    return rating
+  }
+
+  assessPlayabilityFingerSpread() {
+    let maxFret = this.minAboveZero
+    for (let i = 0; i < 6; i++) {
+      if (this.voicing[i] > this.minAboveZero) {
+        maxFret = this.voicing[i]
+      }
+    }
+    return 1-((maxFret-this.minAboveZero) / FINGER_FRET_RANGE)
+  }
+
+  assessPlayabilityMuttedAmount(){
+    let mutedCount = 0
+    for (let i = 0; i < 6; i++) {
+      if (this.voicing[i] == -1) {
+        mutedCount++
+      }
+    }
+    return 1-(mutedCount/6)
+  }
+
+  assessPlayabilityFretHeight(){
+    return 1-(this.minAboveZero/24)
+  }
+
+
+
+
+
+
+
+  //1 Best SOund, 0 worst sound
+  rateSoundQuality() {
+    const details = this.ratingDetails.soundQuality;
+    details.harmonicCompleteness = this.assessSoundHarmonicCompleteness();
+    details.openStrings = this.assessSoundOpenStrings();
+    details.playedStrings = this.assessSoundPlayedStrings();
+    details.fretBoardHeight = this.assessSoundFretBoardHeight();
+    details.voicingRange = this.assessSoundVoicingRange();
+    details.doubleNotes = this.assessSoundDoubleNotes();
+    details.total = ((details.harmonicCompleteness + details.openStrings + details.playedStrings + details.fretBoardHeight + details.voicingRange + details.doubleNotes)/6);
+
+    this.soundQualityRating = details.total;
+  }
+
+  assessSoundHarmonicCompleteness() {
+    // Transform chordFactoryNotes to modulo 12 and store as a Set
+    const uniqueDesiredNotes = new Set(this.chordFactoryNotes.map(note => note % 12));
+  
+    // Transform actuallyPlayedNotes to modulo 12 and store as a Set
+    const playedNotesModuloSet = new Set(this.actuallyPlayedNotes.map(note => note % 12));
+  
+    // Calculate the number of overlapping notes using set intersection
+    let overlapCount = 0;
+    uniqueDesiredNotes.forEach(note => {
+      if (playedNotesModuloSet.has(note)) {
+        overlapCount++;
+      }
+    });
+  
+    // Calculate harmonic completeness score
+    const completenessScore = overlapCount / uniqueDesiredNotes.size;
+    return completenessScore;
+  }
+
+  assessSoundOpenStrings() {
+    let openStrings = 0;
+
+    for (let i = 0; i < this.voicing.length; i++) {
+      if (this.voicing[i] === 0) {
+        openStrings++;
+      }
+    }
+
+    return openStrings / this.voicing.length;
+  }
+
+  assessSoundPlayedStrings() {
+    let playedStrings = 0;
+
+    for (let i = 0; i < this.voicing.length; i++) {
+      if (this.voicing[i] >= 0) {
+        playedStrings++;
+      }
+    }
+
+    return playedStrings / this.voicing.length;
+  }
+
+  assessSoundFretBoardHeight() {
+    return Math.max(0, (1 - (this.minAboveZero / 12)))
+  }
+
+
+
+  assessSoundVoicingRange() {
+    let minIndex = -1
+    let maxIndex = -1
+    for (let i = 0; i < 6; i++) {
+      if (this.voicing[i] != -1) {
+        minIndex = i
+        break;
+      }
+    }
+    //Check if one thing is presen
+    if (minIndex < 0) {
+      return 0;
+    }
+
+    for (let i = 5; i >= 0; i--) {
+      if (this.voicing[i] != -1) {
+        maxIndex = i
+        break;
+      }
+    }
+    let spacing = this.actuallyPlayedNotes[maxIndex] - this.actuallyPlayedNotes[minIndex]
+    let maxSpacing = TUNING[5] + this.minAboveZero + FINGER_FRET_RANGE - TUNING[0] + this.minAboveZero
+
+    // The Higher the number, the better So The higher the Spacing archived, the better
+    let spacingRatio = spacing / maxSpacing
+    return spacingRatio
+  }
+
+  assessSoundDoubleNotes() {
+    let doubleNotes = 0
+    for (let i = 0; i < 5; i++) {
+      if (this.actuallyPlayedNotes[i] == this.actuallyPlayedNotes[i + 1]) {
+        doubleNotes++;
+      }
+    }
+    return 1 - (doubleNotes / 5)
+  }
 }
+/*
+assessVoicingRange(){
+  //TODO: Asses, The Difference Between the Lowest and the highest Played note. Find a Way to normalize the output between 0 (small difference) and 1
+}
+
+
+assessTonalBalance() {
+  const noteFrequencies = this.voicing.map((fret, string) =>
+    fret !== -1 ? (STANDARD_TUNING[string] + fret) % 12 : null
+  ).filter(note => note !== null);
+
+  const lowNotes = noteFrequencies.filter(note => note < 5).length;
+  const midNotes = noteFrequencies.filter(note => note >= 5 && note < 9).length;
+  const highNotes = noteFrequencies.filter(note => note >= 9).length;
+
+  const balance = Math.min(lowNotes, midNotes, highNotes);
+  return balance / 3 * 10;
+}
+
+
+
+assessVoicingRange() {
+  const frets = this.voicing.filter(fret => fret !== -1);
+  const range = Math.max(...frets) - Math.min(...frets);
+  return range > 5 ? 0 : (5 - range) / 5 * 10;
+}
+
+assessDissonance() {
+  const intervals = [];
+  const frets = this.voicing.filter(fret => fret !== -1);
+
+  for (let i = 0; i < frets.length; i++) {
+    for (let j = i + 1; j < frets.length; j++) {
+      const interval = Math.abs(frets[i] - frets[j]);
+      intervals.push(interval);
+    }
+  }
+
+  const dissonantIntervals = intervals.filter(interval => [1, 2, 6, 10].includes(interval));
+  return 10 - dissonantIntervals.length * 2;
+}
+
+assessResonanceAndSustain() {
+  const openStrings = this.voicing.filter(fret => fret === 0).length;
+  return openStrings * 2;
+}
+
+assessChordClarity() {
+  const clearNotes = this.voicing.filter(fret => fret !== -1 && fret !== 0);
+  return clearNotes.length / 6 * 10;
+}
+
+assessContextualFit(contextChords) {
+  const similarityScores = contextChords.map(contextChord => {
+    let score = 0;
+    for (let i = 0; i < 6; i++) {
+      if (contextChord.voicing[i] === this.voicing[i]) {
+        score++;
+      }
+    }
+    return score;
+  });
+
+  const maxSimilarity = Math.max(...similarityScores);
+  return maxSimilarity / 6 * 10;
+}
+}*/
+
+/*
+Start at Index Finger, represented by fingerPositions 1.
+Count the String changes on the Same Fret with the middle finger so if the middle finger is 2 stings below, add 2 to the evalutaion 
+if the middle finger is on the next fret over the minAboveZero, add 0, and only add 1 for each string it moved down or upward relative to the index finger
+if the index finger is on the same fret as the middle finger, but the index finger is not also on the fret where the ring finger is, add the string count distance between the middle and ring finger 
+if the index finger is on one fret more thatn the middle finger, but the middle and the index finger are on the fret below, add only the distance between the ring and the middle finger
+if the index finger is on one fret, the middle finger is on +1 fret and the ring finger is on #1 fret, add 3 to the difficulty
+if the small finger is on the same fret as the ring finger, but no other finger is on that fret, only add the string distance between the ring and the small finger.
+
+
+*/
 
 File: constants.js
 
@@ -531,6 +762,8 @@ export function removeDuplicateArrays(arrays) {
     return
   });
 }
+
+
 
 
 File: script.js
@@ -939,7 +1172,7 @@ export default class DragAndDropList {
         itemElement.className = 'dragDropItem';
         itemElement.id = `dragDropItem-${this.idCounter++}`;
 
-        if (item.probability >0) {
+        if (item.probability > 0) {
             const probabilitySpan = document.createElement('span');
             probabilitySpan.textContent = `(${item.probability}%)`;
             probabilitySpan.style.backgroundColor = this.getBackgroundColor(item.probability);
@@ -994,12 +1227,11 @@ export default class DragAndDropList {
 
     removeSelectedItem(event) {
         event.target.remove();
-        this.updateArray();
+        this.updateArrayFromList();
     }
 
     addSelectedItem(item) {
-        const selectedItemElement = this.createSelectedItemElement(item);
-        this.selectedItemsContainer.appendChild(selectedItemElement);
+
         this.selectedItemsArray.push(item);
         this.updateDisplayArray();
     }
@@ -1033,7 +1265,7 @@ export default class DragAndDropList {
 
         if (droppedItemElement && droppedItemElement.classList.contains('selected-dragDropItem')) {
             droppedItemElement.remove();
-            this.updateArray();
+            this.updateDisplayArray();
         }
     }
 
@@ -1084,18 +1316,12 @@ export default class DragAndDropList {
                 }
             } else {
                 this.selectedItemsContainer.appendChild(droppedItemElement);
-                this.updateArray();
+                this.updateDisplayArray();
             }
         }
         this.updateDisplayArray();
     }
 
-    updateArray() {
-        this.selectedItemsArray = Array.from(this.selectedItemsContainer.children).map(el => {
-            const chordName = el.textContent.split(' (')[0];
-            return this.items.find(item => item.name === chordName);
-        });
-    }
 
     handleDragEnd(event) {
         event.target.classList.remove('dragging');
@@ -1123,7 +1349,8 @@ export default class DragAndDropList {
                 this.updateDisplayArray();
             }
         }
-    } insertAtCorrectPosition(droppedItemElement, targetElement) {
+    }
+    insertAtCorrectPosition(droppedItemElement, targetElement) {
         const droppedIndex = Array.from(this.selectedItemsContainer.children).indexOf(droppedItemElement);
         const targetIndex = Array.from(this.selectedItemsContainer.children).indexOf(targetElement);
 
@@ -1133,21 +1360,41 @@ export default class DragAndDropList {
             targetElement.before(droppedItemElement);
         }
         targetElement.classList.remove('over');
-        this.updateArray();
+        this.updateArrayFromList();
+    }
+
+    updateArrayFromList(){
+        this.selectedItemsArray = Array.from(this.selectedItemsContainer.children).map(el => {
+            const chordName = el.textContent.split(' (')[0];
+            return this.items.find(item => item.name === chordName);
+        });
+        this.updateDisplayArray();
+
     }
 
     updateDisplayArray() {
-        console.log(`Selected Items: ${this.selectedItemsArray.map(item => item.name).join(', ')}`);
-        console.log(this.selectedItemsArray.length);
-        if (this.selectedItemsArray.length === 0) {
+
+        this.selectedItemsContainer.innerHTML = ""
+
+        if (this.selectedItemsArray.length == 0) {
             if (!this.emptyMessageElement.parentNode) {
                 this.selectedItemsContainer.appendChild(this.emptyMessageElement);
             }
         } else {
             this.emptyMessageElement.remove();
         }
+
+        this.selectedItemsArray.forEach(item => {
+            const selectedItemElement = this.createSelectedItemElement(item);
+            this.selectedItemsContainer.appendChild(selectedItemElement);
+        })
+
+
         this.selectedItemsEvent.detail.selectedItems = [...this.selectedItemsArray];
         document.dispatchEvent(this.selectedItemsEvent);
+        console.log(`Selected Items: ${this.selectedItemsArray.map(item => item.name).join(', ')}`);
+
+
     }
 
     filterItems() {
@@ -1177,6 +1424,8 @@ File: index.html
     <link rel="stylesheet" href="piano/style.css" />
     <link rel="stylesheet" href="./output-styles.css" />
     <link rel="stylesheet" href="./input-styles.css" />
+    <link rel="stylesheet" href="./slider-style.css" />
+
 
 
     <!-- FONT -->
@@ -1255,12 +1504,22 @@ File: index.html
         <div class="progression">
 
 
-            <div id="progressionWrappers"></div>
-            <div class="progressionInfo">DYNAMIC<br>Capo: 0 <input id="soundQualitySlider" type="range" min="0" max="100" value="50">
-            </div>
+            <div class="progressionWrapper" id="dynamicProgressionWrapper"></div>
+            <div class="progressionInfo">
+                <div class = "progressionInfoText">
+                    <div class="progressionInfoTextName"><i>DYNAMIC</i></div>
+                    <div class="progressionInfoTextSubtitle">Change from Easy to Play to The Most Beautifuzll Sound</div>
+                </div>
+                <div class="soundQualityWrapper">
+                    <input id="soundQualitySlider" type="range" min="0" max="100" value="50">
+                    <div class="soundQualityLables">
+                        <div>EASY</div>
+                        <div>BEST SOUND</div>
+                    </div>
+                </div>
 
+            </div>
         </div>
-    </div>
 </body>
 
 </html>
@@ -1634,6 +1893,7 @@ import { Chord } from '../chord-library/script.js';
 import TabGenerator from "../tab-generator/script.js"
 
 
+
 export class ProgressionGenerator {
     constructor(initialProgression = [], useRoot = true, tuning = TUNING, color, fingerNumbers = "belowString", showOpenStrings = true) {
         this.tuning = tuning;
@@ -1642,27 +1902,103 @@ export class ProgressionGenerator {
         this.showOpenStrings = showOpenStrings;
         this.progression = [];
         this.useRoot = useRoot; // This flag determines if the root note should be the starting note
+        this.chordFactoryMap = {}; // HashMap to store ChordFactory instances
+
         this.setProgression(initialProgression);
+
         this.progressionTypes = {
             basic: this.getProgressionBasic,
             // Add more progression types as methods here
         };
     }
 
+
+    getKey() {
+        let notesSet = new Set()
+        this.progression.forEach(element => {
+            element.notes.forEach(note => {
+                notesSet.add(note)
+            })
+        })
+        console.log("getKey - Noteset:", notesSet)
+        console.log(this.findKey(notesSet).highestMatch)
+        return notesSet
+    }
+
+    findKey(noteSet) {
+        const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        const majorScaleIntervals = [2, 2, 1, 2, 2, 2, 1];
+        const minorScaleIntervals = [2, 1, 2, 2, 1, 2, 2];
+
+        function generateScale(rootIndex, intervals) {
+            let scale = [rootIndex];
+            let currentIndex = rootIndex;
+            for (let interval of intervals) {
+                currentIndex = (currentIndex + interval) % 12;
+                scale.push(currentIndex);
+            }
+            return scale;
+        }
+
+        function getMatchPercentage(scale, noteSet) {
+            const matchCount = scale.filter(note => noteSet.has(note)).length;
+            return (matchCount / scale.length) * 100;
+        }
+
+        let keyMatches = [];
+        let highestMatch = { key: null, percentage: 0 };
+
+        notes.forEach((note, index) => {
+            const majorScale = generateScale(index, majorScaleIntervals);
+            const minorScale = generateScale(index, minorScaleIntervals);
+            const majorMatchPercentage = getMatchPercentage(majorScale, noteSet);
+            const minorMatchPercentage = getMatchPercentage(minorScale, noteSet);
+
+            keyMatches.push({ key: `${note} Major`, percentage: majorMatchPercentage });
+            keyMatches.push({ key: `${note} Minor`, percentage: minorMatchPercentage });
+
+            // Update highest match as needed
+            if (majorMatchPercentage > highestMatch.percentage) {
+                highestMatch = { key: `${note} Major`, percentage: majorMatchPercentage };
+            }
+            if (minorMatchPercentage > highestMatch.percentage) {
+                highestMatch = { key: `${note} Minor`, percentage: minorMatchPercentage };
+            }
+        });
+
+        return {
+            highestMatch: highestMatch,
+            allMatches: keyMatches.filter(match => match.percentage > 0) // Filter out 0% matches for brevity
+        };
+    }
+
     // Set initial progression with ChordFactory instances for each chord
     setProgression(initialProgression) {
-        this.progression = [];
+        const newChordFactoryMap = {};
+        // Create or reuse ChordFactory instances
         initialProgression.forEach(chord => {
-            console.log(chord)
             if (chord instanceof Chord) {
-                // Create a ChordFactory for each chord definition = Get All Possible Chords for the Chord                
-                let chordFactory = new ChordFactory(chord.notes, chord.rootNote, this.useRoot, this.tuning);
-                console.log(chordFactory)
-                this.progression.push(chordFactory);
+                let chordFactory;
+                if (this.chordFactoryMap[chord.name]) {
+                    chordFactory = this.chordFactoryMap[chord.name];
+                    console.log('ChordFactory retrieved for:', chord.name);
+
+                } else {
+                    chordFactory = new ChordFactory(chord, this.useRoot, this.tuning);
+                    console.log('New ChordFactory created for:', chord.name);
+                }
+                newChordFactoryMap[chord.name] = chordFactory;
             } else {
                 console.error('ProgressionGenerator: Invalid chord object in initial progression. Each chord must be an instance of Chord.');
             }
         });
+
+        // Update the hashmap and clear out unused ChordFactories
+        this.chordFactoryMap = newChordFactoryMap;
+
+        // Populate this.progression with references from the new map
+        this.progression = initialProgression.map(chord => this.chordFactoryMap[chord.name]);
+        this.getKey()
     }
 
     getProgression(type = 'basic') {
@@ -1672,6 +2008,52 @@ export class ProgressionGenerator {
             console.error('ProgressionGenerator: Invalid progression type requested.');
             return [];
         }
+    }
+
+    getPlaceholderHTML() {
+        const placeholderCount = 4; // Generate 1 to 3 placeholders
+        const diagramsContainer = document.createElement('div'); // Container for chord diagrams
+        diagramsContainer.style.opacity = 0.2
+        diagramsContainer.style.display = "flex"
+
+        for (let i = 0; i < placeholderCount; i++) {
+            // Example placeholder data
+
+
+            let voicing = [0, 0, 0, 0, 0, 0];
+  
+            // Create a set to keep track of chosen indices (to ensure uniqueness)
+            let indices = new Set();
+          
+            // Randomly choose 4 unique indices
+            while (indices.size < 4) {
+                let index = Math.floor(Math.random() * voicing.length);
+                indices.add(index);
+            }
+          
+            // Populate the chosen indices with random numbers between -1 and 4
+            indices.forEach(index => {
+                voicing[index] = Math.floor(Math.random() * 6) - 1; // Generates values from -1 to 4
+            });
+
+            const fingerPositions = [0,0,0,0,0,0]; // Positions for C major
+            const barreSize = 0; // No barre for this example
+
+            // Assuming TabGenerator can handle this static data
+            try {
+                const chordDiagram = new TabGenerator(voicing, fingerPositions, barreSize, null, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
+                const svg = chordDiagram.generateChordSVG();
+                diagramsContainer.appendChild(svg);
+            } catch (error) {
+                console.error('Error generating placeholder chord diagram:', error);
+            }
+        }
+        const textContent = document.createElement('div')
+        textContent.innerHTML = "Search Chords uding the Pinao Keys or the Search Bar. You can also use your MIDI Device."
+        textContent.style.display = "flex"
+        textContent.style.alignItems= "center"
+        diagramsContainer.appendChild(textContent);
+        return diagramsContainer; // Return the container with all placeholder SVGs
     }
 
     getProgressionHTML(desiredClasses = [], progressionType = "basic") {
@@ -1714,12 +2096,15 @@ export class ProgressionGenerator {
 
     getProgressionDynamicHTML(soundQuality = 0.5) {
         // Iterate over each entry in the progression, sort by combined rating, and get the first playable chord
+        if (this.progression.length<1){
+            return this.getPlaceholderHTML()
+        }
         this.progression.forEach(chordFactory => {
             chordFactory.sortPlayableChordsByCombinedRating(soundQuality);
         });
 
         let diagramsContainer = document.createElement('div'); // Container for chord diagrams
-console.log(this.progression)
+        console.log(this.progression)
 
 
         this.progression.forEach(chordFactory => {
@@ -1772,6 +2157,16 @@ import { TUNING } from './chord-factory/constants.js';
 
 
 document.addEventListener('DOMContentLoaded', () => {
+    function debounce(func, wait) {
+        let timeout;
+        return function () {
+            const context = this, args = arguments;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                func.apply(context, args);
+            }, wait);
+        };
+    }
 
 
     //Make Settings Button functional
@@ -1780,7 +2175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Toggle a class that controls the visibility and opacity
         settingsScreen.classList.toggle('visible');
     }
-    
+
 
 
     // Import the MidiManager
@@ -1861,7 +2256,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.clearProgression = function () {
-        document.getElementById("itemSearch").value = ""
         dragAndDropList.clearSelectedList();
         console.log("Selected Items cleared");
     };
@@ -1931,22 +2325,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (actualPressedKeys.size > 0) {
             // Convert actualPressedKeys to an array and sort it
             const sortedNotes = Array.from(actualPressedKeys.keys()).sort((a, b) => a - b);
-    
+
             // Determine if the lowest note should be set as the root note
             const lowestNote = sortedNotes[0];
             const lowestNoteMod12 = lowestNote % 12;
             let setRoot = false;
-    
+
             // Check if the lowest note is doubled in higher octaves
             if (sortedNotes.some(note => note !== lowestNote && note % 12 === lowestNoteMod12)) {
                 setRoot = true;
             }
-    
+
             // Check if the lowest note is 12 interval steps away from the second lowest note
-            if (sortedNotes.length > 1 && (sortedNotes[1] - lowestNote >= 6 )) {
+            if (sortedNotes.length > 1 && (sortedNotes[1] - lowestNote >= 6)) {
                 setRoot = true;
             }
-    
+
             // Set or clear the root note based on the above conditions
             if (setRoot) {
                 const visualKey = mapNoteToVisualKey(lowestNote);
@@ -1958,7 +2352,7 @@ document.addEventListener('DOMContentLoaded', () => {
             myPiano.clearRootNote();
         }
     }
-    
+
 
     window.addEventListener("statusUpdated", (e) => {
         document.getElementById("MIDIStatusDiv").innerHTML = e.detail
@@ -1981,31 +2375,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    let progressionGenerator = new ProgressionGenerator([], true, TUNING , "#ffffff", "onNote", true)
+    let soundQualityValue = 1;
+    let progressionGenerator = new ProgressionGenerator([], true, TUNING, "#ffffff", "onNote", true)
 
-    document.addEventListener('selectedItemsUpdated', function(event) {
+    document.addEventListener('selectedItemsUpdated', function (event) {
         console.log('Updated Selected Items:', event.detail.selectedItems);
-        console.log(typeof(event.detail.selectedItems[0]))
-        progressionGenerator.setProgression(event.detail.selectedItems) 
-        let progressionHTML = progressionGenerator.getProgressionHTML([], "basic")
-        console.log(progressionHTML)
-        document.getElementById("progressionWrappers").innerHTML = ""
-        document.getElementById("progressionWrappers").appendChild(progressionHTML)
+        progressionGenerator.setProgression(event.detail.selectedItems)
+        updateProgressionDynamic(soundQualityValue)
     });
 
 
     const soundQualitySlider = document.getElementById("soundQualitySlider");
-
     soundQualitySlider.addEventListener('input', (e) => {
-        const soundQualityValue = e.target.value / 100;
+        soundQualityValue = e.target.value / 100;
         console.log("Slider Value:", soundQualityValue);
-
-        let progressionHTML = progressionGenerator.getProgressionDynamicHTML(soundQualityValue);
-        document.getElementById("progressionWrappers").innerHTML = "";
-        document.getElementById("progressionWrappers").appendChild(progressionHTML);
+        updateProgressionDynamic(soundQualityValue)
     });
-    
-});
+
+    function updateProgressionDynamic(soundQualityValue) {
+        let progressionHTML = progressionGenerator.getProgressionDynamicHTML(soundQualityValue);
+        document.getElementById("dynamicProgressionWrapper").innerHTML = "";
+        document.getElementById("dynamicProgressionWrapper").appendChild(progressionHTML);
+    };
+
+
+    //Update the Progressions to get the PLaceholders:
+    updateProgressionDynamic(soundQualityValue)
+})
 
 
 File: index.html

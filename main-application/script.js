@@ -225,6 +225,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
+
+    //Scale Detector Listener
+    const scaleDisplay = document.getElementById("scaleDisplay")
+    window.addEventListener('scaleDetected', function (event) {
+        scaleDisplay.innerHTML = event.detail.scale
+    });
+
+
+
+
+
     let soundQualityValue = 1;
     let progressionGenerator = new ProgressionGenerator([], true, TUNING, "#ffffff", "onNote", true)
 

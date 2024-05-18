@@ -19,4 +19,7 @@ export function removeDuplicateArrays(arrays) {
   });
 }
 
-
+export function numberToNote(number) {
+  const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+  return number >= 0 ? notes[number % 12] : "Invalid number";
+}
