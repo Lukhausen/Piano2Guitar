@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="piano/style.css" />
     <link rel="stylesheet" href="./output-styles.css" />
     <link rel="stylesheet" href="./input-styles.css" />
+    <link rel="stylesheet" href="./slider-style.css" />
+
 
 
     <!-- FONT -->
@@ -87,12 +89,22 @@
         <div class="progression">
 
 
-            <div id="progressionWrappers"></div>
-            <div class="progressionInfo">DYNAMIC<br>Capo: 0 <input id="soundQualitySlider" type="range" min="0" max="100" value="50">
-            </div>
+            <div class="progressionWrapper" id="dynamicProgressionWrapper"></div>
+            <div class="progressionInfo">
+                <div class = "progressionInfoText">
+                    <div class="progressionInfoTextName"><i>DYNAMIC</i></div>
+                    <div class="progressionInfoTextSubtitle">Change from Easy to Play to The Most Beautifuzll Sound</div>
+                </div>
+                <div class="soundQualityWrapper">
+                    <input id="soundQualitySlider" type="range" min="0" max="100" value="50">
+                    <div class="soundQualityLables">
+                        <div>EASY</div>
+                        <div>BEST SOUND</div>
+                    </div>
+                </div>
 
+            </div>
         </div>
-    </div>
 </body>
 
 </html>

@@ -24,6 +24,66 @@ export class ProgressionGenerator {
         };
     }
 
+
+    getKey() {
+        let notesSet = new Set()
+        this.progression.forEach(element => {
+            element.notes.forEach(note => {
+                notesSet.add(note)
+            })
+        })
+        console.log("getKey - Noteset:", notesSet)
+        console.log(this.findKey(notesSet).highestMatch)
+        return notesSet
+    }
+
+    findKey(noteSet) {
+        const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        const majorScaleIntervals = [2, 2, 1, 2, 2, 2, 1];
+        const minorScaleIntervals = [2, 1, 2, 2, 1, 2, 2];
+
+        function generateScale(rootIndex, intervals) {
+            let scale = [rootIndex];
+            let currentIndex = rootIndex;
+            for (let interval of intervals) {
+                currentIndex = (currentIndex + interval) % 12;
+                scale.push(currentIndex);
+            }
+            return scale;
+        }
+
+        function getMatchPercentage(scale, noteSet) {
+            const matchCount = scale.filter(note => noteSet.has(note)).length;
+            return (matchCount / scale.length) * 100;
+        }
+
+        let keyMatches = [];
+        let highestMatch = { key: null, percentage: 0 };
+
+        notes.forEach((note, index) => {
+            const majorScale = generateScale(index, majorScaleIntervals);
+            const minorScale = generateScale(index, minorScaleIntervals);
+            const majorMatchPercentage = getMatchPercentage(majorScale, noteSet);
+            const minorMatchPercentage = getMatchPercentage(minorScale, noteSet);
+
+            keyMatches.push({ key: `${note} Major`, percentage: majorMatchPercentage });
+            keyMatches.push({ key: `${note} Minor`, percentage: minorMatchPercentage });
+
+            // Update highest match as needed
+            if (majorMatchPercentage > highestMatch.percentage) {
+                highestMatch = { key: `${note} Major`, percentage: majorMatchPercentage };
+            }
+            if (minorMatchPercentage > highestMatch.percentage) {
+                highestMatch = { key: `${note} Minor`, percentage: minorMatchPercentage };
+            }
+        });
+
+        return {
+            highestMatch: highestMatch,
+            allMatches: keyMatches.filter(match => match.percentage > 0) // Filter out 0% matches for brevity
+        };
+    }
+
     // Set initial progression with ChordFactory instances for each chord
     setProgression(initialProgression) {
         const newChordFactoryMap = {};
@@ -50,6 +110,7 @@ export class ProgressionGenerator {
 
         // Populate this.progression with references from the new map
         this.progression = initialProgression.map(chord => this.chordFactoryMap[chord.name]);
+        this.getKey()
     }
 
     getProgression(type = 'basic') {

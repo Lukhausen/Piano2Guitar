@@ -6,6 +6,7 @@
     --dark1: rgb(50, 57, 57);
     --dark2: rgb(35, 42, 42);
     --dark3: rgb(10, 20, 20);
+    --accent1:  rgb(255, 136, 0);
     --padding: 10px;
     --rounding: 7px;
 }
@@ -249,7 +250,7 @@ body {
     gap: var(--padding);
     border-radius: var(--rounding);
     overflow-y: auto;
-    max-height: 25%;
+    max-height: 15%;
 }
 
 .selectedItems {

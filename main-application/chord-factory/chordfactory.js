@@ -14,7 +14,6 @@ export class ChordFactory {
     this.fingerPositions = this.calculateFingerPositions();
     this.allChords = this.generateAllChordCombinations2()
     this.playableChords = this.filterPlayableChords(structuredClone(this.allChords))
-    this.sortPlayableChordsByRating(1)
     //this.getFretSpanStatistics()
     this.sortPlayableChordsByCombinedRating(1)
   }
@@ -144,11 +143,7 @@ export class ChordFactory {
           if (maskScope[string][validPosition] > 0 && maskScope[string][validPosition] < fret) {
             maskScope[string].splice(validPosition, 1);
           }
-
-
         }
-
-
       }
       //for (let i = 0; i < 6; i++) {
       //console.log("generateAllChordCombinations2 - maskScope: ", i, maskScope[i])
@@ -167,7 +162,6 @@ export class ChordFactory {
             //console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]])
 
             maskScope[string].push(this.fingerPositions[string][fingerIndexStorage[string]])
-            //Flag the next index to be looked at later
 
             for (let pos1 of maskScope[(string + 1) % 6]) {
               for (let pos2 of maskScope[(string + 2) % 6]) {
@@ -184,12 +178,14 @@ export class ChordFactory {
 
 
                       //console.log("NEW: ", newVoicing)
-                      chords.push([...newVoicing]);
+                      chords.push(newVoicing);
                     }
                   }
                 }
               }
             }
+            //Flag the next index to be looked at later
+
             fingerIndexStorage[string]++
 
           } else {
@@ -209,8 +205,7 @@ export class ChordFactory {
 
     // Calculate the time taken
     const timeTaken = endTime - startTime;
-    console.log("Time taken:", timeTaken, "milliseconds");
-    console.log(chords)
+    console.log("generateAllChordCombinations2 - Time taken:", timeTaken, "milliseconds");
     return chords;
   }
 
@@ -280,9 +275,6 @@ export class ChordFactory {
     return playableChords;
   }
 
-  sortPlayableChordsByRating() {
-    this.playableChords.sort((a, b) => a.rating - b.rating);
-  }
 
   /**
    * Sorts the playable chords by a combined rating based on sound quality and 

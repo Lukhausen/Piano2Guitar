@@ -1,0 +1,47 @@
+:root {
+    --light0: rgb(240, 240, 240);
+    --light1: rgb(220, 220, 220);
+    --light2: rgb(208, 208, 208);
+    --light3: rgb(143, 142, 142);
+    --dark1: rgb(50, 57, 57);
+    --dark2: rgb(35, 42, 42);
+    --dark3: rgb(10, 20, 20);
+    --padding: 10px;
+    --rounding: 7px;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: var(--padding);
+    background: var(--light1);
+    border-radius: var(--rounding);
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    margin:  calc(var(--padding)/2) 0px;
+    padding: 0;
+    border: 0;
+}
+
+input[type="range"]:hover {
+    opacity: 1;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: calc(2*var(--padding));
+    width: calc(2*var(--padding));
+    background: #ffa600;
+    cursor: pointer;
+    border-radius: 100%;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #04AA6D;
+    cursor: pointer;
+}

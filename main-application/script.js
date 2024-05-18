@@ -233,20 +233,22 @@ document.addEventListener('DOMContentLoaded', () => {
         progressionGenerator.setProgression(event.detail.selectedItems) 
         let progressionHTML = progressionGenerator.getProgressionHTML([], "basic")
         console.log(progressionHTML)
-        document.getElementById("progressionWrappers").innerHTML = ""
-        document.getElementById("progressionWrappers").appendChild(progressionHTML)
+        document.getElementById("dynamicProgressionWrapper").innerHTML = ""
+        document.getElementById("dynamicProgressionWrapper").appendChild(progressionHTML)
     });
 
 
+
+    //DYNMIC
     const soundQualitySlider = document.getElementById("soundQualitySlider");
 
     soundQualitySlider.addEventListener('input', (e) => {
         const soundQualityValue = e.target.value / 100;
         console.log("Slider Value:", soundQualityValue);
 
-        
         let progressionHTML = progressionGenerator.getProgressionDynamicHTML(soundQualityValue);
-        document.getElementById("progressionWrappers").innerHTML = "";
-        document.getElementById("progressionWrappers").appendChild(progressionHTML);
+        document.getElementById("dynamicProgressionWrapper").innerHTML = "";
+        document.getElementById("dynamicProgressionWrapper").appendChild(progressionHTML);
     });
+    
 });
