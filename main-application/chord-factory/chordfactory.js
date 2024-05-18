@@ -4,11 +4,12 @@ import { ChordVoicing } from './chordvoicing.js';
 
 
 export class ChordFactory {
-  constructor(notes, root, startWithRoot = true, tuning = TUNING) {
-    console.log("ChordFactory Recieved Notes: ", notes)
-    this.notes = notes;
+  constructor(chord, startWithRoot = true, tuning = TUNING) {
+    console.log("ChordFactory Recieved Notes: ", chord.notes)
+    this.identifier = chord.name
+    this.notes = chord.notes;
     this.startWithRoot = startWithRoot
-    this.root = root
+    this.root = chord.rootNote
     this.tuning = tuning;
     this.fingerPositions = this.calculateFingerPositions();
     this.allChords = this.generateAllChordCombinations2()

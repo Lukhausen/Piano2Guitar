@@ -244,9 +244,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const soundQualityValue = e.target.value / 100;
         console.log("Slider Value:", soundQualityValue);
 
+        
         let progressionHTML = progressionGenerator.getProgressionDynamicHTML(soundQualityValue);
         document.getElementById("progressionWrappers").innerHTML = "";
         document.getElementById("progressionWrappers").appendChild(progressionHTML);
     });
-    
 });

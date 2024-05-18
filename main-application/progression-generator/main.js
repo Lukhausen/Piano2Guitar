@@ -5,6 +5,7 @@ import { Chord } from '../chord-library/script.js';
 import TabGenerator from "../tab-generator/script.js"
 
 
+
 export class ProgressionGenerator {
     constructor(initialProgression = [], useRoot = true, tuning = TUNING, color, fingerNumbers = "belowString", showOpenStrings = true) {
         this.tuning = tuning;
@@ -13,7 +14,10 @@ export class ProgressionGenerator {
         this.showOpenStrings = showOpenStrings;
         this.progression = [];
         this.useRoot = useRoot; // This flag determines if the root note should be the starting note
+        this.chordFactoryMap = {}; // HashMap to store ChordFactory instances
+
         this.setProgression(initialProgression);
+
         this.progressionTypes = {
             basic: this.getProgressionBasic,
             // Add more progression types as methods here
@@ -22,18 +26,30 @@ export class ProgressionGenerator {
 
     // Set initial progression with ChordFactory instances for each chord
     setProgression(initialProgression) {
-        this.progression = [];
+        const newChordFactoryMap = {};
+        // Create or reuse ChordFactory instances
         initialProgression.forEach(chord => {
-            console.log(chord)
             if (chord instanceof Chord) {
-                // Create a ChordFactory for each chord definition = Get All Possible Chords for the Chord                
-                let chordFactory = new ChordFactory(chord.notes, chord.rootNote, this.useRoot, this.tuning);
-                console.log(chordFactory)
-                this.progression.push(chordFactory);
+                let chordFactory;
+                if (this.chordFactoryMap[chord.name]) {
+                    chordFactory = this.chordFactoryMap[chord.name];
+                    console.log('ChordFactory retrieved for:', chord.name);
+
+                } else {
+                    chordFactory = new ChordFactory(chord, this.useRoot, this.tuning);
+                    console.log('New ChordFactory created for:', chord.name);
+                }
+                newChordFactoryMap[chord.name] = chordFactory;
             } else {
                 console.error('ProgressionGenerator: Invalid chord object in initial progression. Each chord must be an instance of Chord.');
             }
         });
+
+        // Update the hashmap and clear out unused ChordFactories
+        this.chordFactoryMap = newChordFactoryMap;
+
+        // Populate this.progression with references from the new map
+        this.progression = initialProgression.map(chord => this.chordFactoryMap[chord.name]);
     }
 
     getProgression(type = 'basic') {
@@ -90,7 +106,7 @@ export class ProgressionGenerator {
         });
 
         let diagramsContainer = document.createElement('div'); // Container for chord diagrams
-console.log(this.progression)
+        console.log(this.progression)
 
 
         this.progression.forEach(chordFactory => {
