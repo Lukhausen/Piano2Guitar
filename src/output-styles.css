@@ -95,6 +95,11 @@
 
 }
 
+.progressionWrapper div svg::after{
+    content: "AM";
+    color: green;
+}
+
 @media only screen and (max-width: 1200px) {
     .progression {
         flex-direction: column;

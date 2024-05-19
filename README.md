@@ -46,9 +46,14 @@ The project is organized into several directories, each containing scripts and r
 ## Installation and Setup
 
 1. **Clone the repository:**
+
    ```bash
    git clone <repository-url>
    cd PianoToGuitar
+
+   npm install parcel-bundler@1.12.3 --save-dev
+   npm install parcel-plugin-obfuscate --save-dev
+
    ```
 
 2. **Install dependencies:**

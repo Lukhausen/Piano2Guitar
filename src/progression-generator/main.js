@@ -240,6 +240,7 @@ export class ProgressionGenerator {
         });
 
         let diagramsContainer = document.createElement('div'); // Container for chord diagrams
+        diagramsContainer.classList.add("progressionGeneratorContainer")
         console.log(this.progression)
 
 
@@ -250,7 +251,17 @@ export class ProgressionGenerator {
                 try {
                     const chordDiagram = new TabGenerator(chordFactory.playableChords[0].voicing, chordFactory.playableChords[0].fingerPositions, chordFactory.playableChords[0].barreSize, chordFactory.playableChords[0].barre, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
                     const svg = chordDiagram.generateChordSVG();
-                    diagramsContainer.appendChild(svg);
+                    let svgContainer = document.createElement('div'); // Container for chord diagrams
+                    svgContainer.classList.add("progressionGeneratorSvgContainer")
+
+                    let svgNameContainer = document.createElement('div'); // Container for chord diagrams
+                    svgNameContainer.innerHTML = chordFactory.identifier
+                    svgNameContainer.classList.add("progressionGeneratorSvgChordName")
+
+
+                    svgContainer.appendChild(svg);
+                    svgContainer.appendChild(svgNameContainer)
+                    diagramsContainer.appendChild(svgContainer)
                 } catch (error) {
                     console.error('Error generating chord diagram:', error);
                 }

@@ -1,0 +1,38 @@
+:root {
+    --light0: rgb(240, 240, 240);
+    --light1: rgb(220, 220, 220);
+    --light2: rgb(208, 208, 208);
+    --light3: rgb(143, 142, 142);
+    --dark1: rgb(50, 57, 57);
+    --dark2: rgb(35, 42, 42);
+    --dark3: rgb(10, 20, 20);
+    --accent1: rgb(255, 136, 0);
+    --padding: 10px;
+    --rounding: 7px;
+}
+
+
+.progressionGeneratorContainer{
+    display: flex;
+    gap: var(--padding);
+    
+}
+
+.progressionGeneratorSvgChordName {
+    background-color: var(--light0);
+    padding: calc(var(--padding) / 2) var(--padding);
+    border-radius: var(--rounding);
+    font-weight: 800;
+    box-sizing: border-box;
+    color: var(--dark2);
+    box-shadow: 0 0 10px #00000056, inset 0 0 3px #ffffff6e;
+    position: relative;
+    margin-right: calc(max(10vh, 7vw)/10);
+    top:calc(calc(max(10vh, 7vw)/10)*-1)
+}
+
+.progressionGeneratorSvgContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

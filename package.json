@@ -1,0 +1,25 @@
+{
+  "name": "pianotoguitar",
+  "version": "1.0.0",
+  "description": "PianoToGuitar is a web-based application that assists musicians in generating guitar chord diagrams based on piano inputs or MIDI integration. This project allows users to visualize guitar chords that correspond to piano notes, helping bridge the gap between piano and guitar players. The application supports dynamic chord progression generation, drag-and-drop chord selection, and customization of chord diagrams.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "parcel src/index.html",
+    "prod": "parcel build src/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lukhausen/Piano2Guitar.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lukhausen/Piano2Guitar/issues"
+  },
+  "homepage": "https://github.com/Lukhausen/Piano2Guitar#readme",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.3",
+    "parcel-plugin-obfuscate": "^2.1.1"
+  }
+}
