@@ -23,6 +23,8 @@ input[type="range"] {
     margin:  calc(var(--padding)/2) 0px;
     padding: 0;
     border: 0;
+    box-shadow: 0 0 1vw rgba(0, 0, 0, 0.312);
+
 }
 
 input[type="range"]:hover {
@@ -37,6 +39,8 @@ input[type="range"]::-webkit-slider-thumb {
     background: #ffa600;
     cursor: pointer;
     border-radius: 100%;
+    box-shadow: 0 0 1vw rgba(0, 0, 0, 0.312);
+
 }
 
 input[type="range"]::-moz-range-thumb {

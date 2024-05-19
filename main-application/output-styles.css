@@ -3,10 +3,10 @@
     --light1: rgb(220, 220, 220);
     --light2: rgb(208, 208, 208);
     --light3: rgb(143, 142, 142);
-    --dark1: rgb(50, 57, 57);
+    --dark1: #323939;
     --dark2: rgb(35, 42, 42);
     --dark3: rgb(10, 20, 20);
-    --accent1:  rgb(255, 136, 0);
+    --accent1: rgb(255, 136, 0);
     --padding: 10px;
     --rounding: 7px;
 }
@@ -18,9 +18,7 @@
     flex-basis: 0px;
     overflow-y: auto;
     background-color: var(--dark2);
-    border-radius: 0 0  var(--rounding) var(--rounding);
-
-
+    border-radius: 0 0 var(--rounding) var(--rounding);
 }
 
 .progression {
@@ -33,22 +31,23 @@
     box-shadow: 0 0 1vw rgba(0, 0, 0, 0.474);
     padding: var(--padding);
     gap: var(--padding);
+    background-color: #323939;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%236d6d6d' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+
 
 }
 
 .progressionInfo {
-    gap:  calc(2*var(--padding));
+    gap: calc(2*var(--padding));
     justify-content: space-between;
     display: flex;
     flex-direction: column;
-    background-color: var(--dark1);
     /*background: linear-gradient(90deg, rgba(141, 141, 141, 0) 0%, var(--dark2) 100%);*/
     border-radius: 0 var(--rounding) var(--rounding) 0;
     max-width: 25%;
 }
 
-
-.progressionInfoText{
+.progressionInfoText {
     display: flex;
     flex-direction: column;
     color: var(--accent1);
@@ -70,7 +69,8 @@
     flex-direction: row;
     justify-content: space-between;
     font-size: small;
-    font-weight: 1;color: var(--light2);
+    font-weight: 1;
+    color: var(--light2);
 
 }
 
@@ -80,19 +80,19 @@
     justify-content: end;
 }
 
-
-
 .progressionWrapper {
     display: flex;
     flex: 1;
-    background-color: var(--dark1);
     align-items: center;
-user-select: none;
+    user-select: none;
+
 }
 
 .progressionWrapper div svg {
     height: max(10vh, 7vw);
     width: auto;
+    filter: drop-shadow(0 0 0.5vw #00000058);
+
 }
 
 @media only screen and (max-width: 1200px) {
@@ -103,17 +103,17 @@ user-select: none;
     .progressionInfo {
         flex-direction: row;
         max-width: 100%;
-        border-radius: 0  0  var(--rounding) var(--rounding) ;
-
+        border-radius: 0 0 var(--rounding) var(--rounding);
     }
-    .progressionInfoText{
-            max-width: 50%;
 
+    .progressionInfoText {
+        max-width: 50%;
     }
 
     .soundQualityWrapper {
         flex: 1;
     }
+
     .progressionInfoTextSubtitle {
         font-size: small;
     }
