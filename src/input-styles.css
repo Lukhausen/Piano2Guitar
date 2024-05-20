@@ -365,7 +365,7 @@ body {
 
 
 
-@media only screen and (max-width: 1200px) {
+@media screen and (orientation: portrait) {
     .searchContainer {
         flex-direction: column;
     }

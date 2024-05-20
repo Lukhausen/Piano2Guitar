@@ -100,7 +100,7 @@
     color: green;
 }
 
-@media only screen and (max-width: 1200px) {
+@media screen and (orientation: portrait) {
     .progression {
         flex-direction: column;
     }
