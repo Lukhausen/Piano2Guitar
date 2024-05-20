@@ -2,6 +2,7 @@
 
 actor User
 
+participant "Website" as Website
 participant "Piano" as Piano
 participant "MIDIAccessManager" as MIDIManager
 participant "ChordLibrary" as ChordLib
@@ -14,38 +15,39 @@ participant "Chord" as Chord
 participant "Utils" as Utils
 participant "Constants" as Constants
 
+
 == Initialization ==
-User -> Piano: Initialize Piano
+Website -> Piano: Initialize Piano
 activate Piano
 Piano -> Piano: createPiano()
 Piano -> Piano: addKeyListeners()
 deactivate Piano
 
-User -> MIDIManager: Initialize MIDIManager
+Website -> MIDIManager: Initialize MIDIManager
 activate MIDIManager
 MIDIManager -> MIDIManager: attemptMIDIAccess()
 alt MIDI Access Success
     MIDIManager -> MIDIManager: onMIDISuccess()
     MIDIManager -> MIDIManager: addMIDIInputs(inputs)
-    MIDIManager -> User: Dispatch statusUpdated
+    MIDIManager -> Website: Dispatch statusUpdated
 else MIDI Access Failure
     MIDIManager -> MIDIManager: onMIDIFailure()
     MIDIManager -> MIDIManager: handleRetry()
 end
 deactivate MIDIManager
 
-User -> ChordLib: Initialize ChordLibrary
+Website -> ChordLib: Initialize ChordLibrary
 activate ChordLib
 ChordLib -> ChordLib: generateChords()
 deactivate ChordLib
 
-User -> DragDrop: Initialize DragAndDropList
+Website -> DragDrop: Initialize DragAndDropList
 activate DragDrop
 DragDrop -> ChordLib: getAllChords()
 DragDrop -> DragDrop: populateItemsList()
 deactivate DragDrop
 
-User -> ProgGen: Initialize ProgressionGenerator
+Website -> ProgGen: Initialize ProgressionGenerator
 activate ProgGen
 ProgGen -> ProgGen: setProgression(initialProgression)
 deactivate ProgGen
@@ -74,10 +76,7 @@ DragDrop -> ProgGen: setProgression(selectedItems)
 deactivate DragDrop
 
 activate ProgGen
-ProgGen -> ChordLib: getChordByName(name)
-activate ChordLib
-ChordLib -> Chord: new Chord(rootNote, notes, name, customRoot)
-deactivate ChordLib
+ProgGen -> ProgGen: Calculates Delta to old Progression
 ProgGen -> ChordFact: new ChordFactory(chord, useRoot, tuning)
 activate ChordFact
 ChordFact -> Constants: Import constants
@@ -89,7 +88,7 @@ ChordFact -> ProgGen: return ChordFactory instance
 deactivate ChordFact
 
 ProgGen -> ProgGen: analyzeKey()
-ProgGen -> User: Dispatch scaleDetected event
+ProgGen -> Website: Dispatch scaleDetected event
 deactivate ProgGen
 
 == Displaying Chord Diagrams ==
@@ -98,7 +97,7 @@ activate ProgGen
 ProgGen -> ChordFact: sortPlayableChordsByCombinedRating(soundQuality)
 ProgGen -> TabGen: new TabGenerator(chordVoicing.voicing, chordVoicing.fingerPositions, ...)
 activate TabGen
-TabGen -> User: Display Chord Diagram
+TabGen -> Website: Display Chord Diagram
 deactivate TabGen
 deactivate ProgGen
 
