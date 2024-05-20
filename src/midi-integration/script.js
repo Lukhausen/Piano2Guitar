@@ -1,7 +1,7 @@
 export class MIDIAccessManager {
     constructor() {
         this.retryCount = 0;
-        this.maxRetries = 5;
+        this.maxRetries = 50;
         this.notesPlayed = new Set();
         this.activeNotes = new Set();
 
@@ -22,9 +22,14 @@ export class MIDIAccessManager {
     }
 
     onMIDISuccess(midiAccess) {
-        this.updateStatus("MIDI ready!");
+        this.updateStatus("MIDI ready...");
+        this.midiAccess = midiAccess; // Store midiAccess for later use
         midiAccess.onstatechange = this.updateDeviceState.bind(this);
-        Array.from(midiAccess.inputs.values()).forEach(input => input.onmidimessage = this.onMIDIMessage.bind(this));
+        this.addMIDIInputs(midiAccess.inputs);
+    }
+
+    addMIDIInputs(inputs) {
+        Array.from(inputs.values()).forEach(input => input.onmidimessage = this.onMIDIMessage.bind(this));
     }
 
     onMIDIFailure() {
@@ -36,7 +41,7 @@ export class MIDIAccessManager {
         if (this.retryCount < this.maxRetries) {
             this.retryCount++;
             console.log(`Retrying... Attempt ${this.retryCount}`);
-            setTimeout(() => this.attemptMIDIAccess(), 1000); // Retry after 1 second
+            setTimeout(() => this.attemptMIDIAccess(), 3000); // Retry after 3 seconds
         } else {
             console.error(`Failed to connect after ${this.maxRetries} attempts: ${err.message}`);
             this.updateStatus(`No MIDI Devices found.`);
@@ -75,7 +80,16 @@ export class MIDIAccessManager {
         const status = `MIDI: ${port.name} ${port.state}`;
         this.updateStatus(status);
         window.dispatchEvent(new CustomEvent('deviceStateChanged', { detail: { name: port.name, state: port.state } }));
+
+        if (port.state === "disconnected" || port.state === "unavailable") {
+            this.handleDisconnection();
+        }
+    }
+
+    handleDisconnection() {
+        console.log("MIDI device disconnected. Attempting to reconnect...");
+        this.attemptMIDIAccess();
     }
 }
 
-export default MIDIAccessManager
+export default MIDIAccessManager;

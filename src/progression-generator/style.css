@@ -15,7 +15,7 @@
 .progressionGeneratorContainer{
     display: flex;
     gap: var(--padding);
-    
+    flex-wrap: wrap;
 }
 
 .progressionGeneratorSvgChordName {

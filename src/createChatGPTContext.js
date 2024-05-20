@@ -13,7 +13,7 @@ function getDirectoryStructure(dir, fileStructure = {}, parentPath = '') {
     if (stats.isDirectory()) {
       fileStructure[item] = {};
       getDirectoryStructure(fullPath, fileStructure[item], path.join(parentPath, item));
-    } else if (isHtmlOrJsFile(item)) {
+    } else {
       fileStructure[item] = {
         path: fullPath,
         relativePath: path.join(parentPath, item),
@@ -48,7 +48,7 @@ function formatStructure(fileStructure, indent = 0) {
   for (const key in fileStructure) {
     if (typeof fileStructure[key] === 'object' && 'relativePath' in fileStructure[key]) {
       const { relativePath, size, lastModified } = fileStructure[key];
-      structureText += `${indentString}${key} (Path: ${relativePath}, Size: ${size} bytes, Last Modified: ${lastModified})\n`;
+      structureText += `${indentString}${key} (Path: ${relativePath}, Size: ${size} bytes)\n`;
     } else {
       structureText += `${indentString}${key}/\n`;
       structureText += formatStructure(fileStructure[key], indent + 2);

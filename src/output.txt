@@ -1,36 +1,69 @@
 Directory Structure:
 audio/
+  0.mp3 (Path: audio\0.mp3, Size: 200619 bytes)
+  1.mp3 (Path: audio\1.mp3, Size: 200619 bytes)
+  10.mp3 (Path: audio\10.mp3, Size: 200619 bytes)
+  11.mp3 (Path: audio\11.mp3, Size: 200619 bytes)
+  12.mp3 (Path: audio\12.mp3, Size: 200619 bytes)
+  13.mp3 (Path: audio\13.mp3, Size: 200619 bytes)
+  14.mp3 (Path: audio\14.mp3, Size: 200619 bytes)
+  15.mp3 (Path: audio\15.mp3, Size: 200619 bytes)
+  16.mp3 (Path: audio\16.mp3, Size: 200619 bytes)
+  17.mp3 (Path: audio\17.mp3, Size: 200619 bytes)
+  18.mp3 (Path: audio\18.mp3, Size: 200619 bytes)
+  19.mp3 (Path: audio\19.mp3, Size: 200619 bytes)
+  2.mp3 (Path: audio\2.mp3, Size: 200619 bytes)
+  20.mp3 (Path: audio\20.mp3, Size: 200619 bytes)
+  21.mp3 (Path: audio\21.mp3, Size: 200619 bytes)
+  22.mp3 (Path: audio\22.mp3, Size: 200619 bytes)
+  23.mp3 (Path: audio\23.mp3, Size: 200619 bytes)
+  3.mp3 (Path: audio\3.mp3, Size: 200619 bytes)
+  4.mp3 (Path: audio\4.mp3, Size: 200619 bytes)
+  5.mp3 (Path: audio\5.mp3, Size: 200619 bytes)
+  6.mp3 (Path: audio\6.mp3, Size: 200619 bytes)
+  7.mp3 (Path: audio\7.mp3, Size: 200619 bytes)
+  8.mp3 (Path: audio\8.mp3, Size: 200619 bytes)
+  9.mp3 (Path: audio\9.mp3, Size: 200619 bytes)
+  silence.mp3 (Path: audio\silence.mp3, Size: 5223 bytes)
 chord-factory/
-  chordfactory.js (Path: chord-factory\chordfactory.js, Size: 11864 bytes, Last Modified: Sun May 19 2024 20:16:23 GMT+0200 (Mitteleuropäische Sommerzeit))
-  chordvoicing.js (Path: chord-factory\chordvoicing.js, Size: 11247 bytes, Last Modified: Sun May 19 2024 20:16:23 GMT+0200 (Mitteleuropäische Sommerzeit))
-  constants.js (Path: chord-factory\constants.js, Size: 343 bytes, Last Modified: Sun May 19 2024 20:16:23 GMT+0200 (Mitteleuropäische Sommerzeit))
-  main.js (Path: chord-factory\main.js, Size: 1096 bytes, Last Modified: Sun May 19 2024 20:16:23 GMT+0200 (Mitteleuropäische Sommerzeit))
-  utils.js (Path: chord-factory\utils.js, Size: 754 bytes, Last Modified: Sun May 19 2024 20:16:23 GMT+0200 (Mitteleuropäische Sommerzeit))
+  chordfactory.js (Path: chord-factory\chordfactory.js, Size: 11864 bytes)
+  chordvoicing.js (Path: chord-factory\chordvoicing.js, Size: 11247 bytes)
+  constants.js (Path: chord-factory\constants.js, Size: 343 bytes)
+  main.js (Path: chord-factory\main.js, Size: 1096 bytes)
+  package.json (Path: chord-factory\package.json, Size: 169 bytes)
+  utils.js (Path: chord-factory\utils.js, Size: 754 bytes)
 chord-library/
-  script.js (Path: chord-library\script.js, Size: 9395 bytes, Last Modified: Sun May 19 2024 20:16:23 GMT+0200 (Mitteleuropäische Sommerzeit))
-createChatGPTContext.js (Path: createChatGPTContext.js, Size: 2867 bytes, Last Modified: Mon May 20 2024 01:01:16 GMT+0200 (Mitteleuropäische Sommerzeit))
+  script.js (Path: chord-library\script.js, Size: 9395 bytes)
+createChatGPTContext.js (Path: createChatGPTContext.js, Size: 2809 bytes)
 drag-drop/
-  script.js (Path: drag-drop\script.js, Size: 14001 bytes, Last Modified: Sun May 19 2024 20:16:23 GMT+0200 (Mitteleuropäische Sommerzeit))
-  styles.css (Path: drag-drop\styles.css, Size: 1343 bytes, Last Modified: Sun May 19 2024 20:16:23 GMT+0200 (Mitteleuropäische Sommerzeit))
-index.html (Path: index.html, Size: 5806 bytes, Last Modified: Sun May 19 2024 23:30:40 GMT+0200 (Mitteleuropäische Sommerzeit))
-index.js (Path: index.js, Size: 10016 bytes, Last Modified: Sun May 19 2024 20:16:23 GMT+0200 (Mitteleuropäische Sommerzeit))
-input-styles.css (Path: input-styles.css, Size: 8963 bytes, Last Modified: Sun May 19 2024 23:30:53 GMT+0200 (Mitteleuropäische Sommerzeit))
+  script.js (Path: drag-drop\script.js, Size: 14001 bytes)
+  styles.css (Path: drag-drop\styles.css, Size: 1343 bytes)
+index.html (Path: index.html, Size: 5806 bytes)
+index.js (Path: index.js, Size: 10016 bytes)
+input-styles.css (Path: input-styles.css, Size: 8963 bytes)
 midi-integration/
-  index.html (Path: midi-integration\index.html, Size: 263 bytes, Last Modified: Sun May 19 2024 20:16:23 GMT+0200 (Mitteleuropäische Sommerzeit))
-  script.js (Path: midi-integration\script.js, Size: 2996 bytes, Last Modified: Sun May 19 2024 20:16:23 GMT+0200 (Mitteleuropäische Sommerzeit))
-output-styles.css (Path: output-styles.css, Size: 2807 bytes, Last Modified: Sun May 19 2024 23:24:01 GMT+0200 (Mitteleuropäische Sommerzeit))
+  index.html (Path: midi-integration\index.html, Size: 263 bytes)
+  script.js (Path: midi-integration\script.js, Size: 2996 bytes)
+output-styles.css (Path: output-styles.css, Size: 2807 bytes)
+output.txt (Path: output.txt, Size: 127539 bytes)
 piano/
-  script.js (Path: piano\script.js, Size: 9866 bytes, Last Modified: Sun May 19 2024 20:16:23 GMT+0200 (Mitteleuropäische Sommerzeit))
-  style.css (Path: piano\style.css, Size: 1122 bytes, Last Modified: Sun May 19 2024 20:16:23 GMT+0200 (Mitteleuropäische Sommerzeit))
+  script.js (Path: piano\script.js, Size: 9866 bytes)
+  style.css (Path: piano\style.css, Size: 1122 bytes)
 progression-generator/
-  main.js (Path: progression-generator\main.js, Size: 13948 bytes, Last Modified: Mon May 20 2024 00:49:04 GMT+0200 (Mitteleuropäische Sommerzeit))
-  style.css (Path: progression-generator\style.css, Size: 952 bytes, Last Modified: Mon May 20 2024 00:19:56 GMT+0200 (Mitteleuropäische Sommerzeit))
-slider-style.css (Path: slider-style.css, Size: 1167 bytes, Last Modified: Sun May 19 2024 20:16:23 GMT+0200 (Mitteleuropäische Sommerzeit))
+  main.js (Path: progression-generator\main.js, Size: 13948 bytes)
+  package.json (Path: progression-generator\package.json, Size: 169 bytes)
+  style.css (Path: progression-generator\style.css, Size: 952 bytes)
+slider-style.css (Path: slider-style.css, Size: 1167 bytes)
 svg/
+  play.svg (Path: svg\play.svg, Size: 420 bytes)
+  settings.svg (Path: svg\settings.svg, Size: 460 bytes)
+  trashcan.svg (Path: svg\trashcan.svg, Size: 276 bytes)
+  volume_off.svg (Path: svg\volume_off.svg, Size: 476 bytes)
+  volume_up.svg (Path: svg\volume_up.svg, Size: 359 bytes)
 tab-generator/
-  index.html (Path: tab-generator\index.html, Size: 1524 bytes, Last Modified: Sun May 19 2024 20:16:23 GMT+0200 (Mitteleuropäische Sommerzeit))
-  script.js (Path: tab-generator\script.js, Size: 9496 bytes, Last Modified: Sun May 19 2024 20:16:23 GMT+0200 (Mitteleuropäische Sommerzeit))
-  styles.css (Path: tab-generator\styles.css, Size: 1094 bytes, Last Modified: Sun May 19 2024 20:16:23 GMT+0200 (Mitteleuropäische Sommerzeit))
+  index.html (Path: tab-generator\index.html, Size: 1524 bytes)
+  script.js (Path: tab-generator\script.js, Size: 9496 bytes)
+  styles.css (Path: tab-generator\styles.css, Size: 1094 bytes)
 
 File Contents:
 File: chordfactory.js
@@ -1004,7 +1037,7 @@ function getDirectoryStructure(dir, fileStructure = {}, parentPath = '') {
     if (stats.isDirectory()) {
       fileStructure[item] = {};
       getDirectoryStructure(fullPath, fileStructure[item], path.join(parentPath, item));
-    } else if (isHtmlOrJsFile(item)) {
+    } else {
       fileStructure[item] = {
         path: fullPath,
         relativePath: path.join(parentPath, item),
@@ -1039,7 +1072,7 @@ function formatStructure(fileStructure, indent = 0) {
   for (const key in fileStructure) {
     if (typeof fileStructure[key] === 'object' && 'relativePath' in fileStructure[key]) {
       const { relativePath, size, lastModified } = fileStructure[key];
-      structureText += `${indentString}${key} (Path: ${relativePath}, Size: ${size} bytes, Last Modified: ${lastModified})\n`;
+      structureText += `${indentString}${key} (Path: ${relativePath}, Size: ${size} bytes)\n`;
     } else {
       structureText += `${indentString}${key}/\n`;
       structureText += formatStructure(fileStructure[key], indent + 2);
