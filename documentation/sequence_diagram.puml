@@ -1,0 +1,111 @@
+@startuml
+
+actor User
+
+participant "Piano" as Piano
+participant "MIDIAccessManager" as MIDIManager
+participant "ChordLibrary" as ChordLib
+participant "DragAndDropList" as DragDrop
+participant "ProgressionGenerator" as ProgGen
+participant "ChordFactory" as ChordFact
+participant "ChordVoicing" as ChordVoice
+participant "TabGenerator" as TabGen
+participant "Chord" as Chord
+participant "Utils" as Utils
+participant "Constants" as Constants
+
+== Initialization ==
+User -> Piano: Initialize Piano
+activate Piano
+Piano -> Piano: createPiano()
+Piano -> Piano: addKeyListeners()
+deactivate Piano
+
+User -> MIDIManager: Initialize MIDIManager
+activate MIDIManager
+MIDIManager -> MIDIManager: attemptMIDIAccess()
+alt MIDI Access Success
+    MIDIManager -> MIDIManager: onMIDISuccess()
+    MIDIManager -> MIDIManager: addMIDIInputs(inputs)
+    MIDIManager -> User: Dispatch statusUpdated
+else MIDI Access Failure
+    MIDIManager -> MIDIManager: onMIDIFailure()
+    MIDIManager -> MIDIManager: handleRetry()
+end
+deactivate MIDIManager
+
+User -> ChordLib: Initialize ChordLibrary
+activate ChordLib
+ChordLib -> ChordLib: generateChords()
+deactivate ChordLib
+
+User -> DragDrop: Initialize DragAndDropList
+activate DragDrop
+DragDrop -> ChordLib: getAllChords()
+DragDrop -> DragDrop: populateItemsList()
+deactivate DragDrop
+
+User -> ProgGen: Initialize ProgressionGenerator
+activate ProgGen
+ProgGen -> ProgGen: setProgression(initialProgression)
+deactivate ProgGen
+
+== MIDI Input and Piano Interaction ==
+MIDIManager -> MIDIManager: handleNoteOn(note)
+MIDIManager -> Piano: Dispatch noteOn
+activate Piano
+Piano -> Piano: activateKey(note)
+Piano -> ChordLib: searchChords(notes, rootNote)
+activate ChordLib
+ChordLib -> DragDrop: updateItems(searchResults)
+deactivate ChordLib
+deactivate Piano
+
+MIDIManager -> MIDIManager: handleNoteOff(note)
+MIDIManager -> Piano: Dispatch noteOff
+activate Piano
+Piano -> Piano: deactivateKey(note)
+deactivate Piano
+
+== Chord Progression Generation ==
+User -> DragDrop: Add Chord to Progression
+activate DragDrop
+DragDrop -> ProgGen: setProgression(selectedItems)
+deactivate DragDrop
+
+activate ProgGen
+ProgGen -> ChordLib: getChordByName(name)
+activate ChordLib
+ChordLib -> Chord: new Chord(rootNote, notes, name, customRoot)
+deactivate ChordLib
+ProgGen -> ChordFact: new ChordFactory(chord, useRoot, tuning)
+activate ChordFact
+ChordFact -> Constants: Import constants
+ChordFact -> Utils: parseNotes(notes)
+activate ChordVoice
+ChordFact -> ChordVoice: new ChordVoicing(voicing, barre, fingersUsed, ...)
+deactivate ChordVoice
+ChordFact -> ProgGen: return ChordFactory instance
+deactivate ChordFact
+
+ProgGen -> ProgGen: analyzeKey()
+ProgGen -> User: Dispatch scaleDetected event
+deactivate ProgGen
+
+== Displaying Chord Diagrams ==
+User -> ProgGen: Get Dynamic Progression
+activate ProgGen
+ProgGen -> ChordFact: sortPlayableChordsByCombinedRating(soundQuality)
+ProgGen -> TabGen: new TabGenerator(chordVoicing.voicing, chordVoicing.fingerPositions, ...)
+activate TabGen
+TabGen -> User: Display Chord Diagram
+deactivate TabGen
+deactivate ProgGen
+
+== Playing Chord Progression ==
+User -> Piano: Play Chord Progression
+activate Piano
+Piano -> Piano: playChord()
+deactivate Piano
+
+@enduml

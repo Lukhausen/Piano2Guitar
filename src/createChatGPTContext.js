@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 function isHtmlOrJsFile(file) {
-  return file.endsWith('.html') || file.endsWith('.js') || file.endsWith('.css')  ;
+  return file.endsWith('.html') || file.endsWith('.js') ;
 }
 
 function getDirectoryStructure(dir, fileStructure = {}, parentPath = '') {

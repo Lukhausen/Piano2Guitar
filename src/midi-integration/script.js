@@ -33,7 +33,7 @@ export class MIDIAccessManager {
     }
 
     onMIDIFailure() {
-        this.updateStatus("No MIDI Devices found...");
+        this.updateStatus("");
         this.handleRetry(new Error("Initial connection failed"));
     }
 

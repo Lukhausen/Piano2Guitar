@@ -66,6 +66,8 @@ body {
     box-sizing: border-box;
     width: 80vw;
     height: 90vh;
+    
+    min-height: 500px;
     display: flex;
     flex-direction: column;
 }
@@ -310,6 +312,7 @@ body {
     cursor: pointer;
     transition: 0.15s;
     box-shadow: 0 0 10px #00000056, inset 0 0 3px #ffffff6e;
+    
 }
 
 .dragDropItem:hover {
@@ -399,4 +402,14 @@ body {
         height: 100dvh;
 
     }
-}
+    html{
+        align-items: baseline;
+
+    }
+
+    :root {
+        --padding: 5px;
+    }
+.visualPianoIcon{
+    width: max(3vh, 3vw);
+}}
