@@ -55,6 +55,7 @@ deactivate ProgGen
 == MIDI Input and Piano Interaction ==
 MIDIManager -> MIDIManager: handleNoteOn(note)
 MIDIManager -> Piano: Dispatch noteOn
+User -> Piano: Selects Notes
 activate Piano
 Piano -> Piano: activateKey(note)
 Piano -> ChordLib: searchChords(notes, rootNote)
@@ -65,8 +66,13 @@ deactivate Piano
 
 MIDIManager -> MIDIManager: handleNoteOff(note)
 MIDIManager -> Piano: Dispatch noteOff
+User -> Piano: Deselects Notes
 activate Piano
 Piano -> Piano: deactivateKey(note)
+Piano -> ChordLib: searchChords(notes, rootNote)
+activate ChordLib
+ChordLib -> DragDrop: updateItems(searchResults)
+deactivate ChordLib
 deactivate Piano
 
 == Chord Progression Generation ==
