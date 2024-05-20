@@ -123,3 +123,12 @@
         font-size: small;
     }
 }
+
+@media only screen and (max-width: 1200px){
+    body {
+        width: 100vw;
+        height:100vh;
+        height: 100dvh;
+
+    }
+}
