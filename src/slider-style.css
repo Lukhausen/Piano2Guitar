@@ -44,8 +44,12 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 input[type="range"]::-moz-range-thumb {
-    width: 25px;
-    height: 25px;
-    background: #04AA6D;
+    -webkit-appearance: none;
+    appearance: none;
+    height: calc(2*var(--padding));
+    width: calc(2*var(--padding));
+    background: #ffa600;
     cursor: pointer;
+    border-radius: 100%;
+    box-shadow: 0 0 1vw rgba(0, 0, 0, 0.312);
 }
