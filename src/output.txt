@@ -35,17 +35,19 @@ chord-factory/
 chord-library/
   script.js (Path: chord-library\script.js, Size: 9395 bytes)
 createChatGPTContext.js (Path: createChatGPTContext.js, Size: 2783 bytes)
+css/
+  input-styles.css (Path: css\input-styles.css, Size: 9294 bytes)
+  output-styles.css (Path: css\output-styles.css, Size: 2436 bytes)
+  slider-style.css (Path: css\slider-style.css, Size: 1043 bytes)
 drag-drop/
   script.js (Path: drag-drop\script.js, Size: 14001 bytes)
   styles.css (Path: drag-drop\styles.css, Size: 1343 bytes)
-index.html (Path: index.html, Size: 5806 bytes)
+index.html (Path: index.html, Size: 5812 bytes)
 index.js (Path: index.js, Size: 10016 bytes)
-input-styles.css (Path: input-styles.css, Size: 9294 bytes)
 midi-integration/
   index.html (Path: midi-integration\index.html, Size: 263 bytes)
   script.js (Path: midi-integration\script.js, Size: 3424 bytes)
-output-styles.css (Path: output-styles.css, Size: 2436 bytes)
-output.txt (Path: output.txt, Size: 110051 bytes)
+output.txt (Path: output.txt, Size: 110065 bytes)
 piano/
   script.js (Path: piano\script.js, Size: 9866 bytes)
   style.css (Path: piano\style.css, Size: 1122 bytes)
@@ -53,7 +55,6 @@ progression-generator/
   main.js (Path: progression-generator\main.js, Size: 13948 bytes)
   package.json (Path: progression-generator\package.json, Size: 169 bytes)
   style.css (Path: progression-generator\style.css, Size: 968 bytes)
-slider-style.css (Path: slider-style.css, Size: 1043 bytes)
 svg/
   play.svg (Path: svg\play.svg, Size: 420 bytes)
   settings.svg (Path: svg\settings.svg, Size: 460 bytes)
@@ -1486,9 +1487,9 @@ Path: index.html
     <!-- STYLESHEETS -->
     <link rel="stylesheet" href="piano/style.css" />
     <link rel="stylesheet" href="progression-generator/style.css" />
-    <link rel="stylesheet" href="./output-styles.css" />
-    <link rel="stylesheet" href="./input-styles.css" />
-    <link rel="stylesheet" href="./slider-style.css" />
+    <link rel="stylesheet" href="css/output-styles.css" />
+    <link rel="stylesheet" href="css/input-styles.css" />
+    <link rel="stylesheet" href="css/slider-style.css" />
 
 
 

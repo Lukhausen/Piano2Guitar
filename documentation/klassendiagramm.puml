@@ -1,0 +1,154 @@
+@startuml klassendiagramm
+!define DOMElement class
+skinparam packageStyle rect
+left to right direction
+skinparam linetype ortho
+
+
+
+package "SupportComponents" {
+    ' Helper functions and utilities
+    class Utils {
+        Provides helper functions.
+        +parseNotes(input)
+        +removeDuplicateArrays(arrays)
+    }
+
+    ' Constants storage
+    class Constants {
+        Stores static constants used across the application.
+    }
+
+    ' Chord library and search
+    class ChordLibrary {
+        Stores predefined chords.
+        Provides search functionality for chords.
+        +searchChords(noteArray, rootNote, threshold)
+        +getAllChords()
+        +getChordByName(name)
+    }
+
+    ' Chord basic representation
+    class Chord {
+        Represents a chord with root note, notes, name, and custom root.
+        +Chord(rootNote, notes, name, customRoot)
+    }
+}
+
+
+package "Generator" {
+    package "Chord Generator" {
+        ' Drag-and-drop chord item
+        class DragAndDropItem {
+            Represents a chord in the drag-and-drop interface.
+            +DragAndDropItem(chord, probability = -1)
+        }
+
+        ' Chord voicing and evaluation
+        class ChordFactory {
+            Generates possible chord voicings.
+            Evaluates playability and sound quality.
+            +ChordFactory(notes, root, startWithRoot = true, tuning = STANDARD_TUNING)
+            +calculateFingerPositions()
+            +generateAllChordCombinations()
+            +filterPlayableChords(allChords, rootNote, startWithRoot)
+            +sortPlayableChordsByCombinedRating(soundWeight = 0)
+        }
+
+        ' Chord voicing representation
+        class ChordVoicing {
+            Represents and evaluates individual chord voicings.
+            +ChordVoicing(voicing, barre, fingersUsed, barreSize, minAboveZero, chordFactoryNotes, chordFactoryRoot)
+            +calculateChordSpacing()
+            +calculateFingerPosition()
+            +ratePlayability()
+            +rateSoundQuality()
+        }
+    }
+
+    ' Chord progression generator
+    class ProgressionGenerator {
+        Generates and visualizes chord progressions.
+        Uses ChordFactory for chord generation.
+        Uses TabGenerator for visualizing progressions.
+        +getProgression(type)
+        +getProgressionHTML(classes, type)
+        +getProgressionDynamicHTML(soundQuality)
+        +setProgression(initialProgression)
+    }
+
+    ' Diagram and SVG creation
+    class TabGenerator {
+        Creates visual chord diagrams.
+        Generates SVG diagrams based on data from ProgressionGenerator.
+        +generateChordSVG()
+        +drawDiagramComponents(svg)
+        +createSVGElement(tag, attributes)
+    }
+}
+package "UserInterface" {
+    ' Entry point and user interaction orchestrator
+    class "Webpage" {
+        Entry point and orchestrator.
+        Initializes components and handles user interactions.
+        Manages event flow and coordinates different parts of the application.
+    }
+
+    ' MIDI device and event management
+    class MIDIAccessManager {
+        Manages MIDI devices and processes MIDI events.
+        Sends MIDI note events to the Piano component.
+    }
+
+    ' Virtual piano interface
+    class Piano {
+        Provides a virtual piano interface.
+        Allows users to play notes.
+        Interacts with ChordLibrary to find matching chords.
+        +volumeOn()
+        +volumeOff()
+        +activateKey(note)
+        +deactivateKey(note)
+        +setRootNote()
+    }
+
+    ' Drag-and-drop list manager
+    class DragAndDropList {
+        Manages drag-and-drop functionality for chords.
+        Updates selected chord progression.
+        +updateItems(newItems)
+        +addSelectedItem(item)
+        +clearSelectedList()
+    }
+}
+
+
+' Define interactions and dependencies between classes
+"Webpage" -down-> Piano : "Initializes and listens to events"
+"Webpage" -down-> MIDIAccessManager : "Initializes and handles MIDI events"
+"Webpage" -down-> ChordLibrary : "Initializes and searches chords"
+"Webpage" -down-> DragAndDropList : "Initializes and manages drag/drop"
+"Webpage" -down-> ProgressionGenerator : "Initializes and generates progressions"
+"Webpage" -down-> TabGenerator : "Generates chord diagrams"
+"Webpage" -down-> Constants : "Uses static constants"
+
+MIDIAccessManager -down-> Piano : "Sends note events"
+MIDIAccessManager -down-> MIDIAccessManager : "Searches MIDI Devices"
+MIDIAccessManager -down-> DragAndDropList : "If Chord is detected, put Chord into selectedItems"
+Piano -down-> DragAndDropList : "Update Displayed Chords"
+ProgressionGenerator -up-> ChordFactory : "Generates chords"
+ProgressionGenerator -down-> TabGenerator : "Generates diagrams"
+ChordFactory -down-> ChordVoicing : "Creates voicings"
+
+DragAndDropList -down-> ProgressionGenerator : "Updates Progression"
+
+ChordLibrary -down-> DragAndDropList : "Provides List of Chords"
+ChordLibrary -down-> DragAndDropItem : "Uses and Displays"
+ChordVoicing -down-> Utils : "Uses helper functions"
+ChordFactory -down-> Constants : "Uses constants"
+TabGenerator -down-> Constants : "Uses constants"
+
+DragAndDropList -down-> ChordLibrary : "Searches chords"
+DragAndDropItem -down-> Chord
+
+@enduml
