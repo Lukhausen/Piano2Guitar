@@ -310,7 +310,7 @@ body {
     color: var(--dark2);
     position: relative;
     cursor: pointer;
-    transition: 0.15s;
+    transition: 0.02s;
     box-shadow: 0 0 10px #00000056, inset 0 0 3px #ffffff6e;
     
 }
@@ -319,6 +319,7 @@ body {
     transform: scale(1.05) rotate(-0.001turn);
     filter: contrast(1.1);
     z-index: 10;
+
 }
 
 .dragDropItem:active {

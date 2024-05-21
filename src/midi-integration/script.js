@@ -44,7 +44,8 @@ export class MIDIAccessManager {
             setTimeout(() => this.attemptMIDIAccess(), 3000); // Retry after 3 seconds
         } else {
             console.error(`Failed to connect after ${this.maxRetries} attempts: ${err.message}`);
-            this.updateStatus(`No MIDI Devices found.`);
+            //No Midi Device Found
+            this.updateStatus("");
         }
     }
 

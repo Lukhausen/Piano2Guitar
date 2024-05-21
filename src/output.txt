@@ -40,12 +40,12 @@ drag-drop/
   styles.css (Path: drag-drop\styles.css, Size: 1343 bytes)
 index.html (Path: index.html, Size: 5806 bytes)
 index.js (Path: index.js, Size: 10016 bytes)
-input-styles.css (Path: input-styles.css, Size: 9292 bytes)
+input-styles.css (Path: input-styles.css, Size: 9294 bytes)
 midi-integration/
   index.html (Path: midi-integration\index.html, Size: 263 bytes)
-  script.js (Path: midi-integration\script.js, Size: 3410 bytes)
+  script.js (Path: midi-integration\script.js, Size: 3424 bytes)
 output-styles.css (Path: output-styles.css, Size: 2436 bytes)
-output.txt (Path: output.txt, Size: 127308 bytes)
+output.txt (Path: output.txt, Size: 110051 bytes)
 piano/
   script.js (Path: piano\script.js, Size: 9866 bytes)
   style.css (Path: piano\style.css, Size: 1122 bytes)
@@ -1929,7 +1929,8 @@ export class MIDIAccessManager {
             setTimeout(() => this.attemptMIDIAccess(), 3000); // Retry after 3 seconds
         } else {
             console.error(`Failed to connect after ${this.maxRetries} attempts: ${err.message}`);
-            this.updateStatus(`No MIDI Devices found.`);
+            //No Midi Device Found
+            this.updateStatus("");
         }
     }
 
