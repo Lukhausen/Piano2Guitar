@@ -264,20 +264,18 @@ export class ChordFactory {
   filterPlayableChords2(allChordsCopy) {
     const startTime = performance.now();
     const playableChordsSet = new Set();
-  
+
     allChordsCopy.forEach(voicing => {
-  
+
       let barreClass = Array.from({ length: MAX_FRETS }, () => Array.from({ length: 6 }, () => []));
       let barreClassesUsed = new Set();
-      let barreSeparatorIndex = Array.from({ length: MAX_FRETS }, () => [0]);
-      let barreLastSeen = Array.from({ length: MAX_FRETS }, () => [-1]);
-
+      let barreSeparatorIndex = Array.from({ length: MAX_FRETS }, () => 0);
       let minAboveZero = -1;
       let mutingTillRoot = true;
-  
+
       let touchedIndices = [];
       const touchedSet = new Set();
-  
+
       for (let string = 0; string < 6; string++) {
         //Mute Strings That are not the Root Note
         if (this.startWithRoot && mutingTillRoot) {
@@ -290,46 +288,45 @@ export class ChordFactory {
             mutingTillRoot = false;
           }
         }
-  
+
         //Check if the String is not open 0 or muted -1
         if (voicing[string] > 0) {
           //Check if a New MinAboveZero is present
           if (voicing[string] > minAboveZero) {
             minAboveZero = voicing[string];
           }
-  
-          //Now, Place the Strings in their Corresponding barreClass
-          if (voicing[string] >= 0) {
+        }
+        //Now, Place the Strings in their Corresponding barreClass
+        if (voicing[string] >= 0) {
 
-
-            
-            if (voicing[string] == 0) {
-              barreClassesUsed.forEach(() => {
-                barreSeparatorIndex[voicing[string]] += 1;
-              });
-            } else {
-              barreClassesUsed.add(voicing[string]);
-              barreClass[voicing[string]][barreSeparatorIndex[voicing[string]]].push(string);
-              const newIndex = `${voicing[string]}-${barreSeparatorIndex[voicing[string]]}`;
-              if (!touchedSet.has(newIndex)) {
-                touchedIndices.push([voicing[string], barreSeparatorIndex[voicing[string]]]);
-                touchedSet.add(newIndex);
-              }
+          barreClassesUsed.forEach((index) => {
+            if (voicing[string] < index) {
+              barreSeparatorIndex[index] += 1;
             }
+          });
+
+          barreClassesUsed.add(voicing[string]);
+          barreClass[voicing[string]][barreSeparatorIndex[voicing[string]]].push(string);
+          const newIndex = `${voicing[string]}-${barreSeparatorIndex[voicing[string]]}`;
+          if (!touchedSet.has(newIndex)) {
+            touchedIndices.push([voicing[string], barreSeparatorIndex[voicing[string]]]);
+            touchedSet.add(newIndex);
           }
         }
+
       }
-  
+
+
       touchedIndices.forEach(([fret, index]) => {
         console.log(`Touched:`, barreClass[fret][index]);
       });
-  
+
       console.log("filterPlayableChords2", voicing, barreClass, barreClassesUsed);
       //Now Check For each Barre Class Starting at MinAboveZero...
-  
+
     });
     const endTime = performance.now();
-  
+
     // Calculate the time taken
     const timeTaken = endTime - startTime;
     console.log("filterPlayableChords2 - Time taken:", timeTaken, "milliseconds");
