@@ -19,16 +19,17 @@
     <script type="module">
         import TabGenerator from "./script.js"
 
-        const fingerPositions = ['-1', '13', '12', '5', '0', '0'];
-        const fingerNumbers = ['9', '1', '2', '1', '', ''];
-        const barreSize = 3;
+        const fingerPositions = ['-1', '5', '6', '5', '0', '0'];
+        const fingerNumbers = ['1', '1', '2', '1', '', ''];
         const barre = 10;
+        const minAboveZero = 3
+        const barres = [[5,1,3], [3,0,5]]
         const color = "#fff";
         const textColor = "#000";
         const showOpenStrings = true;
 
         try {
-            const chordDiagram = new TabGenerator(fingerPositions, fingerNumbers, barreSize, barre, color, textColor, 'belowString', showOpenStrings);
+            const chordDiagram = new TabGenerator(fingerPositions, fingerNumbers, minAboveZero, barres, color, textColor, 'belowString', showOpenStrings);
             const svg = chordDiagram.generateChordSVG();
             document.getElementById('diagram').appendChild(svg);
         } catch (error) {

@@ -1,4 +1,4 @@
-import { STANDARD_TUNING,TUNING, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
+import { settings } from './constants.js';
 import { parseNotes, removeDuplicateArrays } from './utils.js';
 import { ChordFactory } from './chordfactory.js';
 
@@ -9,7 +9,7 @@ let lastPlayChords;
 for (let i = 0; i < repetitions; i++) {
     const startTime = performance.now();
     
-    const chord = new ChordFactory("E, G, B", 4, true, TUNING);
+    const chord = new ChordFactory("E, G, B", 4, true, settings.tuning);
     const playableChords = chord.playableChords
     
     if (i === repetitions - 1) { // Only save the last result

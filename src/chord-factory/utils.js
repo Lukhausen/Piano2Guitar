@@ -1,4 +1,4 @@
-import { STANDARD_TUNING, NOTE_INDEX_MAP } from './constants.js';
+import { NOTE_INDEX_MAP } from './constants.js';
 
 export function parseNotes(input) {
   return input.toUpperCase()

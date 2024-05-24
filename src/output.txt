@@ -26,34 +26,36 @@ audio/
   9.mp3 (Path: audio\9.mp3, Size: 200619 bytes)
   silence.mp3 (Path: audio\silence.mp3, Size: 5223 bytes)
 chord-factory/
-  chordfactory.js (Path: chord-factory\chordfactory.js, Size: 11864 bytes)
-  chordvoicing.js (Path: chord-factory\chordvoicing.js, Size: 11247 bytes)
-  constants.js (Path: chord-factory\constants.js, Size: 343 bytes)
-  main.js (Path: chord-factory\main.js, Size: 1096 bytes)
+  chordfactory.js (Path: chord-factory\chordfactory.js, Size: 13256 bytes)
+  chordvoicing.js (Path: chord-factory\chordvoicing.js, Size: 11119 bytes)
+  constants.js (Path: chord-factory\constants.js, Size: 1798 bytes)
+  main.js (Path: chord-factory\main.js, Size: 1061 bytes)
   package-lock.json (Path: chord-factory\package-lock.json, Size: 24916 bytes)
   package.json (Path: chord-factory\package.json, Size: 229 bytes)
-  utils.js (Path: chord-factory\utils.js, Size: 754 bytes)
+  timingtext.js (Path: chord-factory\timingtext.js, Size: 1898 bytes)
+  utils.js (Path: chord-factory\utils.js, Size: 737 bytes)
 chord-library/
   script.js (Path: chord-library\script.js, Size: 9401 bytes)
 createChatGPTContext.js (Path: createChatGPTContext.js, Size: 2783 bytes)
 css/
-  input-styles.css (Path: css\input-styles.css, Size: 9294 bytes)
+  input-styles.css (Path: css\input-styles.css, Size: 8745 bytes)
   output-styles.css (Path: css\output-styles.css, Size: 2436 bytes)
+  settings-styles.css (Path: css\settings-styles.css, Size: 678 bytes)
   slider-style.css (Path: css\slider-style.css, Size: 1043 bytes)
 drag-drop/
-  script.js (Path: drag-drop\script.js, Size: 14001 bytes)
+  script.js (Path: drag-drop\script.js, Size: 13797 bytes)
   styles.css (Path: drag-drop\styles.css, Size: 1343 bytes)
-index.html (Path: index.html, Size: 5812 bytes)
-index.js (Path: index.js, Size: 10091 bytes)
+index.html (Path: index.html, Size: 7400 bytes)
+index.js (Path: index.js, Size: 10102 bytes)
 midi-integration/
   index.html (Path: midi-integration\index.html, Size: 263 bytes)
   script.js (Path: midi-integration\script.js, Size: 3424 bytes)
-output.txt (Path: output.txt, Size: 4843132 bytes)
+output.txt (Path: output.txt, Size: 125835 bytes)
 piano/
   script.js (Path: piano\script.js, Size: 9866 bytes)
   style.css (Path: piano\style.css, Size: 1122 bytes)
 progression-generator/
-  main.js (Path: progression-generator\main.js, Size: 13960 bytes)
+  main.js (Path: progression-generator\main.js, Size: 13971 bytes)
   package-lock.json (Path: progression-generator\package-lock.json, Size: 24916 bytes)
   package.json (Path: progression-generator\package.json, Size: 229 bytes)
   style.css (Path: progression-generator\style.css, Size: 968 bytes)
@@ -67,27 +69,27 @@ tab-generator/
   index.html (Path: tab-generator\index.html, Size: 1524 bytes)
   script.js (Path: tab-generator\script.js, Size: 9496 bytes)
   styles.css (Path: tab-generator\styles.css, Size: 1094 bytes)
+test.html (Path: test.html, Size: 10532 bytes)
 
 File Contents:
 File: chordfactory.js
 Path: chord-factory\chordfactory.js
 
-import { STANDARD_TUNING, NOTE_INDEX_MAP, TUNING, FINGER_FRET_RANGE, BARRE_RATING } from './constants.js';
-import { parseNotes, removeDuplicateArrays } from './utils.js';
+import { settings, MAX_FRETS } from './constants.js';
 import { ChordVoicing } from './chordvoicing.js';
 
 
 export class ChordFactory {
-  constructor(chord, startWithRoot = true, tuning = TUNING) {
+  constructor(chord, startWithRoot = true, tuning = settings.tuning) {
     console.log("ChordFactory Recieved Notes: ", chord.notes)
     this.identifier = chord.name
     this.notes = chord.notes;
     this.startWithRoot = startWithRoot
     this.root = chord.rootNote
     this.tuning = tuning;
-    this.fingerPositions = this.calculateFingerPositions();
+    this.fingerPositions = this.calculateValidFingerPositions();
     this.allChords = this.generateAllChordCombinations2()
-    this.playableChords = this.filterPlayableChords(structuredClone(this.allChords))
+    this.playableChords = this.filterPlayableChords2(structuredClone(this.allChords))
     //this.getFretSpanStatistics()
     this.sortPlayableChordsByCombinedRating(1)
   }
@@ -119,7 +121,7 @@ export class ChordFactory {
   }
 
 
-  calculateFingerPositions() {
+  calculateValidFingerPositions() {
     const fingerPositions = [];
 
     for (let stringIndex of this.tuning) {
@@ -147,41 +149,8 @@ export class ChordFactory {
     }, [[]]);
   }
 
-  generateAllChordCombinations() {
-    const chords = [];
-    // All 12 Frets
-    for (let startFret = 0; startFret <= 12; startFret++) {
-      let positionsInRange = []
-      let endFret = startFret + FINGER_FRET_RANGE - 1
-      for (let string = 0; string < 6; string++) {
-        let possibleStringPlacements = []
-        //Push -1 to every String Because it could be muted
-        possibleStringPlacements.push(-1)
-        // As The First Index of The this.fingerPositions[string] String Array ALLWAYS is 1 -1, we can skip it and add it separately
-        //THis is why we start a t 1
-        for (let finger = 1; finger < this.fingerPositions[string].length; finger++) {
-          // As the this.fingerPositions[string][finger] Array is sorted, we can break out, once we hit a higher position than endFret
-          if (this.fingerPositions[string][finger] > endFret) {
-            break;
-          } else if (this.fingerPositions[string][finger] == endFret) {
-            possibleStringPlacements.push(this.fingerPositions[string][finger])
-            break;
-          } else if (this.fingerPositions[string][finger] >= startFret) {
-            possibleStringPlacements.push(this.fingerPositions[string][finger])
-          } else if (this.fingerPositions[string][finger] == 0) {
-            possibleStringPlacements.push(this.fingerPositions[string][finger])
-          }
-        }
-        positionsInRange[string] = possibleStringPlacements
-      }
-      chords.push(...this.cartesianProduct(positionsInRange))
 
-    }
-
-    return chords;
-  }
-
-
+  //Highly efficent Variant of the Cartesian Product, That will not calulate any position twice
   generateAllChordCombinations2() {
 
     const startTime = performance.now();
@@ -232,7 +201,7 @@ export class ChordFactory {
         // First Check If there is a New Element inside the Array
         if (fingerIndexStorage[string] < fingerIndexLength[string]) {
           // CHeck if its in range for Valid CHord, if so add it 
-          if (this.fingerPositions[string][fingerIndexStorage[string]] <= fret + FINGER_FRET_RANGE) {
+          if (this.fingerPositions[string][fingerIndexStorage[string]] <= fret + settings.fingerFretRange) {
             //console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]])
 
             maskScope[string].push(this.fingerPositions[string][fingerIndexStorage[string]])
@@ -284,15 +253,18 @@ export class ChordFactory {
   }
 
 
-  filterPlayableChords(allChordsCopyCopy) {
-    let allChordsCopy = [...allChordsCopyCopy]
-    const playableChords = allChordsCopy.map(voicing => {
+  filterPlayableChords(allChordsCopy) {
+    const startTime = performance.now();
+
+    const playableChordsSet = new Set();
+
+    allChordsCopy.forEach(voicing => {
+      // Start By Muting All Chords
       if (this.startWithRoot) {
-        for (let string = 0; string <= 5; string++) {
+        for (let string = 0; string < 6; string++) {
           if (voicing[string] == -1) {
             continue;
-          }
-          else if (((voicing[string] + this.tuning[string]) % 12) != this.root) {
+          } else if (((voicing[string] + this.tuning[string]) % 12) != this.root) {
             voicing[string] = -1;
           } else {
             break;
@@ -300,19 +272,16 @@ export class ChordFactory {
         }
       }
 
-      //Faster Way to Calculate the MinaboveZero
+      // Faster Way to Calculate the MinaboveZero
       let minAboveZero = Infinity;
-
       for (let i = 0; i < voicing.length; i++) {
         if (voicing[i] > 0 && voicing[i] < minAboveZero) {
           minAboveZero = voicing[i];
         }
       }
-
       if (minAboveZero === Infinity) {
         minAboveZero = 0;
       }
-
 
       let fingersUsed = 0;
       let barreStop = false;
@@ -331,22 +300,110 @@ export class ChordFactory {
           barreAddFingers++;
         }
       }
-      if (barreUseFingers)
+      if (barreUseFingers) {
         if (barreUseFingers >= 2 && barreAddFingers > 3) {
-          return null;
+          return;
         } else if (barreUseFingers < 2) {
           fingersUsed = voicing.filter(fret => fret >= minAboveZero).length;
-          barreUseFingers = 0
+          barreUseFingers = 0;
         }
-      if (fingersUsed <= 4) {
-        let newVoicing = new ChordVoicing(voicing, barreUseFingers > 0 ? minAboveZero : null, barreUseFingers > 0 ? barreAddFingers : fingersUsed, barreUseFingers, minAboveZero, this.notes, this.startWithRoot ? this.root : -1)
-
-        return newVoicing;
       }
-      return null;
-    }
-    ).filter(chordVoicing => chordVoicing !== null);
+      if (fingersUsed <= 4) {
+        let newVoicing = new ChordVoicing(
+          voicing,
+          barreUseFingers > 0 ? minAboveZero : null,
+          barreUseFingers > 0 ? barreAddFingers : fingersUsed,
+          barreUseFingers,
+          minAboveZero,
+          this.notes,
+          this.startWithRoot ? this.root : -1
+        );
+
+        playableChordsSet.add(JSON.stringify(newVoicing));
+      }
+    });
+
+    // Convert the Set back to an array of unique ChordVoicing objects
+    const playableChords = Array.from(playableChordsSet).map(voicingString => JSON.parse(voicingString));
+
+    // Track end time
+    const endTime = performance.now();
+
+    // Calculate the time taken
+    const timeTaken = endTime - startTime;
+    console.log("filterPlayableChords - Time taken:", timeTaken, "milliseconds");
+
     return playableChords;
+  }
+
+
+  filterPlayableChords2(allChordsCopy) {
+    const startTime = performance.now();
+    const playableChordsSet = new Set();
+
+    allChordsCopy.forEach(voicing => {
+
+      let barreClass = Array.from({ length: MAX_FRETS }, () => Array.from({ length: 6 }, () => []));
+      let barreClassesUsed = new Set();
+      let barreSeparatorIndex = Array.from({ length: MAX_FRETS }, () => 0);
+      let minAboveZero = -1;
+      let mutingTillRoot = true;
+
+      let touchedIndices = [];
+      const touchedSet = new Set();
+
+      for (let string = 0; string < 6; string++) {
+        //Mute Strings That are not the Root Note
+        if (this.startWithRoot && mutingTillRoot) {
+          if (voicing[string] == -1) {
+            // Do Nothing
+          } else if (((voicing[string] + this.tuning[string]) % 12) != this.root) {
+            // Mute The String
+            voicing[string] = -1;
+          } else {
+            mutingTillRoot = false;
+          }
+        }
+
+        //Check if the String is not open 0 or muted -1
+        if (voicing[string] > 0) {
+          //Check if a New MinAboveZero is present
+          if (voicing[string] > minAboveZero) {
+            minAboveZero = voicing[string];
+          }
+        }
+        //Now, Place the Strings in their Corresponding barreClass
+        if (voicing[string] >= 0) {
+
+          barreClassesUsed.forEach((index) => {
+            if (voicing[string] < index) {
+              barreSeparatorIndex[index] += 1;
+            }
+          });
+
+          barreClassesUsed.add(voicing[string]);
+          barreClass[voicing[string]][barreSeparatorIndex[voicing[string]]].push(string);
+          const newIndex = `${voicing[string]}-${barreSeparatorIndex[voicing[string]]}`;
+          if (!touchedSet.has(newIndex)) {
+            touchedIndices.push([voicing[string], barreSeparatorIndex[voicing[string]]]);
+            touchedSet.add(newIndex);
+          }
+        }
+      }
+
+      touchedIndices.forEach(([fret, index]) => {
+        console.log(`Touched:`, barreClass[fret][index]);
+      });
+
+      console.log("filterPlayableChords2", voicing, barreClass, barreClassesUsed);
+      //Now Check For each Barre Class Starting at MinAboveZero...
+
+    });
+    const endTime = performance.now();
+
+    // Calculate the time taken
+    const timeTaken = endTime - startTime;
+    console.log("filterPlayableChords2 - Time taken:", timeTaken, "milliseconds");
   }
 
 
@@ -385,9 +442,8 @@ export class ChordFactory {
 File: chordvoicing.js
 Path: chord-factory\chordvoicing.js
 
-import { STANDARD_TUNING, TUNING, FINGER_FRET_RANGE, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
-import { parseNotes, removeDuplicateArrays } from './utils.js';
-import { ChordFactory } from './chordfactory.js';
+import { settings } from './constants.js';
+
 
 export class ChordVoicing {
   constructor(voicing, barre, fingersUsed, barreSize, minAboveZero, chordFactoryNotes, chordFactoryRoot) {
@@ -405,7 +461,7 @@ export class ChordVoicing {
 
     for (let i = 0; i < 6; i++) {
       if (this.voicing[i] >= 0) {
-        this.actuallyPlayedNotes[i] = (this.voicing[i] + TUNING[i])
+        this.actuallyPlayedNotes[i] = (this.voicing[i] + settings.tuning[i])
       } else {
         this.actuallyPlayedNotes[i] = this.voicing[i]
       }
@@ -533,7 +589,7 @@ export class ChordVoicing {
         maxFret = this.voicing[i]
       }
     }
-    return 1-((maxFret-this.minAboveZero) / FINGER_FRET_RANGE)
+    return 1-((maxFret-this.minAboveZero) / settings.fingerFretRange)
   }
 
   assessPlayabilityMuttedAmount(){
@@ -641,7 +697,7 @@ export class ChordVoicing {
       }
     }
     let spacing = this.actuallyPlayedNotes[maxIndex] - this.actuallyPlayedNotes[minIndex]
-    let maxSpacing = TUNING[5] + this.minAboveZero + FINGER_FRET_RANGE - TUNING[0] + this.minAboveZero
+    let maxSpacing = settings.tuning[5] + this.minAboveZero + settings.fingerFretRange - settings.tuning[0] + this.minAboveZero
 
     // The Higher the number, the better So The higher the Spacing archived, the better
     let spacingRatio = spacing / maxSpacing
@@ -666,7 +722,7 @@ assessVoicingRange(){
 
 assessTonalBalance() {
   const noteFrequencies = this.voicing.map((fret, string) =>
-    fret !== -1 ? (STANDARD_TUNING[string] + fret) % 12 : null
+    fret !== -1 ? (STANDARD_settings.tuning[string] + fret) % 12 : null
   ).filter(note => note !== null);
 
   const lowNotes = noteFrequencies.filter(note => note < 5).length;
@@ -742,20 +798,76 @@ File: constants.js
 Path: chord-factory\constants.js
 
 // constants.js
-export const STANDARD_TUNING = ['E', 'A', 'D', 'G', 'B', 'E'];
-export const TUNING = [40, 45, 50, 55, 59, 64];
 export const NOTE_INDEX_MAP = {
   'C': 0, 'C#': 1, 'D': 2, 'D#': 3, 'E': 4,
   'F': 5, 'F#': 6, 'G': 7, 'G#': 8, 'A': 9,
   'A#': 10, 'B': 11
 };
 export const BARRE_RATING = 1
-export const FINGER_FRET_RANGE = 4
+export const MAX_FRETS = 24
+
+/**
+ * Class representing application settings.
+ */
+class Settings {
+  /**
+   * Create a settings object with default values.
+   */
+  constructor() {
+    this._tuning = [40, 45, 50, 55, 59, 64];
+    this._fingerFretRange = 4;
+  }
+
+  /**
+   * Get the current tuning values.
+   * @returns {number[]} The current tuning values as an array of integers.
+   */
+  get tuning() {
+    return this._tuning;
+  }
+
+  /**
+   * Set new tuning values.
+   * @param {number[]} value - An array of integers representing the new tuning values.
+   * @throws {Error} Throws an error if the value is not an array of integers.
+   */
+  set tuning(value) {
+    if (Array.isArray(value) && value.every(num => Number.isInteger(num))) {
+      this._tuning = value;
+    } else {
+      throw new Error("Invalid tuning value. It must be an array of integers.");
+    }
+  }
+
+  /**
+   * Get the current finger fret range.
+   * @returns {number} The current finger fret range as a positive integer.
+   */
+  get fingerFretRange() {
+    return this._fingerFretRange;
+  }
+
+  /**
+   * Set a new finger fret range.
+   * @param {number} value - A positive integer representing the new finger fret range.
+   * @throws {Error} Throws an error if the value is not a positive integer.
+   */
+  set fingerFretRange(value) {
+    if (Number.isInteger(value) && value > 0) {
+      this._fingerFretRange = value;
+    } else {
+      throw new Error("Invalid fingerFretRange value. It must be a positive integer.");
+    }
+  }
+}
+
+export const settings = new Settings();
+
 
 File: main.js
 Path: chord-factory\main.js
 
-import { STANDARD_TUNING,TUNING, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
+import { settings } from './constants.js';
 import { parseNotes, removeDuplicateArrays } from './utils.js';
 import { ChordFactory } from './chordfactory.js';
 
@@ -766,7 +878,7 @@ let lastPlayChords;
 for (let i = 0; i < repetitions; i++) {
     const startTime = performance.now();
     
-    const chord = new ChordFactory("E, G, B", 4, true, TUNING);
+    const chord = new ChordFactory("E, G, B", 4, true, settings.tuning);
     const playableChords = chord.playableChords
     
     if (i === repetitions - 1) { // Only save the last result
@@ -789,10 +901,81 @@ const averageTime = totalDuration / repetitions;
 console.log(`Average Processing Time: ${averageTime.toFixed(2)} ms`);
 
 
+File: timingtext.js
+Path: chord-factory\timingtext.js
+
+const MAX_FRETS = 12;
+
+function generateFixedVoicing() {
+    return [
+        [0, 2, 2, 1, 0, 0],
+        [3, 2, 0, 0, 3, 3],
+        [0, 3, 2, 0, 1, 0],
+        [-1, -1, 0, 2, 3, 2],
+        [3, 2, 0, 0, 1, 0]
+    ];
+}
+
+function generateFixedChords(numChords) {
+    const fixedVoicing = generateFixedVoicing();
+    const chords = [];
+    for (let i = 0; i < numChords; i++) {
+        chords.push(fixedVoicing[i % fixedVoicing.length]);
+    }
+    return chords;
+}
+
+function filterPlayableChordsWithSet(allChordsCopy) {
+    const startTime = performance.now();
+
+    allChordsCopy.forEach(voicing => {
+        let touchedIndices = new Set();
+
+        for (let string = 0; string < 6; string++) {
+            if (voicing[string] > 0) {
+                touchedIndices.add(`${voicing[string]}-${string}`);
+            }
+        }
+    });
+
+    const endTime = performance.now();
+    return endTime - startTime;
+}
+
+function filterPlayableChordsWithArrayCheck(allChordsCopy) {
+    const startTime = performance.now();
+
+    allChordsCopy.forEach(voicing => {
+        let touchedIndices = [];
+
+        for (let string = 0; string < 6; string++) {
+            if (voicing[string] > 0) {
+                let index = `${voicing[string]}-${string}`;
+                if (!touchedIndices.includes(index)) {
+                    touchedIndices.push(index);
+                }
+            }
+        }
+    });
+
+    const endTime = performance.now();
+    return endTime - startTime;
+}
+
+const numChords = 10000;
+const allChordsCopy = generateFixedChords(numChords);
+
+const timeWithSet = filterPlayableChordsWithSet(allChordsCopy);
+const timeWithArrayCheck = filterPlayableChordsWithArrayCheck(allChordsCopy);
+
+console.log(`Time taken with Set: ${timeWithSet} milliseconds`);
+console.log(`Time taken with Array Check: ${timeWithArrayCheck} milliseconds`);
+
+
 File: utils.js
 Path: chord-factory\utils.js
 
-import { STANDARD_TUNING, NOTE_INDEX_MAP } from './constants.js';
+import { NOTE_INDEX_MAP } from './constants.js';
 
 export function parseNotes(input) {
   return input.toUpperCase()
@@ -1209,7 +1392,6 @@ export default class DragAndDropList {
                 firstElement.style.backgroundColor = "#ffffff00";
                 firstElement.style.color = "var(--light3)";
                 firstElement.style.fontSize = "small";
-                firstElement.style.marginBottom = "var(--padding)";
 
                 this.itemsContainer.appendChild(firstElement);
             }
@@ -1221,8 +1403,6 @@ export default class DragAndDropList {
                 breakElement.style.width = "100%";
                 breakElement.style.height = "2px";
                 breakElement.style.backgroundColor = "var(--dark1)";
-                breakElement.style.marginTop = "var(--padding)";
-                breakElement.style.marginBottom = "var(--padding)";
                 breakElement.style.boxShadow = "var(--padding) 0px 0px 0px var(--dark1), calc(var(--padding)*-1) 0px 0px 0px var(--dark1)";
 
                 this.itemsContainer.appendChild(breakElement);
@@ -1491,7 +1671,8 @@ Path: index.html
     <link rel="stylesheet" href="progression-generator/style.css" />
     <link rel="stylesheet" href="css/output-styles.css" />
     <link rel="stylesheet" href="css/input-styles.css" />
-    <link rel="stylesheet" href="css/slider-style.css" />
+    <link rel="stylesheet" href="css/slider-styles.css" />
+    <link rel="stylesheet" href="css/settings-styles.css" />
 
 
 
@@ -1509,7 +1690,38 @@ Path: index.html
 
     <div class="inputWrapper">
         <div id="settings">
-            Settings
+            <div class="settingsheader">Settings</div>
+            <div class="settingsitem">
+                <div>Guitar Tuning</div>
+                <select name="cars" id="cars">
+                    <option value="0">C</option>
+                    <option value="1">C#</option>
+                    <option value="2">D</option>
+                    <option value="3">D#</option>
+                    <option value="4">E</option>
+                    <option value="5">F</option>
+                    <option value="6">F#</option>
+                    <option value="7">G</option>
+                    <option value="8">G#</option>
+                    <option value="9">A</option>
+                    <option value="10">A#</option>
+                    <option value="11">B</option>
+                </select>
+                <select name="cars" id="cars">
+                    <option value="0">C</option>
+                    <option value="1">C#</option>
+                    <option value="2">D</option>
+                    <option value="3">D#</option>
+                    <option value="4">E</option>
+                    <option value="5">F</option>
+                    <option value="6">F#</option>
+                    <option value="7">G</option>
+                    <option value="8">G#</option>
+                    <option value="9">A</option>
+                    <option value="10">A#</option>
+                    <option value="11">B</option>
+                </select>
+            </div>
         </div>
         <div class="header">
             PianoToGuitar.com
@@ -1578,7 +1790,8 @@ Path: index.html
             <div class="progressionInfo">
                 <div class="progressionInfoText">
                     <div class="progressionInfoTextName"><i>DYNAMIC</i></div>
-                    <div class="progressionInfoTextSubtitle">Adjust the slider to transition from simple chords to the most beautifully sounding ones!
+                    <div class="progressionInfoTextSubtitle">Adjust the slider to transition from simple chords to the
+                        most beautifully sounding ones!
                     </div>
                 </div>
                 <div class="soundQualityWrapper">
@@ -1603,7 +1816,7 @@ import Piano from './piano/script.js';
 import { Chord, ChordLibrary } from "./chord-library/script.js"
 import MIDIAccessManager from "./midi-integration/script.js"
 import { ProgressionGenerator } from './progression-generator/main.js';
-import { TUNING } from './chord-factory/constants.js';
+import { settings } from './chord-factory/constants.js';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1836,7 +2049,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     let soundQualityValue = 1;
-    let progressionGenerator = new ProgressionGenerator([], true, TUNING, "#ffffff", "onNote", true)
+    let progressionGenerator = new ProgressionGenerator([], true, settings.tuning, "#ffffff", "onNote", true)
 
     document.addEventListener('selectedItemsUpdated', async function (event) {
         console.log('Updated Selected Items:', event.detail.selectedItems);
@@ -2246,7 +2459,7 @@ export default Piano;
 File: main.js
 Path: progression-generator\main.js
 
-import { TUNING, NOTE_INDEX_MAP, BARRE_RATING } from '../chord-factory/constants.js';
+import { settings, NOTE_INDEX_MAP, BARRE_RATING } from '../chord-factory/constants.js';
 import { parseNotes, removeDuplicateArrays } from '../chord-factory/utils.js';
 import { ChordFactory } from '../chord-factory/chordfactory.js';
 import { Chord } from '../chord-library/script.js';
@@ -2256,7 +2469,7 @@ import TabGenerator from "../tab-generator/script.js"
 
 
 export class ProgressionGenerator {
-    constructor(initialProgression = [], useRoot = true, tuning = TUNING, color, fingerNumbers = "belowString", showOpenStrings = true) {
+    constructor(initialProgression = [], useRoot = true, tuning = settings.tuning, color, fingerNumbers = "belowString", showOpenStrings = true) {
         this.tuning = tuning;
         this.color = color;
         this.fingerNumbers = fingerNumbers;
@@ -2820,4 +3033,280 @@ class TabGenerator {
 }
 
 export default TabGenerator;
+
+File: test.html
+Path: test.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guitar Tuning Selector</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            width: 300px;
+            margin: 50px auto;
+            text-align: center;
+        }
+        
+        #tuning-search {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: relative;
+            background-color: #f9f9f9;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            z-index: 1;
+            transition: max-height 0.3s ease;
+        }
+        
+        .dropdown-content a {
+            padding: 8px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+        }
+        
+        .dropdown-content a:hover,
+        .dropdown-content a:focus {
+            background-color: #f1f1f1;
+        }
+        
+        .dropdown-content a.active {
+            background-color: #e0e0e0;
+        }
+        
+        button {
+            padding: 8px 16px;
+            margin-top: 10px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            margin: 15% auto;
+            width: 80%;
+            max-width: 400px;
+            position: relative;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .feedback {
+            display: none;
+            color: green;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <label for="tuning-search">Select Guitar Tuning:</label>
+        <input type="text" id="tuning-search" placeholder="Search or Add Custom Tuning" aria-haspopup="listbox" aria-expanded="false" aria-controls="tuning-dropdown">
+        <div id="tuning-dropdown" class="dropdown-content" role="listbox">
+            <!-- Dynamically populated options -->
+        </div>
+        <button id="add-custom-btn">Add Custom Tuning</button>
+        <div class="feedback" id="feedback-message">Custom tuning added successfully! (Click to dismiss)</div>
+    </div>
+
+    <!-- Modal for Custom Tuning -->
+    <div id="custom-modal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+            <span class="close-btn" role="button" aria-label="Close">&times;</span>
+            <h2>Add Custom Tuning</h2>
+            <form id="custom-tuning-form">
+                <label for="string1">String 1:</label>
+                <input type="text" id="string1" name="string1" required>
+                <label for="string2">String 2:</label>
+                <input type="text" id="string2" name="string2" required>
+                <label for="string3">String 3:</label>
+                <input type="text" id="string3" name="string3" required>
+                <label for="string4">String 4:</label>
+                <input type="text" id="string4" name="string4" required>
+                <label for="string5">String 5:</label>
+                <input type="text" id="string5" name="string5" required>
+                <label for="string6">String 6:</label>
+                <input type="text" id="string6" name="string6" required>
+                <button type="submit">Save Tuning</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tuningSearch = document.getElementById('tuning-search');
+            const tuningDropdown = document.getElementById('tuning-dropdown');
+            const addCustomBtn = document.getElementById('add-custom-btn');
+            const customModal = document.getElementById('custom-modal');
+            const closeBtn = document.querySelector('.close-btn');
+            const customTuningForm = document.getElementById('custom-tuning-form');
+            const feedbackMessage = document.getElementById('feedback-message');
+
+            const tunings = [
+                'Standard E',
+                'Drop D',
+                'DADGAD',
+                'Open G',
+                'Open D',
+                'Half Step Down',
+                'Full Step Down',
+                // Add more predefined tunings here
+            ];
+
+            let activeOptionIndex = -1;
+
+            function populateDropdown(tunings) {
+                tuningDropdown.innerHTML = '';
+                tunings.forEach((tuning, index) => {
+                    const option = document.createElement('a');
+                    option.href = '#';
+                    option.textContent = tuning;
+                    option.setAttribute('role', 'option');
+                    option.tabIndex = 0;
+                    option.addEventListener('click', () => selectTuning(tuning));
+                    tuningDropdown.appendChild(option);
+                });
+            }
+
+            function selectTuning(tuning) {
+                tuningSearch.value = tuning;
+                toggleDropdownVisibility(false);
+                activeOptionIndex = -1;
+            }
+
+            function toggleDropdownVisibility(visible) {
+                tuningDropdown.style.display = visible ? 'block' : 'none';
+                tuningSearch.setAttribute('aria-expanded', visible.toString());
+                tuningDropdown.style.maxHeight = visible ? '200px' : '0';
+            }
+
+            function handleArrowKeys(event) {
+                const options = tuningDropdown.getElementsByTagName('a');
+                if (options.length > 0) {
+                    if (event.key === 'ArrowDown') {
+                        event.preventDefault();
+                        activeOptionIndex = (activeOptionIndex + 1) % options.length;
+                        updateActiveOption(options);
+                    } else if (event.key === 'ArrowUp') {
+                        event.preventDefault();
+                        activeOptionIndex = (activeOptionIndex - 1 + options.length) % options.length;
+                        updateActiveOption(options);
+                    } else if (event.key === 'Enter' && activeOptionIndex > -1) {
+                        event.preventDefault();
+                        selectTuning(options[activeOptionIndex].textContent);
+                    }
+                }
+            }
+
+            function updateActiveOption(options) {
+                Array.from(options).forEach(option => option.classList.remove('active'));
+                if (activeOptionIndex > -1) {
+                    options[activeOptionIndex].classList.add('active');
+                    options[activeOptionIndex].focus();
+                }
+            }
+
+            tuningSearch.addEventListener('input', function() {
+                const filter = tuningSearch.value.toLowerCase();
+                const filteredTunings = tunings.filter(tuning => tuning.toLowerCase().includes(filter));
+                populateDropdown(filteredTunings);
+                toggleDropdownVisibility(filteredTunings.length > 0);
+            });
+
+            tuningSearch.addEventListener('focus', function() {
+                const filter = tuningSearch.value.toLowerCase();
+                const filteredTunings = tunings.filter(tuning => tuning.toLowerCase().includes(filter));
+                populateDropdown(filteredTunings);
+                toggleDropdownVisibility(filteredTunings.length > 0);
+            });
+
+            tuningSearch.addEventListener('keydown', handleArrowKeys);
+
+            addCustomBtn.addEventListener('click', function() {
+                customModal.style.display = 'block';
+                customModal.setAttribute('aria-hidden', 'false');
+                closeBtn.focus();
+            });
+
+            closeBtn.addEventListener('click', function() {
+                customModal.style.display = 'none';
+                customModal.setAttribute('aria-hidden', 'true');
+            });
+
+            window.addEventListener('click', function(event) {
+                if (event.target === customModal) {
+                    customModal.style.display = 'none';
+                    customModal.setAttribute('aria-hidden', 'true');
+                }
+            });
+
+            window.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && customModal.style.display === 'block') {
+                    customModal.style.display = 'none';
+                    customModal.setAttribute('aria-hidden', 'true');
+                }
+            });
+
+            customTuningForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const customTuning = Array.from(new FormData(customTuningForm)).map(([key, value]) => value).join(' ');
+                tunings.push(customTuning);
+                customModal.style.display = 'none';
+                customModal.setAttribute('aria-hidden', 'true');
+                tuningSearch.value = customTuning;
+                populateDropdown(tunings);
+                feedbackMessage.style.display = 'block';
+                setTimeout(() => {
+                    feedbackMessage.style.display = 'none';
+                }, 3000);
+                customTuningForm.reset();
+            });
+
+            feedbackMessage.addEventListener('click', function() {
+                feedbackMessage.style.display = 'none';
+            });
+
+            // Close dropdown when clicking outside
+            window.addEventListener('click', function(event) {
+                if (!event.target.matches('#tuning-search')) {
+                    toggleDropdownVisibility(false);
+                }
+            });
+
+            populateDropdown(tunings);
+        });
+    </script>
+</body>
+</html>
+
 

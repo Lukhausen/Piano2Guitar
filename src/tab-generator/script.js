@@ -15,19 +15,13 @@ class TabGenerator {
      * @param {string} [numberPosition='onNote'] - Position of the numbers, 'onNote' to place them on the note, or any other value to place them separately.
      * @param {boolean} showOpenStrings - Whether to display open strings in the diagram.
      */
-    constructor(fingerPositions, fingerNumbers, barreSize = null, barre = null, elementColor = "#000", textColor = "#fff", numberPosition = 'onNote', showOpenStrings) {
+    constructor(fingerPositions, fingerNumbers, minAboveZero = 0, barres = [], elementColor = "#000", textColor = "#fff", numberPosition = 'onNote', showOpenStrings) {
 
         if (!Array.isArray(fingerPositions) || fingerPositions.length !== 6) {
             console.error("Error: fingerPositions must be an array of length 6.");
         }
         if (fingerNumbers && (!Array.isArray(fingerNumbers) || fingerNumbers.length !== 6)) {
             console.error("Error: fingerNumbers must be an array of length 6 or null.");
-        }
-        if (barreSize !== null && (typeof barreSize !== 'number' || barreSize < 1 || barreSize > 6)) {
-            console.error("Error: barreSize must be a number between 1 and 6 or null.");
-        }
-        if (barre !== null && (typeof barre !== 'number' || !/^\d+$/.test(barre))) {
-            console.error("Error: barre must be a string representing a number or null.");
         }
         if (typeof elementColor !== 'string') {
             console.error("Error: elementColor must be a string.");
@@ -41,19 +35,28 @@ class TabGenerator {
         if (typeof showOpenStrings !== 'boolean') {
             console.error("Error: showOpenStrings must be a boolean.");
         }
-
+        // Assign instance variables
         this.fingerPositions = fingerPositions;
         this.fingerNumbers = fingerNumbers;
-        this.barreSize = barreSize;
-        this.barre = barre;
-        this.numberPosition = numberPosition;
-        this.showOpenStrings = showOpenStrings;
+        this.minAboveZero = 0; // Minimum fret number above zero
+        this.barres = barres;               // Specific fret where the barre is placed
+        this.color = elementColor; // Color for diagram elements
+        this.textColor = textColor;       // Color for the text
+        this.numberPosition = numberPosition; // Position of the numbers
+        this.showOpenStrings = showOpenStrings; // Whether to display open strings
+
+        // Diagram layout constants
         this.topSpacing = 25;
-        this.indicatorTopSpacing = 19;
-        this.textTopSpacing = 190
-        this.topBarHeight = 5
-        this.color = elementColor
-        this.textColor = textColor
+        this.topBarHeight = 7;
+        this.fretSpacing = 25;
+        this.stringSpacing = 25;
+        this.paddingLeft = 30;
+        this.barreSidesOverflow = 10;
+        this.stringOverflowBotom = 10;
+        this.fretCount = 4;
+        this.circleRadius = 10;
+        this.infoPadding = 10;
+        this.openStringRadius = 7;
     }
 
     generateChordSVG() {
@@ -69,8 +72,11 @@ class TabGenerator {
 
     drawDiagramComponents(svg) {
         this.drawTopBar(svg);
-        if (this.barreSize !== null) {
-            this.drawBarre(svg);
+        if (this.barres) {
+            this.barres.forEach(element => {
+                this.drawBarre(svg, element[0],element[1],element[2]);
+
+            });
         }
         this.drawStrings(svg);
         this.drawFrets(svg);
@@ -92,9 +98,9 @@ class TabGenerator {
 
     drawTopBar(svg) {
         const topBar = this.createSVGElement('rect', {
-            x: "29.5",
-            y: 14 + this.topSpacing,
-            width: '125',
+            x: this.paddingLeft,
+            y: this.topSpacing,
+            width: this.stringSpacing * 5,
             height: this.topBarHeight,
             fill: this.color,
             stroke: this.color,
@@ -106,8 +112,8 @@ class TabGenerator {
     drawStrings(svg) {
         for (let i = 0; i < 6; i++) {
             const line = this.createSVGElement('line', {
-                x1: 30 + i * 25, y1: this.topSpacing + 13,
-                x2: 30 + i * 25, y2: 140 + this.topSpacing,
+                x1: this.paddingLeft + i * this.stringSpacing, y1: this.topSpacing,
+                x2: this.paddingLeft + i * this.stringSpacing, y2: this.fretSpacing * this.fretCount + this.topSpacing + this.stringOverflowBotom + this.topBarHeight,
                 stroke: this.color, 'stroke-width': ((6 - i) / 3) + 1
             });
             svg.appendChild(line);
@@ -115,10 +121,10 @@ class TabGenerator {
     }
 
     drawFrets(svg) {
-        for (let j = 0; j < 5; j++) {
+        for (let j = 0; j < this.fretCount + 1; j++) {
             const line = this.createSVGElement('line', {
-                x1: '30', y1: 20 + this.topSpacing + j * 25,
-                x2: '155', y2: 20 + this.topSpacing + j * 25,
+                x1: this.paddingLeft, y1: this.topSpacing + j * this.fretSpacing + this.topBarHeight,
+                x2: this.paddingLeft + this.stringSpacing * 5, y2: this.topSpacing + j * this.fretSpacing + this.topBarHeight,
                 stroke: this.color, 'stroke-width': '2'
             });
             svg.appendChild(line);
@@ -126,22 +132,21 @@ class TabGenerator {
     }
 
     drawNotes(svg) {
-        const barreFret = this.barre ? parseInt(this.barre) : 1;
-        for (let k = 0; k < 6; k++) {
-            if (this.fingerPositions[k] !== 'x') {
-                const fret = parseInt(this.fingerPositions[k]);
+        for (let string = 0; string < 6; string++) {
+            if (this.fingerPositions[string] !== '-1') {
+                let fret = parseInt(this.fingerPositions[string]);
                 if (fret > 0) {
-                    const position = 40 + (fret - barreFret) * 25;
-                    const circle = this.createSVGElement('circle', {
-                        cx: 30 + k * 25, cy: position + this.topSpacing - 8,
-                        r: '10', fill: this.color
+                    let position = this.topSpacing + this.topBarHeight + (fret - this.minAboveZero) * this.fretSpacing - this.circleRadius / 2;
+                    let circle = this.createSVGElement('circle', {
+                        cx: this.paddingLeft + string * this.stringSpacing, cy: position + this.topSpacing - 8,
+                        r: this.circleRadius, fill: this.color
                     });
                     svg.appendChild(circle);
 
-                    if (this.fingerNumbers && this.fingerNumbers[k]) {
-                        const textPositionY = this.numberPosition === 'onNote' ? position + this.topSpacing : this.textTopSpacing;
+                    if (this.fingerNumbers && this.fingerNumbers[string]) {
+                        const textPositionY = this.numberPosition === 'onNote' ? position + this.topSpacing : this.topSpacing + this.topBarHeight + (this.fretCount + 1) * this.fretSpacing + this.stringOverflowBotom;
                         const text = this.createSVGElement('text', {
-                            x: 30 + k * 25,
+                            x: this.paddingLeft + string * this.stringSpacing,
                             y: textPositionY,
                             'font-family': 'Arial',
                             'font-size': '20',
@@ -149,7 +154,7 @@ class TabGenerator {
                             fill: this.numberPosition === 'onNote' ? this.textColor : this.color,
                             'text-anchor': 'middle'
                         });
-                        text.textContent = this.fingerNumbers[k];
+                        text.textContent = this.fingerNumbers[string];
                         svg.appendChild(text);
                     }
                 }
@@ -158,25 +163,24 @@ class TabGenerator {
     }
 
     drawMuteIndicators(svg) {
-        const ofsetX = 0;
-        const ofsetY = -15 + this.indicatorTopSpacing;
-        const strokeLength = 13;
+        const radius = 10
+        const height = radius * Math.sqrt(2)
+
         for (let i = 0; i < 6; i++) {
             if (this.fingerPositions[i] == -1) {
-                const halfStroke = strokeLength / 2;
                 const line1 = this.createSVGElement('line', {
-                    x1: 30 + i * 25 - halfStroke + ofsetX,
-                    y1: 10 + ofsetY,
-                    x2: 30 + i * 25 + halfStroke + ofsetX,
-                    y2: 10 + strokeLength + ofsetY,
+                    x1: this.paddingLeft + i * this.stringSpacing - height / 2,
+                    y1: this.topSpacing - height-this.infoPadding,
+                    x2: this.paddingLeft + i * this.stringSpacing + height / 2,
+                    y2: this.topSpacing-this.infoPadding,
                     stroke: this.color,
                     'stroke-width': '2'
                 });
                 const line2 = this.createSVGElement('line', {
-                    x1: 30 + i * 25 + halfStroke + ofsetX,
-                    y1: 10 + ofsetY,
-                    x2: 30 + i * 25 - halfStroke + ofsetX,
-                    y2: 10 + strokeLength + ofsetY,
+                    x1: this.paddingLeft + i * this.stringSpacing - height / 2,
+                    y1: this.topSpacing-this.infoPadding,
+                    x2: this.paddingLeft + i * this.stringSpacing + height / 2,
+                    y2: this.topSpacing - height-this.infoPadding,
                     stroke: this.color,
                     'stroke-width': '2'
                 });
@@ -190,9 +194,9 @@ class TabGenerator {
         for (let i = 0; i < 6; i++) {
             if (this.fingerPositions[i] === '0') {
                 const circle = this.createSVGElement('circle', {
-                    cx: 30 + i * 25,
-                    cy: this.indicatorTopSpacing,
-                    r: '7',
+                    cx: this.paddingLeft + i * this.stringSpacing,
+                    cy: this.topSpacing - this.infoPadding - this.openStringRadius,
+                    r: this.openStringRadius,
                     fill: 'none',
                     stroke: this.color,
                     'stroke-width': '2'
@@ -202,16 +206,16 @@ class TabGenerator {
         }
     }
 
-    drawBarre(svg) {
-        const index = 6 - this.barreSize;
-        const barreWidth = this.barreSize * 25 - 15;
+    drawBarre(svg, barreFret,barreStartString, barreEndString ) {
+        barreFret = barreFret - this.minAboveZero
+        const barreWidth = barreEndString - barreStartString
         const barreHeight = 10;
-        const barreX = 25 + index * 25 - 5;
-        const barreY = 25 + (7.5 - barreHeight / 2) + this.topSpacing;
+        const barreX = this.paddingLeft - this.barreSidesOverflow + barreStartString * this.stringSpacing;
+        const barreY = barreFret * this.fretSpacing + this.topSpacing + this.topBarHeight + (this.fretSpacing / 2) - barreHeight / 2;
 
         const rect = this.createSVGElement('rect', {
             x: barreX, y: barreY,
-            width: barreWidth + 10, height: barreHeight,
+            width: barreWidth * this.stringSpacing + 2 * this.barreSidesOverflow, height: barreHeight,
             rx: '5', ry: '5',
             fill: this.color
         });

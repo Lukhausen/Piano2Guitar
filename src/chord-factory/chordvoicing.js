@@ -1,14 +1,33 @@
-import { STANDARD_TUNING, TUNING, FINGER_FRET_RANGE, NOTE_INDEX_MAP, BARRE_RATING } from './constants.js';
-import { parseNotes, removeDuplicateArrays } from './utils.js';
-import { ChordFactory } from './chordfactory.js';
+import { settings } from './constants.js';
 
+
+/**
+ * Class representing a Chord Voicing.
+ * 
+ * The `ChordVoicing` class is used to represent a specific way to play a chord on a guitar. It includes
+ * properties and methods to calculate and rate the playability and sound quality of the chord voicing.
+ * 
+ * @class
+ */
 export class ChordVoicing {
-  constructor(voicing, barre, fingersUsed, barreSize, minAboveZero, chordFactoryNotes, chordFactoryRoot) {
+  /**
+   * Creates an instance of ChordVoicing.
+   * 
+   * @constructor
+   * @param {Array<number>} voicing - Array representing the fret positions for each string (0-5). `-1` represents a muted string, `0` represents an open string.
+   * @param {number|null} barre - The fret position where a barre chord is applied. `null` if no barre chord.
+   * @param {number} fingersUsed - The number of fingers used to play the chord.
+   * @param {number} minAboveZero - The minimum fret position above zero used in the voicing.
+   * @param {Array<number>} chordFactoryNotes - Array of note indices used in the chord (0-11 representing C-B).
+   * @param {number} chordFactoryRoot - The root note of the chord.
+   */
+  constructor(voicing, fingersUsed, barres, minAboveZero, chordFactoryNotes, chordFactoryRoot) {
+
+
     this.voicing = voicing;
-    this.barre = barre;
+    this.barres = barres;
 
     this.fingersUsed = fingersUsed
-    this.barreSize = barreSize
     this.minAboveZero = minAboveZero
     this.fingerPositions = [0, 0, 0, 0, 0, 0]
     this.chordSpacing = 0
@@ -18,7 +37,7 @@ export class ChordVoicing {
 
     for (let i = 0; i < 6; i++) {
       if (this.voicing[i] >= 0) {
-        this.actuallyPlayedNotes[i] = (this.voicing[i] + TUNING[i])
+        this.actuallyPlayedNotes[i] = (this.voicing[i] + settings.tuning[i])
       } else {
         this.actuallyPlayedNotes[i] = this.voicing[i]
       }
@@ -46,8 +65,8 @@ export class ChordVoicing {
       }
     };
 
-    this.calculateChordSpacing()
-    this.calculateFingerPosition()
+    //this.calculateChordSpacing()
+    //this.calculateFingerPosition()
 
     this.rateSoundQuality()
     this.ratePlayability()
@@ -146,21 +165,21 @@ export class ChordVoicing {
         maxFret = this.voicing[i]
       }
     }
-    return 1-((maxFret-this.minAboveZero) / FINGER_FRET_RANGE)
+    return 1 - ((maxFret - this.minAboveZero) / settings.fingerFretRange)
   }
 
-  assessPlayabilityMuttedAmount(){
+  assessPlayabilityMuttedAmount() {
     let mutedCount = 0
     for (let i = 0; i < 6; i++) {
       if (this.voicing[i] == -1) {
         mutedCount++
       }
     }
-    return 1-(mutedCount/6)
+    return 1 - (mutedCount / 6)
   }
 
-  assessPlayabilityFretHeight(){
-    return 1-(this.minAboveZero/24)
+  assessPlayabilityFretHeight() {
+    return 1 - (this.minAboveZero / 24)
   }
 
 
@@ -178,7 +197,7 @@ export class ChordVoicing {
     details.fretBoardHeight = this.assessSoundFretBoardHeight();
     details.voicingRange = this.assessSoundVoicingRange();
     details.doubleNotes = this.assessSoundDoubleNotes();
-    details.total = ((details.harmonicCompleteness + details.openStrings + details.playedStrings + details.fretBoardHeight + details.voicingRange + details.doubleNotes)/6);
+    details.total = ((details.harmonicCompleteness + details.openStrings + details.playedStrings + details.fretBoardHeight + details.voicingRange + details.doubleNotes) / 6);
 
     this.soundQualityRating = details.total;
   }
@@ -186,10 +205,10 @@ export class ChordVoicing {
   assessSoundHarmonicCompleteness() {
     // Transform chordFactoryNotes to modulo 12 and store as a Set
     const uniqueDesiredNotes = new Set(this.chordFactoryNotes.map(note => note % 12));
-  
+
     // Transform actuallyPlayedNotes to modulo 12 and store as a Set
     const playedNotesModuloSet = new Set(this.actuallyPlayedNotes.map(note => note % 12));
-  
+
     // Calculate the number of overlapping notes using set intersection
     let overlapCount = 0;
     uniqueDesiredNotes.forEach(note => {
@@ -197,7 +216,7 @@ export class ChordVoicing {
         overlapCount++;
       }
     });
-  
+
     // Calculate harmonic completeness score
     const completenessScore = overlapCount / uniqueDesiredNotes.size;
     return completenessScore;
@@ -254,7 +273,7 @@ export class ChordVoicing {
       }
     }
     let spacing = this.actuallyPlayedNotes[maxIndex] - this.actuallyPlayedNotes[minIndex]
-    let maxSpacing = TUNING[5] + this.minAboveZero + FINGER_FRET_RANGE - TUNING[0] + this.minAboveZero
+    let maxSpacing = settings.tuning[5] + this.minAboveZero + settings.fingerFretRange - settings.tuning[0] + this.minAboveZero
 
     // The Higher the number, the better So The higher the Spacing archived, the better
     let spacingRatio = spacing / maxSpacing
@@ -279,7 +298,7 @@ assessVoicingRange(){
 
 assessTonalBalance() {
   const noteFrequencies = this.voicing.map((fret, string) =>
-    fret !== -1 ? (STANDARD_TUNING[string] + fret) % 12 : null
+    fret !== -1 ? (STANDARD_settings.tuning[string] + fret) % 12 : null
   ).filter(note => note !== null);
 
   const lowNotes = noteFrequencies.filter(note => note < 5).length;

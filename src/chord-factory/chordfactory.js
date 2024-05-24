@@ -1,10 +1,9 @@
-import { STANDARD_TUNING, NOTE_INDEX_MAP, TUNING, FINGER_FRET_RANGE, MAX_FRETS, BARRE_RATING } from './constants.js';
-import { parseNotes, removeDuplicateArrays } from './utils.js';
+import { settings, MAX_FRETS } from './constants.js';
 import { ChordVoicing } from './chordvoicing.js';
 
 
 export class ChordFactory {
-  constructor(chord, startWithRoot = true, tuning = TUNING) {
+  constructor(chord, startWithRoot = true, tuning = settings.tuning) {
     console.log("ChordFactory Recieved Notes: ", chord.notes)
     this.identifier = chord.name
     this.notes = chord.notes;
@@ -125,7 +124,7 @@ export class ChordFactory {
         // First Check If there is a New Element inside the Array
         if (fingerIndexStorage[string] < fingerIndexLength[string]) {
           // CHeck if its in range for Valid CHord, if so add it 
-          if (this.fingerPositions[string][fingerIndexStorage[string]] <= fret + FINGER_FRET_RANGE) {
+          if (this.fingerPositions[string][fingerIndexStorage[string]] <= fret + settings.fingerFretRange) {
             //console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]])
 
             maskScope[string].push(this.fingerPositions[string][fingerIndexStorage[string]])
@@ -313,15 +312,25 @@ export class ChordFactory {
             touchedSet.add(newIndex);
           }
         }
-
       }
-
-
+      let barres = []
       touchedIndices.forEach(([fret, index]) => {
-        console.log(`Touched:`, barreClass[fret][index]);
+        if (barreClass[fret][index].length > 1) {
+          barres.push([fret, Math.min(...barreClass[fret][index]), Math.max(...barreClass[fret][index])])
+
+        }
       });
 
-      console.log("filterPlayableChords2", voicing, barreClass, barreClassesUsed);
+      let newVoicing = new ChordVoicing(
+        voicing,
+        minAboveZero ? minAboveZero : null,
+        barres,
+        minAboveZero,
+        this.notes,
+        this.startWithRoot ? this.root : -1
+      );
+      playableChordsSet.add(JSON.stringify(newVoicing));
+      console.log("filterPlayableChords2 - voicing, barres", voicing, barres);
       //Now Check For each Barre Class Starting at MinAboveZero...
 
     });
@@ -329,8 +338,12 @@ export class ChordFactory {
 
     // Calculate the time taken
     const timeTaken = endTime - startTime;
+    const playableChords = Array.from(playableChordsSet).map(voicingString => JSON.parse(voicingString));
+
     console.log("filterPlayableChords2 - Time taken:", timeTaken, "milliseconds");
+    return playableChords
   }
+
 
 
   /**
