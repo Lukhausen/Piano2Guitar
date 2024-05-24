@@ -30,10 +30,11 @@ chord-factory/
   chordvoicing.js (Path: chord-factory\chordvoicing.js, Size: 11247 bytes)
   constants.js (Path: chord-factory\constants.js, Size: 343 bytes)
   main.js (Path: chord-factory\main.js, Size: 1096 bytes)
-  package.json (Path: chord-factory\package.json, Size: 169 bytes)
+  package-lock.json (Path: chord-factory\package-lock.json, Size: 24916 bytes)
+  package.json (Path: chord-factory\package.json, Size: 229 bytes)
   utils.js (Path: chord-factory\utils.js, Size: 754 bytes)
 chord-library/
-  script.js (Path: chord-library\script.js, Size: 9395 bytes)
+  script.js (Path: chord-library\script.js, Size: 9401 bytes)
 createChatGPTContext.js (Path: createChatGPTContext.js, Size: 2783 bytes)
 css/
   input-styles.css (Path: css\input-styles.css, Size: 9294 bytes)
@@ -43,17 +44,18 @@ drag-drop/
   script.js (Path: drag-drop\script.js, Size: 14001 bytes)
   styles.css (Path: drag-drop\styles.css, Size: 1343 bytes)
 index.html (Path: index.html, Size: 5812 bytes)
-index.js (Path: index.js, Size: 10016 bytes)
+index.js (Path: index.js, Size: 10091 bytes)
 midi-integration/
   index.html (Path: midi-integration\index.html, Size: 263 bytes)
   script.js (Path: midi-integration\script.js, Size: 3424 bytes)
-output.txt (Path: output.txt, Size: 110065 bytes)
+output.txt (Path: output.txt, Size: 4843132 bytes)
 piano/
   script.js (Path: piano\script.js, Size: 9866 bytes)
   style.css (Path: piano\style.css, Size: 1122 bytes)
 progression-generator/
-  main.js (Path: progression-generator\main.js, Size: 13948 bytes)
-  package.json (Path: progression-generator\package.json, Size: 169 bytes)
+  main.js (Path: progression-generator\main.js, Size: 13960 bytes)
+  package-lock.json (Path: progression-generator\package-lock.json, Size: 24916 bytes)
+  package.json (Path: progression-generator\package.json, Size: 229 bytes)
   style.css (Path: progression-generator\style.css, Size: 968 bytes)
 svg/
   play.svg (Path: svg\play.svg, Size: 420 bytes)
@@ -941,7 +943,7 @@ export class ChordLibrary {
         });
     }
 
-    searchChords(noteArray, rootNote, threshold = 50) {
+    async searchChords(noteArray, rootNote, threshold = 50) {
         console.log("Searching Chords...")
         const results = [];
         noteArray = noteArray.map(note => note % 12); // Normalize notes to be within octave
@@ -1717,12 +1719,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    document.querySelector('.pianoContainer').addEventListener('notesChanged', (e) => {
+    document.querySelector('.pianoContainer').addEventListener('notesChanged',async (e) => {
         console.log('Piano notes changed:', e.detail.notes, e.detail.rootNote);
         let items
         if (e.detail.notes.length > 0) {
             console.log("Reviced notesChanged Event: " + e.detail.notes + " Root: " + e.detail.rootNote)
-            items = chordLibrary.searchChords(e.detail.notes, e.detail.rootNote, 50)
+            items = await chordLibrary.searchChords(e.detail.notes, e.detail.rootNote, 50)
         } else {
             items = allChordLibraryItems
         }
@@ -1802,18 +1804,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    window.addEventListener("statusUpdated", (e) => {
+    window.addEventListener("statusUpdated", async (e) => {
         document.getElementById("MIDIStatusDiv").innerHTML = e.detail
-
     })
 
 
     //Functionality to autom,atically add Chord when played by midi:
-    window.addEventListener('notesOutput', (e) => {
+    window.addEventListener('notesOutput', async (e) => {
         const notes = e.detail;
         if (notes.length > 0) {
             const rootNote = Math.min(...notes);
-            const searchResults = chordLibrary.searchChords(notes, rootNote, 100);
+            const searchResults = await chordLibrary.searchChords(notes, rootNote, 100);
             if (searchResults.length > 0) {
                 const chord = searchResults[0];
                 dragAndDropList.addSelectedItem(chord);
@@ -1826,7 +1827,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //Scale Detector Listener
     const scaleDisplay = document.getElementById("scaleDisplay")
-    window.addEventListener('scaleDetected', function (event) {
+    window.addEventListener('scaleDetected', async function (event) {
         scaleDisplay.innerHTML = event.detail.scale
     });
 
@@ -1837,22 +1838,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let soundQualityValue = 1;
     let progressionGenerator = new ProgressionGenerator([], true, TUNING, "#ffffff", "onNote", true)
 
-    document.addEventListener('selectedItemsUpdated', function (event) {
+    document.addEventListener('selectedItemsUpdated', async function (event) {
         console.log('Updated Selected Items:', event.detail.selectedItems);
-        progressionGenerator.setProgression(event.detail.selectedItems)
-        updateProgressionDynamic(soundQualityValue)
+        await progressionGenerator.setProgression(event.detail.selectedItems)
+        await updateProgressionDynamic(soundQualityValue)
     });
 
 
     const soundQualitySlider = document.getElementById("soundQualitySlider");
-    soundQualitySlider.addEventListener('input', (e) => {
+    soundQualitySlider.addEventListener('input', async (e) => {
         soundQualityValue = e.target.value / 100;
         console.log("Slider Value:", soundQualityValue);
-        updateProgressionDynamic(soundQualityValue)
+        await updateProgressionDynamic(soundQualityValue)
     });
 
-    function updateProgressionDynamic(soundQualityValue) {
-        let progressionHTML = progressionGenerator.getProgressionDynamicHTML(soundQualityValue);
+    async function updateProgressionDynamic(soundQualityValue) {
+        let progressionHTML = await progressionGenerator.getProgressionDynamicHTML(soundQualityValue);
         document.getElementById("dynamicProgressionWrapper").innerHTML = "";
         document.getElementById("dynamicProgressionWrapper").appendChild(progressionHTML);
     };
@@ -2213,7 +2214,6 @@ class Piano {
         this.container.dispatchEvent(event);
     }
     clearPiano() {
-        this.audioElements.forEach(audio => { audio.pause(); audio.currentTime = 0; });
 
         this.playedNotes = []; // Clear the array of played notes
         this.rootNote = null; // Clear the root note
@@ -2223,6 +2223,7 @@ class Piano {
         this.container.querySelectorAll('.key.rootNote').forEach(key => {
             key.classList.remove("rootNote");
         });
+        this.audioElements.forEach(audio => { audio.pause(); audio.currentTime = 0; });
         this.updatePlayedNotes();
     }
 
@@ -2345,7 +2346,7 @@ export class ProgressionGenerator {
 
 
     // Set initial progression with ChordFactory instances for each chord
-    setProgression(initialProgression) {
+    async setProgression(initialProgression) {
         const newChordFactoryMap = {};
         // Create or reuse ChordFactory instances
         initialProgression.forEach(chord => {
@@ -2477,7 +2478,7 @@ export class ProgressionGenerator {
     }
 
 
-    getProgressionDynamicHTML(soundQuality = 0.5) {
+    async getProgressionDynamicHTML(soundQuality = 0.5) {
         // Iterate over each entry in the progression, sort by combined rating, and get the first playable chord
         if (this.progression.length < 1) {
             return this.getPlaceholderHTML()

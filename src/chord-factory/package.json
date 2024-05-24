@@ -5,5 +5,8 @@
   "main": "main.js",
   "author": "",
   "license": "Closed Source",
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@babel/core": "^7.24.5"
+  }
 }

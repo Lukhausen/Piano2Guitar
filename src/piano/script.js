@@ -226,7 +226,6 @@ class Piano {
         this.container.dispatchEvent(event);
     }
     clearPiano() {
-        this.audioElements.forEach(audio => { audio.pause(); audio.currentTime = 0; });
 
         this.playedNotes = []; // Clear the array of played notes
         this.rootNote = null; // Clear the root note
@@ -236,6 +235,7 @@ class Piano {
         this.container.querySelectorAll('.key.rootNote').forEach(key => {
             key.classList.remove("rootNote");
         });
+        this.audioElements.forEach(audio => { audio.pause(); audio.currentTime = 0; });
         this.updatePlayedNotes();
     }
 

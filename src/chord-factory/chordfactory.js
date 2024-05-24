@@ -1,4 +1,4 @@
-import { STANDARD_TUNING, NOTE_INDEX_MAP, TUNING, FINGER_FRET_RANGE, BARRE_RATING } from './constants.js';
+import { STANDARD_TUNING, NOTE_INDEX_MAP, TUNING, FINGER_FRET_RANGE, MAX_FRETS, BARRE_RATING } from './constants.js';
 import { parseNotes, removeDuplicateArrays } from './utils.js';
 import { ChordVoicing } from './chordvoicing.js';
 
@@ -11,9 +11,9 @@ export class ChordFactory {
     this.startWithRoot = startWithRoot
     this.root = chord.rootNote
     this.tuning = tuning;
-    this.fingerPositions = this.calculateFingerPositions();
+    this.fingerPositions = this.calculateValidFingerPositions();
     this.allChords = this.generateAllChordCombinations2()
-    this.playableChords = this.filterPlayableChords(structuredClone(this.allChords))
+    this.playableChords = this.filterPlayableChords2(structuredClone(this.allChords))
     //this.getFretSpanStatistics()
     this.sortPlayableChordsByCombinedRating(1)
   }
@@ -45,7 +45,7 @@ export class ChordFactory {
   }
 
 
-  calculateFingerPositions() {
+  calculateValidFingerPositions() {
     const fingerPositions = [];
 
     for (let stringIndex of this.tuning) {
@@ -73,41 +73,8 @@ export class ChordFactory {
     }, [[]]);
   }
 
-  generateAllChordCombinations() {
-    const chords = [];
-    // All 12 Frets
-    for (let startFret = 0; startFret <= 12; startFret++) {
-      let positionsInRange = []
-      let endFret = startFret + FINGER_FRET_RANGE - 1
-      for (let string = 0; string < 6; string++) {
-        let possibleStringPlacements = []
-        //Push -1 to every String Because it could be muted
-        possibleStringPlacements.push(-1)
-        // As The First Index of The this.fingerPositions[string] String Array ALLWAYS is 1 -1, we can skip it and add it separately
-        //THis is why we start a t 1
-        for (let finger = 1; finger < this.fingerPositions[string].length; finger++) {
-          // As the this.fingerPositions[string][finger] Array is sorted, we can break out, once we hit a higher position than endFret
-          if (this.fingerPositions[string][finger] > endFret) {
-            break;
-          } else if (this.fingerPositions[string][finger] == endFret) {
-            possibleStringPlacements.push(this.fingerPositions[string][finger])
-            break;
-          } else if (this.fingerPositions[string][finger] >= startFret) {
-            possibleStringPlacements.push(this.fingerPositions[string][finger])
-          } else if (this.fingerPositions[string][finger] == 0) {
-            possibleStringPlacements.push(this.fingerPositions[string][finger])
-          }
-        }
-        positionsInRange[string] = possibleStringPlacements
-      }
-      chords.push(...this.cartesianProduct(positionsInRange))
 
-    }
-
-    return chords;
-  }
-
-
+  //Highly efficent Variant of the Cartesian Product, That will not calulate any position twice
   generateAllChordCombinations2() {
 
     const startTime = performance.now();
@@ -210,15 +177,18 @@ export class ChordFactory {
   }
 
 
-  filterPlayableChords(allChordsCopyCopy) {
-    let allChordsCopy = [...allChordsCopyCopy]
-    const playableChords = allChordsCopy.map(voicing => {
+  filterPlayableChords(allChordsCopy) {
+    const startTime = performance.now();
+
+    const playableChordsSet = new Set();
+
+    allChordsCopy.forEach(voicing => {
+      // Start By Muting All Chords
       if (this.startWithRoot) {
-        for (let string = 0; string <= 5; string++) {
+        for (let string = 0; string < 6; string++) {
           if (voicing[string] == -1) {
             continue;
-          }
-          else if (((voicing[string] + this.tuning[string]) % 12) != this.root) {
+          } else if (((voicing[string] + this.tuning[string]) % 12) != this.root) {
             voicing[string] = -1;
           } else {
             break;
@@ -226,19 +196,16 @@ export class ChordFactory {
         }
       }
 
-      //Faster Way to Calculate the MinaboveZero
+      // Faster Way to Calculate the MinaboveZero
       let minAboveZero = Infinity;
-
       for (let i = 0; i < voicing.length; i++) {
         if (voicing[i] > 0 && voicing[i] < minAboveZero) {
           minAboveZero = voicing[i];
         }
       }
-
       if (minAboveZero === Infinity) {
         minAboveZero = 0;
       }
-
 
       let fingersUsed = 0;
       let barreStop = false;
@@ -257,22 +224,115 @@ export class ChordFactory {
           barreAddFingers++;
         }
       }
-      if (barreUseFingers)
+      if (barreUseFingers) {
         if (barreUseFingers >= 2 && barreAddFingers > 3) {
-          return null;
+          return;
         } else if (barreUseFingers < 2) {
           fingersUsed = voicing.filter(fret => fret >= minAboveZero).length;
-          barreUseFingers = 0
+          barreUseFingers = 0;
         }
-      if (fingersUsed <= 4) {
-        let newVoicing = new ChordVoicing(voicing, barreUseFingers > 0 ? minAboveZero : null, barreUseFingers > 0 ? barreAddFingers : fingersUsed, barreUseFingers, minAboveZero, this.notes, this.startWithRoot ? this.root : -1)
-
-        return newVoicing;
       }
-      return null;
-    }
-    ).filter(chordVoicing => chordVoicing !== null);
+      if (fingersUsed <= 4) {
+        let newVoicing = new ChordVoicing(
+          voicing,
+          barreUseFingers > 0 ? minAboveZero : null,
+          barreUseFingers > 0 ? barreAddFingers : fingersUsed,
+          barreUseFingers,
+          minAboveZero,
+          this.notes,
+          this.startWithRoot ? this.root : -1
+        );
+
+        playableChordsSet.add(JSON.stringify(newVoicing));
+      }
+    });
+
+    // Convert the Set back to an array of unique ChordVoicing objects
+    const playableChords = Array.from(playableChordsSet).map(voicingString => JSON.parse(voicingString));
+
+    // Track end time
+    const endTime = performance.now();
+
+    // Calculate the time taken
+    const timeTaken = endTime - startTime;
+    console.log("filterPlayableChords - Time taken:", timeTaken, "milliseconds");
+
     return playableChords;
+  }
+
+
+  filterPlayableChords2(allChordsCopy) {
+    const startTime = performance.now();
+    const playableChordsSet = new Set();
+  
+    allChordsCopy.forEach(voicing => {
+  
+      let barreClass = Array.from({ length: MAX_FRETS }, () => Array.from({ length: 6 }, () => []));
+      let barreClassesUsed = new Set();
+      let barreSeparatorIndex = Array.from({ length: MAX_FRETS }, () => [0]);
+      let barreLastSeen = Array.from({ length: MAX_FRETS }, () => [-1]);
+
+      let minAboveZero = -1;
+      let mutingTillRoot = true;
+  
+      let touchedIndices = [];
+      const touchedSet = new Set();
+  
+      for (let string = 0; string < 6; string++) {
+        //Mute Strings That are not the Root Note
+        if (this.startWithRoot && mutingTillRoot) {
+          if (voicing[string] == -1) {
+            // Do Nothing
+          } else if (((voicing[string] + this.tuning[string]) % 12) != this.root) {
+            // Mute The String
+            voicing[string] = -1;
+          } else {
+            mutingTillRoot = false;
+          }
+        }
+  
+        //Check if the String is not open 0 or muted -1
+        if (voicing[string] > 0) {
+          //Check if a New MinAboveZero is present
+          if (voicing[string] > minAboveZero) {
+            minAboveZero = voicing[string];
+          }
+  
+          //Now, Place the Strings in their Corresponding barreClass
+          if (voicing[string] >= 0) {
+
+
+            
+            if (voicing[string] == 0) {
+              barreClassesUsed.forEach(() => {
+                barreSeparatorIndex[voicing[string]] += 1;
+              });
+            } else {
+              barreClassesUsed.add(voicing[string]);
+              barreClass[voicing[string]][barreSeparatorIndex[voicing[string]]].push(string);
+              const newIndex = `${voicing[string]}-${barreSeparatorIndex[voicing[string]]}`;
+              if (!touchedSet.has(newIndex)) {
+                touchedIndices.push([voicing[string], barreSeparatorIndex[voicing[string]]]);
+                touchedSet.add(newIndex);
+              }
+            }
+          }
+        }
+      }
+  
+      touchedIndices.forEach(([fret, index]) => {
+        console.log(`Touched:`, barreClass[fret][index]);
+      });
+  
+      console.log("filterPlayableChords2", voicing, barreClass, barreClassesUsed);
+      //Now Check For each Barre Class Starting at MinAboveZero...
+  
+    });
+    const endTime = performance.now();
+  
+    // Calculate the time taken
+    const timeTaken = endTime - startTime;
+    console.log("filterPlayableChords2 - Time taken:", timeTaken, "milliseconds");
   }
 
 

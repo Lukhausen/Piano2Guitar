@@ -8,3 +8,4 @@ export const NOTE_INDEX_MAP = {
 };
 export const BARRE_RATING = 1
 export const FINGER_FRET_RANGE = 4
+export const MAX_FRETS = 24

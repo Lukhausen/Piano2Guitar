@@ -98,7 +98,7 @@ export class ProgressionGenerator {
 
 
     // Set initial progression with ChordFactory instances for each chord
-    setProgression(initialProgression) {
+    async setProgression(initialProgression) {
         const newChordFactoryMap = {};
         // Create or reuse ChordFactory instances
         initialProgression.forEach(chord => {
@@ -230,7 +230,7 @@ export class ProgressionGenerator {
     }
 
 
-    getProgressionDynamicHTML(soundQuality = 0.5) {
+    async getProgressionDynamicHTML(soundQuality = 0.5) {
         // Iterate over each entry in the progression, sort by combined rating, and get the first playable chord
         if (this.progression.length < 1) {
             return this.getPlaceholderHTML()

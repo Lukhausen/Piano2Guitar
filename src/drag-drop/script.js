@@ -95,7 +95,6 @@ export default class DragAndDropList {
                 firstElement.style.backgroundColor = "#ffffff00";
                 firstElement.style.color = "var(--light3)";
                 firstElement.style.fontSize = "small";
-                firstElement.style.marginBottom = "var(--padding)";
 
                 this.itemsContainer.appendChild(firstElement);
             }
@@ -107,8 +106,6 @@ export default class DragAndDropList {
                 breakElement.style.width = "100%";
                 breakElement.style.height = "2px";
                 breakElement.style.backgroundColor = "var(--dark1)";
-                breakElement.style.marginTop = "var(--padding)";
-                breakElement.style.marginBottom = "var(--padding)";
                 breakElement.style.boxShadow = "var(--padding) 0px 0px 0px var(--dark1), calc(var(--padding)*-1) 0px 0px 0px var(--dark1)";
 
                 this.itemsContainer.appendChild(breakElement);

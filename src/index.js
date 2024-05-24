@@ -119,12 +119,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    document.querySelector('.pianoContainer').addEventListener('notesChanged', (e) => {
+    document.querySelector('.pianoContainer').addEventListener('notesChanged',async (e) => {
         console.log('Piano notes changed:', e.detail.notes, e.detail.rootNote);
         let items
         if (e.detail.notes.length > 0) {
             console.log("Reviced notesChanged Event: " + e.detail.notes + " Root: " + e.detail.rootNote)
-            items = chordLibrary.searchChords(e.detail.notes, e.detail.rootNote, 50)
+            items = await chordLibrary.searchChords(e.detail.notes, e.detail.rootNote, 50)
         } else {
             items = allChordLibraryItems
         }
@@ -204,18 +204,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    window.addEventListener("statusUpdated", (e) => {
+    window.addEventListener("statusUpdated", async (e) => {
         document.getElementById("MIDIStatusDiv").innerHTML = e.detail
-
     })
 
 
     //Functionality to autom,atically add Chord when played by midi:
-    window.addEventListener('notesOutput', (e) => {
+    window.addEventListener('notesOutput', async (e) => {
         const notes = e.detail;
         if (notes.length > 0) {
             const rootNote = Math.min(...notes);
-            const searchResults = chordLibrary.searchChords(notes, rootNote, 100);
+            const searchResults = await chordLibrary.searchChords(notes, rootNote, 100);
             if (searchResults.length > 0) {
                 const chord = searchResults[0];
                 dragAndDropList.addSelectedItem(chord);
@@ -228,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //Scale Detector Listener
     const scaleDisplay = document.getElementById("scaleDisplay")
-    window.addEventListener('scaleDetected', function (event) {
+    window.addEventListener('scaleDetected', async function (event) {
         scaleDisplay.innerHTML = event.detail.scale
     });
 
@@ -239,22 +238,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let soundQualityValue = 1;
     let progressionGenerator = new ProgressionGenerator([], true, TUNING, "#ffffff", "onNote", true)
 
-    document.addEventListener('selectedItemsUpdated', function (event) {
+    document.addEventListener('selectedItemsUpdated', async function (event) {
         console.log('Updated Selected Items:', event.detail.selectedItems);
-        progressionGenerator.setProgression(event.detail.selectedItems)
-        updateProgressionDynamic(soundQualityValue)
+        await progressionGenerator.setProgression(event.detail.selectedItems)
+        await updateProgressionDynamic(soundQualityValue)
     });
 
 
     const soundQualitySlider = document.getElementById("soundQualitySlider");
-    soundQualitySlider.addEventListener('input', (e) => {
+    soundQualitySlider.addEventListener('input', async (e) => {
         soundQualityValue = e.target.value / 100;
         console.log("Slider Value:", soundQualityValue);
-        updateProgressionDynamic(soundQualityValue)
+        await updateProgressionDynamic(soundQualityValue)
     });
 
-    function updateProgressionDynamic(soundQualityValue) {
-        let progressionHTML = progressionGenerator.getProgressionDynamicHTML(soundQualityValue);
+    async function updateProgressionDynamic(soundQualityValue) {
+        let progressionHTML = await progressionGenerator.getProgressionDynamicHTML(soundQualityValue);
         document.getElementById("dynamicProgressionWrapper").innerHTML = "";
         document.getElementById("dynamicProgressionWrapper").appendChild(progressionHTML);
     };

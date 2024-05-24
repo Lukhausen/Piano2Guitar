@@ -119,7 +119,7 @@ export class ChordLibrary {
         });
     }
 
-    searchChords(noteArray, rootNote, threshold = 50) {
+    async searchChords(noteArray, rootNote, threshold = 50) {
         console.log("Searching Chords...")
         const results = [];
         noteArray = noteArray.map(note => note % 12); // Normalize notes to be within octave
