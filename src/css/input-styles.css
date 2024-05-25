@@ -360,7 +360,7 @@ body {
     }
 
     html {
-        font-size: small;
+        font-size:medium;
     }
 
     body {
@@ -389,7 +389,7 @@ body {
     }
 
     :root {
-        --padding: 5px;
+        --padding: 7px;
     }
 .visualPianoIcon{
     width: max(3vh, 3vw);

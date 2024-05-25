@@ -1,0 +1,27 @@
+.selectedItemWrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.searchContainer {
+    display: flex;
+}
+
+.searchChordList {
+    flex-basis: 25vh;
+}
+
+.inputWrapper {
+    flex: 0;
+}
+
+.selectedItemsWrapper{
+    max-height: 25vh;
+flex:1
+}
+.selectedItems{
+    align-items: center;
+}
+.selectedItemWrapper{
+    display: none;
+}

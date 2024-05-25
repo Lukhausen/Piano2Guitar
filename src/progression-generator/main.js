@@ -177,7 +177,7 @@ export class ProgressionGenerator {
 
             // Assuming TabGenerator can handle this static data
             try {
-                const chordDiagram = new TabGenerator(voicing, fingerPositions, 0,  null, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
+                const chordDiagram = new TabGenerator(voicing, fingerPositions, 0, null, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
                 const svg = chordDiagram.generateChordSVG();
                 diagramsContainer.appendChild(svg);
             } catch (error) {
@@ -230,7 +230,7 @@ export class ProgressionGenerator {
     }
 
 
-    async getProgressionDynamicHTML(soundQuality = 0.5) {
+    async getProgressionDynamicHTML(soundQuality = 0.5, ammount = 1) {
         // Iterate over each entry in the progression, sort by combined rating, and get the first playable chord
         if (this.progression.length < 1) {
             return this.getPlaceholderHTML()
@@ -246,24 +246,26 @@ export class ProgressionGenerator {
 
         this.progression.forEach(chordFactory => {
             // Extract first playable chord from each ChordFactory instance
-            if (chordFactory.playableChords[0]) {
-                // Assuming TabGenerator takes chord details and returns an SVG element
-                try {
-                    const chordDiagram = new TabGenerator(chordFactory.playableChords[0].voicing, chordFactory.playableChords[0].fingerPositions, chordFactory.playableChords[0].minAboveZero, chordFactory.playableChords[0].barres, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
-                    const svg = chordDiagram.generateChordSVG();
-                    let svgContainer = document.createElement('div'); // Container for chord diagrams
-                    svgContainer.classList.add("progressionGeneratorSvgContainer")
+            for (let i = 0; i < ammount; i++) {
+                if (chordFactory.playableChords[i]) {
+                    // Assuming TabGenerator takes chord details and returns an SVG element
+                    try {
+                        const chordDiagram = new TabGenerator(chordFactory.playableChords[i].voicing, chordFactory.playableChords[i].fingerPositions, chordFactory.playableChords[i].minAboveZero, chordFactory.playableChords[i].barres, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
+                        const svg = chordDiagram.generateChordSVG();
+                        let svgContainer = document.createElement('div'); // Container for chord diagrams
+                        svgContainer.classList.add("progressionGeneratorSvgContainer")
 
-                    let svgNameContainer = document.createElement('div'); // Container for chord diagrams
-                    svgNameContainer.innerHTML = chordFactory.identifier
-                    svgNameContainer.classList.add("progressionGeneratorSvgChordName")
+                        let svgNameContainer = document.createElement('div'); // Container for chord diagrams
+                        svgNameContainer.innerHTML = chordFactory.identifier
+                        svgNameContainer.classList.add("progressionGeneratorSvgChordName")
 
 
-                    svgContainer.appendChild(svg);
-                    svgContainer.appendChild(svgNameContainer)
-                    diagramsContainer.appendChild(svgContainer)
-                } catch (error) {
-                    console.error('Error generating chord diagram:', error);
+                        svgContainer.appendChild(svg);
+                        svgContainer.appendChild(svgNameContainer)
+                        diagramsContainer.appendChild(svgContainer)
+                    } catch (error) {
+                        console.error('Error generating chord diagram:', error);
+                    }
                 }
             }
         });

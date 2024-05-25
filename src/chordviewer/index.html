@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piano2Guitar</title>
+    <!-- STYLESHEETS -->
+    <link rel="stylesheet" href="../piano/style.css" />
+    <link rel="stylesheet" href="../progression-generator/style.css" />
+    <link rel="stylesheet" href="../css/output-styles.css" />
+    <link rel="stylesheet" href="../css/input-styles.css" />
+    <link rel="stylesheet" href="../css/slider-styles.css" />
+    <link rel="stylesheet" href="../css/settings-styles.css" />
+    <link rel="stylesheet" href="styles.css" />
+
+
+
+
+    <!-- FONT -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+
+
+    <!-- SCRIPTS -->
+    <script type="module" src="./index.js"></script>
+</head>
+
+<body>
+
+    <div class="inputWrapper">
+        <div class="header">
+            PianoToGuitar.com - ChordViewer
+            <svg class="visualPianoIcon" id="settingsIcon" xmlns="http://www.w3.org/2000/svg" onclick="toggleSettings()"
+                height="24" viewBox="0 -960 960 960" width="24">
+                <path
+                    d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z" />
+            </svg>
+        </div>
+        <div class="searchContainer">
+            <div class="searchContainerWrapper">
+                <div class="searchContainer">
+
+                    <div class="searchWordContainer">
+                        <div class="blackFadeBottom"></div>
+                        <input class="searchBox" type="text" id="itemSearch" placeholder="Search chords by name...">
+                        <div class="searchChordList" id="itemsContainer">
+                            <!-- Items will be populated here by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="selectedItemWrapper">
+
+                <div class="selectedItemsHeading">
+                    <div>Your Selected Chord</div>
+                </div>
+                <div class="selectedItemsWrapper">
+                    <div class="selectedItems" id="selectedItems">
+                        <!-- Dragged items will appear here -->
+                    </div>
+
+                    <svg class="visualPianoIcon" xmlns="http://www.w3.org/2000/svg" onclick="clearProgression()"
+                        height="24" viewBox="0 -960 960 960" width="24">
+                        <path fill="currentColor"
+                            d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm80-160h80v-360h-80v360Zm160 0h80v-360h-80v360Z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="outputWrapper" id="outputWrapper">
+        <div class="progression">
+
+
+            <div class="progressionWrapper" id="dynamicProgressionWrapper"></div>
+            <div class="progressionInfo">
+                <div class="progressionInfoText">
+                    <div class="progressionInfoTextName"><i>DYNAMIC</i></div>
+                    <div class="progressionInfoTextSubtitle">Adjust the slider to transition from simple chords to the
+                        most beautifully sounding ones!
+                    </div>
+                </div>
+                <div class="soundQualityWrapper">
+                    <input id="soundQualitySlider" type="range" min="0" max="100" value="50">
+                    <div class="soundQualityLables">
+                        <div>EASY</div>
+                        <div>BEST SOUND</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+</body>
+
+</html>

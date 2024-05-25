@@ -38,32 +38,45 @@ class TabGenerator {
         // Assign instance variables
         this.fingerPositions = fingerPositions;
         this.fingerNumbers = fingerNumbers;
-        this.minAboveZero = 0; // Minimum fret number above zero
         this.barres = barres;               // Specific fret where the barre is placed
         this.color = elementColor; // Color for diagram elements
         this.textColor = textColor;       // Color for the text
         this.numberPosition = numberPosition; // Position of the numbers
         this.showOpenStrings = showOpenStrings; // Whether to display open strings
+        this.maxFret = Math.max(...fingerPositions)
+
+
 
         // Diagram layout constants
         this.topSpacing = 25;
         this.topBarHeight = 7;
         this.fretSpacing = 25;
         this.stringSpacing = 25;
-        this.paddingLeft = 30;
+        this.paddingLeft = 15;
         this.barreSidesOverflow = 10;
         this.stringOverflowBotom = 10;
         this.fretCount = 4;
         this.circleRadius = 10;
         this.infoPadding = 10;
         this.openStringRadius = 7;
+
+
+        //Offset
+        this.offset = 1
+        if (this.maxFret > this.fretCount){
+            this.offset = minAboveZero
+        }
+
+        //Global Framw Width
+        this.width = 185;
+        this.height = 175
     }
 
     generateChordSVG() {
         const svgAttributes = {
-            width: '200',
-            height: '200',
-            viewBox: '0 0 200 200'  // This sets the viewBox attribute
+            width:  this.width,
+            height: this.height,
+            viewBox: "0 0 " +  this.width + " " +this.height  // This sets the viewBox attribute
         };
         const svg = this.createSVGElement('svg', svgAttributes);
         this.drawDiagramComponents(svg);
@@ -74,7 +87,7 @@ class TabGenerator {
         this.drawTopBar(svg);
         if (this.barres) {
             this.barres.forEach(element => {
-                this.drawBarre(svg, element[0],element[1],element[2]);
+                this.drawBarre(svg, element[0], element[1], element[2]);
 
             });
         }
@@ -85,6 +98,7 @@ class TabGenerator {
         }
         this.drawNotes(svg);
         this.drawMuteIndicators(svg);
+        this.drawFretHeight(svg)
     }
 
 
@@ -133,10 +147,10 @@ class TabGenerator {
 
     drawNotes(svg) {
         for (let string = 0; string < 6; string++) {
-            if (this.fingerPositions[string] !== '-1') {
+            if (this.fingerPositions[string] > 0) {
                 let fret = parseInt(this.fingerPositions[string]);
                 if (fret > 0) {
-                    let position = this.topSpacing + this.topBarHeight + (fret - this.minAboveZero) * this.fretSpacing - this.circleRadius / 2;
+                    let position = this.topSpacing + this.topBarHeight + ((fret) - this.offset) * this.fretSpacing - this.circleRadius / 2;
                     let circle = this.createSVGElement('circle', {
                         cx: this.paddingLeft + string * this.stringSpacing, cy: position + this.topSpacing - 8,
                         r: this.circleRadius, fill: this.color
@@ -170,17 +184,17 @@ class TabGenerator {
             if (this.fingerPositions[i] == -1) {
                 const line1 = this.createSVGElement('line', {
                     x1: this.paddingLeft + i * this.stringSpacing - height / 2,
-                    y1: this.topSpacing - height-this.infoPadding,
+                    y1: this.topSpacing - height - this.infoPadding,
                     x2: this.paddingLeft + i * this.stringSpacing + height / 2,
-                    y2: this.topSpacing-this.infoPadding,
+                    y2: this.topSpacing - this.infoPadding,
                     stroke: this.color,
                     'stroke-width': '2'
                 });
                 const line2 = this.createSVGElement('line', {
                     x1: this.paddingLeft + i * this.stringSpacing - height / 2,
-                    y1: this.topSpacing-this.infoPadding,
+                    y1: this.topSpacing - this.infoPadding,
                     x2: this.paddingLeft + i * this.stringSpacing + height / 2,
-                    y2: this.topSpacing - height-this.infoPadding,
+                    y2: this.topSpacing - height - this.infoPadding,
                     stroke: this.color,
                     'stroke-width': '2'
                 });
@@ -206,28 +220,35 @@ class TabGenerator {
         }
     }
 
-    drawBarre(svg, barreFret,barreStartString, barreEndString ) {
-        barreFret = barreFret - this.minAboveZero
-        const barreWidth = barreEndString - barreStartString
-        const barreHeight = 10;
-        const barreX = this.paddingLeft - this.barreSidesOverflow + barreStartString * this.stringSpacing;
-        const barreY = barreFret * this.fretSpacing + this.topSpacing + this.topBarHeight + (this.fretSpacing / 2) - barreHeight / 2;
+    drawBarre(svg, barreFret, barreStartString, barreEndString) {
+        if (barreFret != 0) {
+            barreFret = barreFret - this.offset 
+            const barreWidth = barreEndString - barreStartString
+            const barreHeight = 10;
+            const barreX = this.paddingLeft - this.barreSidesOverflow + barreStartString * this.stringSpacing;
+            const barreY = barreFret * this.fretSpacing + this.topSpacing + this.topBarHeight + (this.fretSpacing / 2) - barreHeight / 2;
 
-        const rect = this.createSVGElement('rect', {
-            x: barreX, y: barreY,
-            width: barreWidth * this.stringSpacing + 2 * this.barreSidesOverflow, height: barreHeight,
-            rx: '5', ry: '5',
-            fill: this.color
-        });
-        svg.appendChild(rect);
-
-        if (this.barre) {
-            const text = this.createSVGElement('text', {
-                x: barreX + barreWidth + 15, y: barreY + barreHeight,
-                'font-family': 'Arial', 'font-size': '20', fill: this.color,
-                'text-anchor': 'left'
+            const rect = this.createSVGElement('rect', {
+                x: barreX, y: barreY,
+                width: barreWidth * this.stringSpacing + 2 * this.barreSidesOverflow, height: barreHeight,
+                rx: '5', ry: '5',
+                fill: this.color
             });
-            text.textContent = this.barre + "fr";
+            svg.appendChild(rect);
+
+
+        }
+    }
+
+    drawFretHeight(svg) {
+        if (this.offset  > 1) {
+            const text = this.createSVGElement('text', {
+                x:this.paddingLeft + this.stringSpacing*5 + this.infoPadding, y: this.topSpacing + this.topBarHeight + this.fretSpacing * 0.5,
+                'font-family': 'Arial', 'font-size': '20', fill: this.color,
+                'text-anchor': 'left',
+                "alignment-baseline": "central"
+            });
+            text.textContent = this.offset  + "fr";
             svg.appendChild(text);
         }
     }

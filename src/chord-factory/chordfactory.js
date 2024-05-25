@@ -269,7 +269,7 @@ export class ChordFactory {
       let barreClass = Array.from({ length: MAX_FRETS }, () => Array.from({ length: 6 }, () => []));
       let barreClassesUsed = new Set();
       let barreSeparatorIndex = Array.from({ length: MAX_FRETS }, () => 0);
-      let minAboveZero = -1;
+      let minAboveZero = 99;
       let mutingTillRoot = true;
 
       let touchedIndices = [];
@@ -291,7 +291,7 @@ export class ChordFactory {
         //Check if the String is not open 0 or muted -1
         if (voicing[string] > 0) {
           //Check if a New MinAboveZero is present
-          if (voicing[string] > minAboveZero) {
+          if (voicing[string] < minAboveZero) {
             minAboveZero = voicing[string];
           }
         }
