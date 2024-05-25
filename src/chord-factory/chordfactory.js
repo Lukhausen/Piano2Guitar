@@ -262,18 +262,31 @@ export class ChordFactory {
 
   filterPlayableChords2(allChordsCopy) {
     const startTime = performance.now();
-    const playableChordsSet = new Set();
+    let playableChordsVoicingSet = new Set();
+    let playableChordsArray = []
+    let totalChordVoicingTime = 0; // Initialize a variable to accumulate time for ChordVoicing creation
+
+    // Pre-create and reuse these objects - Testing Shoed This is faster than Creating them newly
+    let barreClass = Array.from({ length: MAX_FRETS }, () => Array.from({ length: 6 }, () => []));
+    let barreClassesUsed = new Set();
+    let barreSeparatorIndex = Array.from({ length: MAX_FRETS }, () => 0);
+    let minAboveZero = 99;
+    let mutingTillRoot = true;
+    let touchedSet = new Set();
+
 
     allChordsCopy.forEach(voicing => {
+      minAboveZero = 99;
+      mutingTillRoot = true;
 
-      let barreClass = Array.from({ length: MAX_FRETS }, () => Array.from({ length: 6 }, () => []));
-      let barreClassesUsed = new Set();
-      let barreSeparatorIndex = Array.from({ length: MAX_FRETS }, () => 0);
-      let minAboveZero = 99;
-      let mutingTillRoot = true;
+      // Reset values for each iteration
+      barreClass.forEach(fretArray => fretArray.forEach(stringArray => stringArray.length = 0));
+      barreClassesUsed.clear();
+      touchedSet.clear()
+      barreSeparatorIndex.fill(0);
 
       let touchedIndices = [];
-      const touchedSet = new Set();
+      
 
       for (let string = 0; string < 6; string++) {
         //Mute Strings That are not the Root Note
@@ -287,6 +300,15 @@ export class ChordFactory {
             mutingTillRoot = false;
           }
         }
+      }
+      // Check if the voicing is already in the set
+      let voicingString = JSON.stringify(voicing);
+      if (playableChordsVoicingSet.has(voicingString)) {
+        //console.log("Allready Has Voicing, Skipping...")
+        return; // Skip processing if voicing is already in the set
+      }
+      for (let string = 0; string < 6; string++) {
+        //Mute Strings That are not the Root Note
 
         //Check if the String is not open 0 or muted -1
         if (voicing[string] > 0) {
@@ -295,6 +317,11 @@ export class ChordFactory {
             minAboveZero = voicing[string];
           }
         }
+
+
+
+
+
         //Now, Place the Strings in their Corresponding barreClass
         if (voicing[string] >= 0) {
 
@@ -313,6 +340,10 @@ export class ChordFactory {
           }
         }
       }
+
+
+
+
       let barres = []
       touchedIndices.forEach(([fret, index]) => {
         if (barreClass[fret][index].length > 1) {
@@ -320,6 +351,7 @@ export class ChordFactory {
 
         }
       });
+      const chordVoicingStartTime = performance.now();
 
       let newVoicing = new ChordVoicing(
         voicing,
@@ -329,19 +361,25 @@ export class ChordFactory {
         this.notes,
         this.startWithRoot ? this.root : -1
       );
-      playableChordsSet.add(JSON.stringify(newVoicing));
-      console.log("filterPlayableChords2 - voicing, barres", voicing, barres);
+
+      const chordVoicingEndTime = performance.now();
+      const chordVoicingTimeTaken = chordVoicingEndTime - chordVoicingStartTime;
+      totalChordVoicingTime += chordVoicingTimeTaken;
+
+      playableChordsVoicingSet.add(voicingString);
+      playableChordsArray.push(newVoicing);
+      //console.log("filterPlayableChords2 - voicing, barres", voicing, barres);
       //Now Check For each Barre Class Starting at MinAboveZero...
 
     });
     const endTime = performance.now();
 
     // Calculate the time taken
-    const timeTaken = endTime - startTime;
-    const playableChords = Array.from(playableChordsSet).map(voicingString => JSON.parse(voicingString));
+    const totalTimeTaken = endTime - startTime;
 
-    console.log("filterPlayableChords2 - Time taken:", timeTaken, "milliseconds");
-    return playableChords
+    console.log("filterPlayableChords2 - Total time taken:", totalTimeTaken, "milliseconds");
+    console.log("Total time taken for ChordVoicings:", totalChordVoicingTime, "milliseconds");
+    return playableChordsArray
   }
 
 
