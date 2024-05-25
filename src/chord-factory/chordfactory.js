@@ -396,6 +396,12 @@ export class ChordFactory {
           }
         }
       }
+
+      //IF minabove Zero Was note set, Set it to zero
+      if (minAboveZero == 99){
+        minAboveZero = 0
+      }
+
       const chordVoicingStartTime = performance.now();
 
       let newVoicing = new ChordVoicing(

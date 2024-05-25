@@ -113,7 +113,8 @@ export class ChordVoicing {
     details.mutedAmount = this.assessPlayabilityMuttedAmount();
     details.fretHeight = this.assessPlayabilityFretHeight();
     details.mutedDifficulty = this.assessPlayabilityMuttedDifficulty();
-    details.total = (details.fingersUsed + details.fingerSpread + details.mutedAmount + details.fretHeight + details.mutedDifficulty) / 5;
+    details.barreAmmount = this.assessPlayabilityBarreAmmount();
+    details.total = (details.fingersUsed + details.fingerSpread + details.mutedAmount + details.fretHeight + details.mutedDifficulty + details.barreAmmount) / 6;
 
     this.playabilityRating = details.total;
   }
@@ -127,9 +128,9 @@ export class ChordVoicing {
   }
 
   assessPlayabilityFingerSpread() {
-    let maxFret = this.minAboveZero
+    let maxFret = 0
     for (let i = 0; i < 6; i++) {
-      if (this.voicing[i] > this.minAboveZero) {
+      if (this.voicing[i] > maxFret) {
         maxFret = this.voicing[i]
       }
     }
@@ -151,8 +152,29 @@ export class ChordVoicing {
   }
 
   assessPlayabilityMuttedDifficulty(){
-    return 0
+    let mutedDifficulty = 0
+    //Check Muting from the top
+    for (let i = 0; i < 4; i++) {
+      if (this.voicing[i] == -1) {
+        mutedDifficulty += (i+1)
+      }
+    }
+    //Check Muting from the bottom
+    for (let i = 0; i < 4; i++) {
+      if (this.voicing[5-i] == -1) {
+        mutedDifficulty += (i+1)
+      }
+    }
+
+    return 1 - (mutedDifficulty/12)
+
   }
+
+  assessPlayabilityBarreAmmount(){
+    return 1-(this.barres.length / 3)
+  }
+
+
 
 
 
