@@ -21,15 +21,15 @@ export class ChordVoicing {
    * @param {Array<number>} chordFactoryNotes - Array of note indices used in the chord (0-11 representing C-B).
    * @param {number} chordFactoryRoot - The root note of the chord.
    */
-  constructor(voicing, fingersUsed, barres, minAboveZero, chordFactoryNotes, chordFactoryRoot) {
+  constructor(voicing, fingerPositions, barres, minAboveZero, fingersUsed, chordFactoryNotes, chordFactoryRoot) {
 
 
     this.voicing = voicing;
     this.barres = barres;
 
-    this.fingersUsed = fingersUsed
     this.minAboveZero = minAboveZero
-    this.fingerPositions = [0, 0, 0, 0, 0, 0]
+    this.fingerPositions = fingerPositions
+    this.fingersUsed = fingersUsed
     this.chordSpacing = 0
     this.chordFactoryNotes = chordFactoryNotes
     this.chordFactoryRoot = chordFactoryRoot
@@ -104,33 +104,6 @@ export class ChordVoicing {
   }
 
 
-  calculateFingerPosition() {
-    let startPosition = this.minAboveZero
-    let finger = 1
-
-    //Make the start Position the BArre Position and If there is an Barre, Set all The according Things to Barre
-    if (this.barre) {
-      for (let i = this.barreSize; i > 0; i--) {
-        if (this.voicing[6 - i] == this.barre) {
-          this.fingerPositions[6 - i] = 1
-        }
-
-        finger = 2
-      }
-    }
-    //Now go through each Fret, Start With the lowest fret above zero or with the barre fret.
-
-    for (let fret = 0; fret < 4; fret++) {
-      for (let string = 0; string < 6; string++) {
-        if (startPosition + fret == this.voicing[string] && this.fingerPositions[string] !== 1 && this.voicing[string] !== 0) {
-          this.fingerPositions[string] = finger
-          finger++
-        }
-      }
-    }
-
-    return;
-  }
 
   // 0 is Badly Playable and 1 Is good PLayability
   ratePlayability() {
@@ -139,7 +112,8 @@ export class ChordVoicing {
     details.fingerSpread = this.assessPlayabilityFingerSpread();
     details.mutedAmount = this.assessPlayabilityMuttedAmount();
     details.fretHeight = this.assessPlayabilityFretHeight();
-    details.total = (details.fingersUsed + details.fingerSpread + details.mutedAmount + details.fretHeight) / 4;
+    details.mutedDifficulty = this.assessPlayabilityMuttedDifficulty();
+    details.total = (details.fingersUsed + details.fingerSpread + details.mutedAmount + details.fretHeight + details.mutedDifficulty) / 5;
 
     this.playabilityRating = details.total;
   }
@@ -147,14 +121,8 @@ export class ChordVoicing {
   assessPlayabilityFingersUsed() {
     // USe FInger Positions because They are MOst realibale and ALgorithmically Safe Way (Becaus of possible future Changes) to asses Finger COunt
     let maxUsableFingers = 4
-    let usedFingers = 0
-    for (let i = 0; i < 6; i++) {
-      if (this.fingerPositions[i] > usedFingers) {
-        usedFingers = this.fingerPositions[i]
-      }
-    }
     // INvert Rating so Many fingers used gets a low score
-    let rating = 1 - (usedFingers / maxUsableFingers)
+    let rating = 1 - (this.fingersUsed / maxUsableFingers)
     return rating
   }
 
@@ -179,9 +147,12 @@ export class ChordVoicing {
   }
 
   assessPlayabilityFretHeight() {
-    return 1 - (this.minAboveZero / 24)
+    return 1 - Math.max((this.minAboveZero / 12),0)
   }
 
+  assessPlayabilityMuttedDifficulty(){
+    return 0
+  }
 
 
 

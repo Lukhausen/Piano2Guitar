@@ -124,7 +124,7 @@ export class ChordFactory {
         // First Check If there is a New Element inside the Array
         if (fingerIndexStorage[string] < fingerIndexLength[string]) {
           // CHeck if its in range for Valid CHord, if so add it 
-          if (this.fingerPositions[string][fingerIndexStorage[string]] <= fret + settings.fingerFretRange) {
+          if (this.fingerPositions[string][fingerIndexStorage[string]] <= fret + settings.fingerFretRange -1) {
             //console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]])
 
             maskScope[string].push(this.fingerPositions[string][fingerIndexStorage[string]])
@@ -266,13 +266,18 @@ export class ChordFactory {
     let playableChordsArray = []
     let totalChordVoicingTime = 0; // Initialize a variable to accumulate time for ChordVoicing creation
 
-    // Pre-create and reuse these objects - Testing Shoed This is faster than Creating them newly
+    // Pre-create and reuse these objects - Testing Showed This is faster than Creating them newly
     let barreClass = Array.from({ length: MAX_FRETS }, () => Array.from({ length: 6 }, () => []));
     let barreClassesUsed = new Set();
     let barreSeparatorIndex = Array.from({ length: MAX_FRETS }, () => 0);
     let minAboveZero = 99;
     let mutingTillRoot = true;
     let touchedSet = new Set();
+    let barres = []
+    let touchedIndices = [];
+    let fingerPositionsCounter = 0
+    let fingerPositions = [-1, -1, -1, -1, -1, -1]
+    let fingerPositionsAmmount = 0
 
 
     allChordsCopy.forEach(voicing => {
@@ -284,9 +289,12 @@ export class ChordFactory {
       barreClassesUsed.clear();
       touchedSet.clear()
       barreSeparatorIndex.fill(0);
+      barres = []
+      touchedIndices = [];
+      fingerPositionsCounter = 0
+      fingerPositions = [-1, -1, -1, -1, -1, -1]
+      fingerPositionsAmmount = 0
 
-      let touchedIndices = [];
-      
 
       for (let string = 0; string < 6; string++) {
         //Mute Strings That are not the Root Note
@@ -300,64 +308,102 @@ export class ChordFactory {
             mutingTillRoot = false;
           }
         }
-      }
-      // Check if the voicing is already in the set
-      let voicingString = JSON.stringify(voicing);
-      if (playableChordsVoicingSet.has(voicingString)) {
-        //console.log("Allready Has Voicing, Skipping...")
-        return; // Skip processing if voicing is already in the set
-      }
-      for (let string = 0; string < 6; string++) {
-        //Mute Strings That are not the Root Note
 
-        //Check if the String is not open 0 or muted -1
+        //Count Total Fingers Used in this voicing.
         if (voicing[string] > 0) {
-          //Check if a New MinAboveZero is present
+          fingerPositionsAmmount++
           if (voicing[string] < minAboveZero) {
             minAboveZero = voicing[string];
           }
         }
 
 
-
-
-
-        //Now, Place the Strings in their Corresponding barreClass
-        if (voicing[string] >= 0) {
-
-          barreClassesUsed.forEach((index) => {
-            if (voicing[string] < index) {
-              barreSeparatorIndex[index] += 1;
-            }
-          });
-
-          barreClassesUsed.add(voicing[string]);
-          barreClass[voicing[string]][barreSeparatorIndex[voicing[string]]].push(string);
-          const newIndex = `${voicing[string]}-${barreSeparatorIndex[voicing[string]]}`;
-          if (!touchedSet.has(newIndex)) {
-            touchedIndices.push([voicing[string], barreSeparatorIndex[voicing[string]]]);
-            touchedSet.add(newIndex);
-          }
-        }
+      }
+      // Check if the voicing is already in the set
+      let voicingString = "V-" + voicing[0] + voicing[1] + voicing[2] + voicing[3] + voicing[4] + voicing[5];
+      if (playableChordsVoicingSet.has(voicingString)) {
+        //console.log("Allready Has Voicing, Skipping...")
+        return; // Skip processing if voicing is already in the set
       }
 
 
 
+      //Take a Look at the Ammount of fingers Required. If is less than 5 no barre needs to be caluclated.
+      if (fingerPositionsAmmount > 4) {
 
-      let barres = []
-      touchedIndices.forEach(([fret, index]) => {
-        if (barreClass[fret][index].length > 1) {
-          barres.push([fret, Math.min(...barreClass[fret][index]), Math.max(...barreClass[fret][index])])
+        for (let string = 0; string < 6; string++) {
+          //Mute Strings That are not the Root Note
 
+
+
+
+          //Now, Place the Strings in their Corresponding barreClass
+          if (voicing[string] >= 0) {
+
+            barreClassesUsed.forEach((index) => {
+              if (voicing[string] < index) {
+                barreSeparatorIndex[index] += 1;
+              }
+            });
+
+            barreClassesUsed.add(voicing[string]);
+            barreClass[voicing[string]][barreSeparatorIndex[voicing[string]]].push(string);
+            const newIndex = `${voicing[string]}-${barreSeparatorIndex[voicing[string]]}`;
+            if (!touchedSet.has(newIndex)) {
+              touchedIndices.push([voicing[string], barreSeparatorIndex[voicing[string]]]);
+              touchedSet.add(newIndex);
+            }
+          }
         }
-      });
+
+
+        // Sort touchedIndices from lowest to highest fret
+        touchedIndices.sort(([fretA], [fretB]) => fretA - fretB);
+        //console.log(touchedIndices)
+        touchedIndices.forEach(([fret, index]) => {
+          if (barreClass[fret][index].length > 0) {
+            if (barreClass[fret][index].length > 1 && fret != 0) {
+              barres.push([fret, Math.min(...barreClass[fret][index]), Math.max(...barreClass[fret][index])])
+              fingerPositionsCounter++
+              barreClass[fret][index].forEach(element => {
+                fingerPositions[element] = fingerPositionsCounter
+              })
+
+            } else if (fret != 0) {
+              fingerPositionsCounter++
+              fingerPositions[barreClass[fret][index]] = fingerPositionsCounter
+            }
+
+          }
+
+        });
+
+
+        //Check if 5 Finger are still used, If so, Remove the CHord.
+        if (fingerPositionsCounter > 4) {
+          return
+        }
+      } else {
+        //console.log("SkippedBarre Because The Fingers are to less")
+        //No Barre Requred, so we can just calulate Where each finger goes.
+        for (let fret = 0; fret < settings.fingerFretRange; fret++) {
+          for (let string = 0; string < 6; string++) {
+            if (minAboveZero + fret == voicing[string] && fingerPositions[string] !== 1 && voicing[string] !== 0) {
+              fingerPositionsCounter++
+              fingerPositions[string] = fingerPositionsCounter
+              
+            }
+          }
+        }
+      }
       const chordVoicingStartTime = performance.now();
 
       let newVoicing = new ChordVoicing(
         voicing,
-        minAboveZero ? minAboveZero : null,
+        fingerPositions,
         barres,
         minAboveZero,
+        fingerPositionsAmmount,
         this.notes,
         this.startWithRoot ? this.root : -1
       );
