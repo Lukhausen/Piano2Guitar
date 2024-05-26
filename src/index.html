@@ -22,44 +22,108 @@
 
 
     <!-- SCRIPTS -->
+    <script type="module" src="./settings.js"></script>
     <script type="module" src="./index.js"></script>
 </head>
 
 <body>
 
     <div class="inputWrapper">
+        <div id="closeSettings" onClick="closeSettings()"></div>
         <div id="settings">
-            <div class="settingsheader">Settings</div>
-            <div class="settingsitem">
-                <div>Guitar Tuning</div>
-                <select name="cars" id="cars">
-                    <option value="0">C</option>
-                    <option value="1">C#</option>
-                    <option value="2">D</option>
-                    <option value="3">D#</option>
-                    <option value="4">E</option>
-                    <option value="5">F</option>
-                    <option value="6">F#</option>
-                    <option value="7">G</option>
-                    <option value="8">G#</option>
-                    <option value="9">A</option>
-                    <option value="10">A#</option>
-                    <option value="11">B</option>
-                </select>
-                <select name="cars" id="cars">
-                    <option value="0">C</option>
-                    <option value="1">C#</option>
-                    <option value="2">D</option>
-                    <option value="3">D#</option>
-                    <option value="4">E</option>
-                    <option value="5">F</option>
-                    <option value="6">F#</option>
-                    <option value="7">G</option>
-                    <option value="8">G#</option>
-                    <option value="9">A</option>
-                    <option value="10">A#</option>
-                    <option value="11">B</option>
-                </select>
+            <div class="settingsHeader">Settings</div>
+            <div class="settingsContent">
+                <div class="settingsItem">
+                    <div class="settingSubHeader">
+                        <div>Guitar Tuning</div>
+                    </div>
+                    <div class="settingsItemContent">
+                        <select name="string1" id="string1">
+                            <option value="0">C</option>
+                            <option value="1">C#</option>
+                            <option value="2">D</option>
+                            <option value="3">D#</option>
+                            <option value="4">E</option>
+                            <option value="5">F</option>
+                            <option value="6">F#</option>
+                            <option value="7">G</option>
+                            <option value="8">G#</option>
+                            <option value="9">A</option>
+                            <option value="10">A#</option>
+                            <option value="11">B</option>
+                        </select>
+                        <select name="string2" id="string2">
+                            <option value="0">C</option>
+                            <option value="1">C#</option>
+                            <option value="2">D</option>
+                            <option value="3">D#</option>
+                            <option value="4">E</option>
+                            <option value="5">F</option>
+                            <option value="6">F#</option>
+                            <option value="7">G</option>
+                            <option value="8">G#</option>
+                            <option value="9">A</option>
+                            <option value="10">A#</option>
+                            <option value="11">B</option>
+                        </select>
+                        <select name="string3" id="string3">
+                            <option value="0">C</option>
+                            <option value="1">C#</option>
+                            <option value="2">D</option>
+                            <option value="3">D#</option>
+                            <option value="4">E</option>
+                            <option value="5">F</option>
+                            <option value="6">F#</option>
+                            <option value="7">G</option>
+                            <option value="8">G#</option>
+                            <option value="9">A</option>
+                            <option value="10">A#</option>
+                            <option value="11">B</option>
+                        </select>
+                        <select name="string4" id="string4">
+                            <option value="0">C</option>
+                            <option value="1">C#</option>
+                            <option value="2">D</option>
+                            <option value="3">D#</option>
+                            <option value="4">E</option>
+                            <option value="5">F</option>
+                            <option value="6">F#</option>
+                            <option value="7">G</option>
+                            <option value="8">G#</option>
+                            <option value="9">A</option>
+                            <option value="10">A#</option>
+                            <option value="11">B</option>
+                        </select>
+                        <select name="string5" id="string5">
+                            <option value="0">C</option>
+                            <option value="1">C#</option>
+                            <option value="2">D</option>
+                            <option value="3">D#</option>
+                            <option value="4">E</option>
+                            <option value="5">F</option>
+                            <option value="6">F#</option>
+                            <option value="7">G</option>
+                            <option value="8">G#</option>
+                            <option value="9">A</option>
+                            <option value="10">A#</option>
+                            <option value="11">B</option>
+                        </select>
+                        <select name="string6" id="string6">
+                            <option value="0">C</option>
+                            <option value="1">C#</option>
+                            <option value="2">D</option>
+                            <option value="3">D#</option>
+                            <option value="4">E</option>
+                            <option value="5">F</option>
+                            <option value="6">F#</option>
+                            <option value="7">G</option>
+                            <option value="8">G#</option>
+                            <option value="9">A</option>
+                            <option value="10">A#</option>
+                            <option value="11">B</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="header">
@@ -129,7 +193,8 @@
             <div class="progressionInfo">
                 <div class="progressionInfoText">
                     <div class="progressionInfoTextName"><i>DYNAMIC</i></div>
-                    <div class="progressionInfoTextSubtitle">Adjust the slider to transition from simple chords to the
+                    <div class="progressionInfoTextSubtitle">Adjust the slider to transition from simple chords to
+                        the
                         most beautifully sounding ones!
                     </div>
                 </div>

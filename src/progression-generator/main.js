@@ -1,5 +1,5 @@
-import { settings, NOTE_INDEX_MAP, BARRE_RATING } from '../chord-factory/constants.js';
-import { parseNotes, removeDuplicateArrays } from '../chord-factory/utils.js';
+import { settings, BARRE_RATING } from '../chord-factory/constants.js';
+import { parseNotes, removeDuplicateArrays, NOTE_INDEX_MAP } from '../chord-factory/utils.js';
 import { ChordFactory } from '../chord-factory/chordfactory.js';
 import { Chord } from '../chord-library/script.js';
 import { numberToNote } from '../chord-factory/utils.js';
@@ -9,12 +9,13 @@ import { TabHTML } from './tabhtml.js';
 
 
 export class ProgressionGenerator {
-    constructor(initialProgression = [], useRoot = true, tuning = settings.tuning, color, fingerNumbers = "belowString", showOpenStrings = true) {
-        this.tuning = tuning;
+    constructor(initialProgression = [], useRoot = true, color, fingerNumbers = "belowString", showOpenStrings = true) {
+        this.tuning = settings.tuning;
         this.color = color;
         this.fingerNumbers = fingerNumbers;
         this.showOpenStrings = showOpenStrings;
         this.progression = [];
+        this.progressionChords = [];
         this.useRoot = useRoot; // This flag determines if the root note should be the starting note
         this.chordFactoryMap = {}; // HashMap to store ChordFactory instances
         this.keyAnalysis = []
@@ -100,8 +101,15 @@ export class ProgressionGenerator {
 
     // Set initial progression with ChordFactory instances for each chord
     async setProgression(initialProgression) {
+        //only do this if progression is there...
+        if (!initialProgression) {
+            return
+        }
+        this.progressionChords = initialProgression
         const newChordFactoryMap = {};
+
         // Create or reuse ChordFactory instances
+
         initialProgression.forEach(chord => {
             if (chord instanceof Chord) {
                 let chordFactory;
@@ -136,6 +144,14 @@ export class ProgressionGenerator {
             window.dispatchEvent(event);
         }
 
+    }
+
+    async reloadProgression() {
+        this.tuning = settings.tuning;
+        this.chordFactoryMap = {};
+        this.progression = []
+        this.setProgression(this.progressionChords);
+        console.log("ProgressionGenerator: Reloaded Progression")
     }
 
     getProgression(type = 'basic') {
@@ -236,26 +252,26 @@ export class ProgressionGenerator {
         if (this.progression.length < 1) {
             return this.getPlaceholderHTML();
         }
-    
+
         // Create the container for the chord diagrams
         let diagramsContainer = document.createElement('div'); // Container for chord diagrams
         diagramsContainer.classList.add("progressionGeneratorContainer");
-    
+
         // Iterate over each ChordFactory instance in the progression
         this.progression.forEach(chordFactory => {
             // Create an instance of TabHTML for the current chordFactory
             const tabHTML = new TabHTML(chordFactory, this.color, this.fingerNumbers, this.showOpenStrings);
-    
+
             // Generate the HTML for the current chordFactory
             const chordDiagrams = tabHTML.generateHTML(soundQuality, ammount);
-    
+
             // Append the generated HTML to the main container
-            chordDiagrams.forEach(element=>{
+            chordDiagrams.forEach(element => {
                 diagramsContainer.appendChild(element);
 
             })
         });
-    
+
         // Return the container with all chord diagrams
         return diagramsContainer;
     }

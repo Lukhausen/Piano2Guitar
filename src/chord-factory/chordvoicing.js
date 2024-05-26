@@ -103,19 +103,36 @@ export class ChordVoicing {
     this.chordSpacing = totalSpacing;
   }
 
-
+  static PLAYABILITY_WEIGHTS = {
+    fingersUsed: 1,
+    fingerSpread: 1,
+    mutedAmount: 1,
+    fretHeight: 1,
+    mutedDifficulty: 1,
+    mutedReachability: 1,
+    barreAmount: 1
+  };
 
   // 0 is Badly Playable and 1 Is good PLayability
   ratePlayability() {
     const details = this.ratingDetails.playability;
     details.fingersUsed = this.assessPlayabilityFingersUsed();
     details.fingerSpread = this.assessPlayabilityFingerSpread();
-    details.mutedAmount = this.assessPlayabilityMuttedAmount();
+    details.mutedAmount = this.assessPlayabilityMutedAmount();
     details.fretHeight = this.assessPlayabilityFretHeight();
-    details.mutedDifficulty = this.assessPlayabilityMuttedDifficulty();
-    details.mutedRachability = this.assessPlayabilityMuttedRachability();
-    details.barreAmmount = this.assessPlayabilityBarreAmmount();
-    details.total = (details.fingersUsed + details.fingerSpread + details.mutedAmount + details.fretHeight + details.mutedDifficulty + details.barreAmmount + details.mutedRachability) / 7;
+    details.mutedDifficulty = this.assessPlayabilityMutedDifficulty();
+    details.mutedReachability = this.assessPlayabilityMutedReachability();
+    details.barreAmount = this.assessPlayabilityBarreAmount();
+
+    details.total = (
+      details.fingersUsed * ChordVoicing.PLAYABILITY_WEIGHTS.fingersUsed +
+      details.fingerSpread * ChordVoicing.PLAYABILITY_WEIGHTS.fingerSpread +
+      details.mutedAmount * ChordVoicing.PLAYABILITY_WEIGHTS.mutedAmount +
+      details.fretHeight * ChordVoicing.PLAYABILITY_WEIGHTS.fretHeight +
+      details.mutedDifficulty * ChordVoicing.PLAYABILITY_WEIGHTS.mutedDifficulty +
+      details.mutedReachability * ChordVoicing.PLAYABILITY_WEIGHTS.mutedReachability +
+      details.barreAmount * ChordVoicing.PLAYABILITY_WEIGHTS.barreAmount
+    ) / Object.keys(ChordVoicing.PLAYABILITY_WEIGHTS).length;
 
     this.playabilityRating = details.total;
   }
@@ -138,7 +155,7 @@ export class ChordVoicing {
     return 1 - ((maxFret - this.minAboveZero) / settings.fingerFretRange)
   }
 
-  assessPlayabilityMuttedAmount() {
+  assessPlayabilityMutedAmount() {
     let mutedCount = 0
     for (let i = 0; i < 6; i++) {
       if (this.voicing[i] == -1) {
@@ -152,7 +169,7 @@ export class ChordVoicing {
     return 1 - Math.max((this.minAboveZero / 12), 0)
   }
 
-  assessPlayabilityMuttedDifficulty() {
+  assessPlayabilityMutedDifficulty() {
     let mutedDifficulty = 0
     //Check Muting from the top
     for (let i = 0; i < 4; i++) {
@@ -171,11 +188,11 @@ export class ChordVoicing {
 
   }
 
-  assessPlayabilityBarreAmmount() {
+  assessPlayabilityBarreAmount() {
     return 1 - ((this.barres.length * this.barres.length) / (3 * 3))
   }
 
-  assessPlayabilityMuttedRachability() {
+  assessPlayabilityMutedReachability() {
     let mutedDifficulty = 0;
     let totalUnreachableMutes = 0;
 
@@ -209,7 +226,18 @@ export class ChordVoicing {
 
 
 
-  //1 Best SOund, 0 worst sound
+
+
+  static SOUND_QUALITY_WEIGHTS = {
+    harmonicCompleteness: 1,
+    openStrings: 1,
+    playedStrings: 1,
+    fretBoardHeight: 1,
+    voicingRange: 1,
+    doubleNotes: 1
+  };
+
+  // 1 Best Sound, 0 worst sound
   rateSoundQuality() {
     const details = this.ratingDetails.soundQuality;
     details.harmonicCompleteness = this.assessSoundHarmonicCompleteness();
@@ -218,7 +246,15 @@ export class ChordVoicing {
     details.fretBoardHeight = this.assessSoundFretBoardHeight();
     details.voicingRange = this.assessSoundVoicingRange();
     details.doubleNotes = this.assessSoundDoubleNotes();
-    details.total = ((details.harmonicCompleteness + details.openStrings + details.playedStrings + details.fretBoardHeight + details.voicingRange + details.doubleNotes) / 6);
+
+    details.total = (
+      details.harmonicCompleteness * ChordVoicing.SOUND_QUALITY_WEIGHTS.harmonicCompleteness +
+      details.openStrings * ChordVoicing.SOUND_QUALITY_WEIGHTS.openStrings +
+      details.playedStrings * ChordVoicing.SOUND_QUALITY_WEIGHTS.playedStrings +
+      details.fretBoardHeight * ChordVoicing.SOUND_QUALITY_WEIGHTS.fretBoardHeight +
+      details.voicingRange * ChordVoicing.SOUND_QUALITY_WEIGHTS.voicingRange +
+      details.doubleNotes * ChordVoicing.SOUND_QUALITY_WEIGHTS.doubleNotes
+    ) / Object.keys(ChordVoicing.SOUND_QUALITY_WEIGHTS).length;
 
     this.soundQualityRating = details.total;
   }

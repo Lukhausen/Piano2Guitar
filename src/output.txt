@@ -1,74 +1,37 @@
 Directory Structure:
 audio/
-  0.mp3 (Path: audio\0.mp3, Size: 200619 bytes)
-  1.mp3 (Path: audio\1.mp3, Size: 200619 bytes)
-  10.mp3 (Path: audio\10.mp3, Size: 200619 bytes)
-  11.mp3 (Path: audio\11.mp3, Size: 200619 bytes)
-  12.mp3 (Path: audio\12.mp3, Size: 200619 bytes)
-  13.mp3 (Path: audio\13.mp3, Size: 200619 bytes)
-  14.mp3 (Path: audio\14.mp3, Size: 200619 bytes)
-  15.mp3 (Path: audio\15.mp3, Size: 200619 bytes)
-  16.mp3 (Path: audio\16.mp3, Size: 200619 bytes)
-  17.mp3 (Path: audio\17.mp3, Size: 200619 bytes)
-  18.mp3 (Path: audio\18.mp3, Size: 200619 bytes)
-  19.mp3 (Path: audio\19.mp3, Size: 200619 bytes)
-  2.mp3 (Path: audio\2.mp3, Size: 200619 bytes)
-  20.mp3 (Path: audio\20.mp3, Size: 200619 bytes)
-  21.mp3 (Path: audio\21.mp3, Size: 200619 bytes)
-  22.mp3 (Path: audio\22.mp3, Size: 200619 bytes)
-  23.mp3 (Path: audio\23.mp3, Size: 200619 bytes)
-  3.mp3 (Path: audio\3.mp3, Size: 200619 bytes)
-  4.mp3 (Path: audio\4.mp3, Size: 200619 bytes)
-  5.mp3 (Path: audio\5.mp3, Size: 200619 bytes)
-  6.mp3 (Path: audio\6.mp3, Size: 200619 bytes)
-  7.mp3 (Path: audio\7.mp3, Size: 200619 bytes)
-  8.mp3 (Path: audio\8.mp3, Size: 200619 bytes)
-  9.mp3 (Path: audio\9.mp3, Size: 200619 bytes)
-  silence.mp3 (Path: audio\silence.mp3, Size: 5223 bytes)
 chord-factory/
-  chordfactory.js (Path: chord-factory\chordfactory.js, Size: 13256 bytes)
-  chordvoicing.js (Path: chord-factory\chordvoicing.js, Size: 11119 bytes)
-  constants.js (Path: chord-factory\constants.js, Size: 1798 bytes)
+  chordfactory.js (Path: chord-factory\chordfactory.js, Size: 17403 bytes)
+  chordvoicing.js (Path: chord-factory\chordvoicing.js, Size: 14477 bytes)
+  constants.js (Path: chord-factory\constants.js, Size: 1652 bytes)
   main.js (Path: chord-factory\main.js, Size: 1061 bytes)
-  package-lock.json (Path: chord-factory\package-lock.json, Size: 24916 bytes)
-  package.json (Path: chord-factory\package.json, Size: 229 bytes)
   timingtext.js (Path: chord-factory\timingtext.js, Size: 1898 bytes)
-  utils.js (Path: chord-factory\utils.js, Size: 737 bytes)
+  utils.js (Path: chord-factory\utils.js, Size: 1515 bytes)
 chord-library/
-  script.js (Path: chord-library\script.js, Size: 9401 bytes)
-createChatGPTContext.js (Path: createChatGPTContext.js, Size: 2783 bytes)
+  script.js (Path: chord-library\script.js, Size: 10574 bytes)
+chordviewer/
+  index.html (Path: chordviewer\index.html, Size: 4280 bytes)
+  index.js (Path: chordviewer\index.js, Size: 2342 bytes)
+createChatGPTContext.js (Path: createChatGPTContext.js, Size: 2809 bytes)
 css/
-  input-styles.css (Path: css\input-styles.css, Size: 8745 bytes)
-  output-styles.css (Path: css\output-styles.css, Size: 2436 bytes)
-  settings-styles.css (Path: css\settings-styles.css, Size: 678 bytes)
-  slider-style.css (Path: css\slider-style.css, Size: 1043 bytes)
 drag-drop/
   script.js (Path: drag-drop\script.js, Size: 13797 bytes)
-  styles.css (Path: drag-drop\styles.css, Size: 1343 bytes)
-index.html (Path: index.html, Size: 7400 bytes)
-index.js (Path: index.js, Size: 10102 bytes)
+index.html (Path: index.html, Size: 10189 bytes)
+index.js (Path: index.js, Size: 11394 bytes)
 midi-integration/
   index.html (Path: midi-integration\index.html, Size: 263 bytes)
   script.js (Path: midi-integration\script.js, Size: 3424 bytes)
-output.txt (Path: output.txt, Size: 125835 bytes)
 piano/
   script.js (Path: piano\script.js, Size: 9866 bytes)
-  style.css (Path: piano\style.css, Size: 1122 bytes)
 progression-generator/
-  main.js (Path: progression-generator\main.js, Size: 13971 bytes)
-  package-lock.json (Path: progression-generator\package-lock.json, Size: 24916 bytes)
-  package.json (Path: progression-generator\package.json, Size: 229 bytes)
-  style.css (Path: progression-generator\style.css, Size: 968 bytes)
+  main.js (Path: progression-generator\main.js, Size: 13062 bytes)
+  svg/
+  tabhtml.js (Path: progression-generator\tabhtml.js, Size: 8754 bytes)
+settings.js (Path: settings.js, Size: 1401 bytes)
 svg/
-  play.svg (Path: svg\play.svg, Size: 420 bytes)
-  settings.svg (Path: svg\settings.svg, Size: 460 bytes)
-  trashcan.svg (Path: svg\trashcan.svg, Size: 276 bytes)
-  volume_off.svg (Path: svg\volume_off.svg, Size: 476 bytes)
-  volume_up.svg (Path: svg\volume_up.svg, Size: 359 bytes)
 tab-generator/
-  index.html (Path: tab-generator\index.html, Size: 1524 bytes)
-  script.js (Path: tab-generator\script.js, Size: 9496 bytes)
-  styles.css (Path: tab-generator\styles.css, Size: 1094 bytes)
+  index.html (Path: tab-generator\index.html, Size: 1572 bytes)
+  script.js (Path: tab-generator\script.js, Size: 11120 bytes)
 test.html (Path: test.html, Size: 10532 bytes)
 
 File Contents:
@@ -130,7 +93,9 @@ export class ChordFactory {
         const validPositions = this.getValidFretPositionsForNote(chordIndex, stringIndex % 12);
         positions.push(...validPositions);
       }
-      positions.push(-1); // Add -1 once for each string index
+      if (!positions.includes(0)) { // Check if positions array does not contain 0
+        positions.push(-1); // Add -1 only if there is no 0
+      }
       positions.sort((a, b) => a - b); // Sort the positions from lowest to highest
       fingerPositions.push(positions);
     }
@@ -160,7 +125,9 @@ export class ChordFactory {
 
     let maskScope = [];
     for (let i = 0; i < 6; i++) {
-      maskScope[i] = [-1]; // Each sub-array is separately instantiated
+      //Check If A Zero is present in the Valid Positions. Then We dont need to Mute The String Ever.
+      if (this.fingerPositions[i])
+        maskScope[i] = [this.fingerPositions[i][0]]; // Each sub-array is separately instantiated
     }
     //console.log("Initial maskScope array:", maskScope);
 
@@ -201,7 +168,7 @@ export class ChordFactory {
         // First Check If there is a New Element inside the Array
         if (fingerIndexStorage[string] < fingerIndexLength[string]) {
           // CHeck if its in range for Valid CHord, if so add it 
-          if (this.fingerPositions[string][fingerIndexStorage[string]] <= fret + settings.fingerFretRange) {
+          if (this.fingerPositions[string][fingerIndexStorage[string]] <= fret + settings.fingerFretRange - 1) {
             //console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]])
 
             maskScope[string].push(this.fingerPositions[string][fingerIndexStorage[string]])
@@ -339,18 +306,39 @@ export class ChordFactory {
 
   filterPlayableChords2(allChordsCopy) {
     const startTime = performance.now();
-    const playableChordsSet = new Set();
+    let playableChordsVoicingSet = new Set();
+    let playableChordsArray = []
+    let totalChordVoicingTime = 0; // Initialize a variable to accumulate time for ChordVoicing creation
+
+    // Pre-create and reuse these objects - Testing Showed This is faster than Creating them newly
+    let barreClass = Array.from({ length: MAX_FRETS }, () => Array.from({ length: 6 }, () => []));
+    let barreClassesUsed = new Set();
+    let barreSeparatorIndex = Array.from({ length: MAX_FRETS }, () => 0);
+    let minAboveZero = 99;
+    let mutingTillRoot = true;
+    let touchedSet = new Set();
+    let barres = []
+    let touchedIndices = [];
+    let fingerPositionsCounter = 0
+    let fingerPositions = [-1, -1, -1, -1, -1, -1]
+    let fingerPositionsAmmount = 0
+
 
     allChordsCopy.forEach(voicing => {
+      minAboveZero = 99;
+      mutingTillRoot = true;
 
-      let barreClass = Array.from({ length: MAX_FRETS }, () => Array.from({ length: 6 }, () => []));
-      let barreClassesUsed = new Set();
-      let barreSeparatorIndex = Array.from({ length: MAX_FRETS }, () => 0);
-      let minAboveZero = -1;
-      let mutingTillRoot = true;
+      // Reset values for each iteration
+      barreClass.forEach(fretArray => fretArray.forEach(stringArray => stringArray.length = 0));
+      barreClassesUsed.clear();
+      touchedSet.clear()
+      barreSeparatorIndex.fill(0);
+      barres = []
+      touchedIndices = [];
+      fingerPositionsCounter = 0
+      fingerPositions = [-1, -1, -1, -1, -1, -1]
+      fingerPositionsAmmount = 0
 
-      let touchedIndices = [];
-      const touchedSet = new Set();
 
       for (let string = 0; string < 6; string++) {
         //Mute Strings That are not the Root Note
@@ -365,46 +353,134 @@ export class ChordFactory {
           }
         }
 
-        //Check if the String is not open 0 or muted -1
+        //Count Total Fingers Used in this voicing.
         if (voicing[string] > 0) {
-          //Check if a New MinAboveZero is present
-          if (voicing[string] > minAboveZero) {
+          fingerPositionsAmmount++
+          if (voicing[string] < minAboveZero) {
             minAboveZero = voicing[string];
           }
         }
-        //Now, Place the Strings in their Corresponding barreClass
-        if (voicing[string] >= 0) {
 
-          barreClassesUsed.forEach((index) => {
-            if (voicing[string] < index) {
-              barreSeparatorIndex[index] += 1;
+
+      }
+      // Check if the voicing is already in the set
+      let voicingString = "V-" + voicing[0] + voicing[1] + voicing[2] + voicing[3] + voicing[4] + voicing[5];
+      if (playableChordsVoicingSet.has(voicingString)) {
+        //console.log("Allready Has Voicing, Skipping...")
+        return; // Skip processing if voicing is already in the set
+      }
+
+      //Remove Chords Below two fingers used.
+      if (fingerPositionsAmmount < 2) {
+        return
+      }
+
+      //Take a Look at the Ammount of fingers Required. If is less than 5 no barre needs to be caluclated.
+      if (fingerPositionsAmmount > 4) {
+
+        for (let string = 0; string < 6; string++) {
+          //Mute Strings That are not the Root Note
+
+
+
+
+          //Now, Place the Strings in their Corresponding barreClass
+          if (voicing[string] >= 0) {
+
+            barreClassesUsed.forEach((index) => {
+              if (voicing[string] < index) {
+                barreSeparatorIndex[index] += 1;
+              }
+            });
+
+            barreClassesUsed.add(voicing[string]);
+            barreClass[voicing[string]][barreSeparatorIndex[voicing[string]]].push(string);
+            const newIndex = `${voicing[string]}-${barreSeparatorIndex[voicing[string]]}`;
+            if (!touchedSet.has(newIndex)) {
+              touchedIndices.push([voicing[string], barreSeparatorIndex[voicing[string]]]);
+              touchedSet.add(newIndex);
             }
-          });
+          }
+        }
 
-          barreClassesUsed.add(voicing[string]);
-          barreClass[voicing[string]][barreSeparatorIndex[voicing[string]]].push(string);
-          const newIndex = `${voicing[string]}-${barreSeparatorIndex[voicing[string]]}`;
-          if (!touchedSet.has(newIndex)) {
-            touchedIndices.push([voicing[string], barreSeparatorIndex[voicing[string]]]);
-            touchedSet.add(newIndex);
+
+        // Sort touchedIndices from lowest to highest fret
+        touchedIndices.sort(([fretA], [fretB]) => fretA - fretB);
+        //console.log(touchedIndices)
+        touchedIndices.forEach(([fret, index]) => {
+          if (barreClass[fret][index].length > 0) {
+            if (barreClass[fret][index].length > 1 && fret != 0) {
+              barres.push([fret, Math.min(...barreClass[fret][index]), Math.max(...barreClass[fret][index])])
+              fingerPositionsCounter++
+              barreClass[fret][index].forEach(element => {
+                fingerPositions[element] = fingerPositionsCounter
+              })
+
+            } else if (fret != 0) {
+              fingerPositionsCounter++
+              fingerPositions[barreClass[fret][index]] = fingerPositionsCounter
+            }
+
+          }
+
+        });
+
+
+        //Check if 5 Finger are still used, If so, Remove the CHord.
+        if (fingerPositionsCounter > 4) {
+          return
+        }
+      } else {
+        //console.log("SkippedBarre Because The Fingers are to less")
+        //No Barre Requred, so we can just calulate Where each finger goes.
+        for (let fret = 0; fret < settings.fingerFretRange; fret++) {
+          for (let string = 0; string < 6; string++) {
+            if (minAboveZero + fret == voicing[string] && fingerPositions[string] !== 1 && voicing[string] !== 0) {
+              fingerPositionsCounter++
+              fingerPositions[string] = fingerPositionsCounter
+
+            }
           }
         }
       }
 
-      touchedIndices.forEach(([fret, index]) => {
-        console.log(`Touched:`, barreClass[fret][index]);
-      });
+      //IF minabove Zero Was note set, Set it to zero
+      if (minAboveZero == 99) {
+        minAboveZero = 0
+      }
 
-      console.log("filterPlayableChords2", voicing, barreClass, barreClassesUsed);
+      const chordVoicingStartTime = performance.now();
+
+      let newVoicing = new ChordVoicing(
+        voicing,
+        fingerPositions,
+        barres,
+        minAboveZero,
+        fingerPositionsAmmount,
+        this.notes,
+        this.startWithRoot ? this.root : -1
+      );
+
+      const chordVoicingEndTime = performance.now();
+      const chordVoicingTimeTaken = chordVoicingEndTime - chordVoicingStartTime;
+      totalChordVoicingTime += chordVoicingTimeTaken;
+
+      playableChordsVoicingSet.add(voicingString);
+      playableChordsArray.push(newVoicing);
+      //console.log("filterPlayableChords2 - voicing, barres", voicing, barres);
       //Now Check For each Barre Class Starting at MinAboveZero...
 
     });
     const endTime = performance.now();
 
     // Calculate the time taken
-    const timeTaken = endTime - startTime;
-    console.log("filterPlayableChords2 - Time taken:", timeTaken, "milliseconds");
+    const totalTimeTaken = endTime - startTime;
+
+    console.log("filterPlayableChords2 - Total time taken:", totalTimeTaken, "milliseconds");
+    console.log("Total time taken for ChordVoicings:", totalChordVoicingTime, "milliseconds");
+    return playableChordsArray
   }
+
 
 
   /**
@@ -445,15 +521,35 @@ Path: chord-factory\chordvoicing.js
 import { settings } from './constants.js';
 
 
+/**
+ * Class representing a Chord Voicing.
+ * 
+ * The `ChordVoicing` class is used to represent a specific way to play a chord on a guitar. It includes
+ * properties and methods to calculate and rate the playability and sound quality of the chord voicing.
+ * 
+ * @class
+ */
 export class ChordVoicing {
-  constructor(voicing, barre, fingersUsed, barreSize, minAboveZero, chordFactoryNotes, chordFactoryRoot) {
-    this.voicing = voicing;
-    this.barre = barre;
+  /**
+   * Creates an instance of ChordVoicing.
+   * 
+   * @constructor
+   * @param {Array<number>} voicing - Array representing the fret positions for each string (0-5). `-1` represents a muted string, `0` represents an open string.
+   * @param {number|null} barre - The fret position where a barre chord is applied. `null` if no barre chord.
+   * @param {number} fingersUsed - The number of fingers used to play the chord.
+   * @param {number} minAboveZero - The minimum fret position above zero used in the voicing.
+   * @param {Array<number>} chordFactoryNotes - Array of note indices used in the chord (0-11 representing C-B).
+   * @param {number} chordFactoryRoot - The root note of the chord.
+   */
+  constructor(voicing, fingerPositions, barres, minAboveZero, fingersUsed, chordFactoryNotes, chordFactoryRoot) {
 
-    this.fingersUsed = fingersUsed
-    this.barreSize = barreSize
+
+    this.voicing = voicing;
+    this.barres = barres;
+
     this.minAboveZero = minAboveZero
-    this.fingerPositions = [0, 0, 0, 0, 0, 0]
+    this.fingerPositions = fingerPositions
+    this.fingersUsed = fingersUsed
     this.chordSpacing = 0
     this.chordFactoryNotes = chordFactoryNotes
     this.chordFactoryRoot = chordFactoryRoot
@@ -489,8 +585,8 @@ export class ChordVoicing {
       }
     };
 
-    this.calculateChordSpacing()
-    this.calculateFingerPosition()
+    //this.calculateChordSpacing()
+    //this.calculateFingerPosition()
 
     this.rateSoundQuality()
     this.ratePlayability()
@@ -527,43 +623,36 @@ export class ChordVoicing {
     this.chordSpacing = totalSpacing;
   }
 
-
-  calculateFingerPosition() {
-    let startPosition = this.minAboveZero
-    let finger = 1
-
-    //Make the start Position the BArre Position and If there is an Barre, Set all The according Things to Barre
-    if (this.barre) {
-      for (let i = this.barreSize; i > 0; i--) {
-        if (this.voicing[6 - i] == this.barre) {
-          this.fingerPositions[6 - i] = 1
-        }
-
-        finger = 2
-      }
-    }
-    //Now go through each Fret, Start With the lowest fret above zero or with the barre fret.
-
-    for (let fret = 0; fret < 4; fret++) {
-      for (let string = 0; string < 6; string++) {
-        if (startPosition + fret == this.voicing[string] && this.fingerPositions[string] !== 1 && this.voicing[string] !== 0) {
-          this.fingerPositions[string] = finger
-          finger++
-        }
-      }
-    }
-
-    return;
-  }
+  static PLAYABILITY_WEIGHTS = {
+    fingersUsed: 1,
+    fingerSpread: 1,
+    mutedAmount: 1,
+    fretHeight: 1,
+    mutedDifficulty: 1,
+    mutedReachability: 1,
+    barreAmount: 1
+  };
 
   // 0 is Badly Playable and 1 Is good PLayability
   ratePlayability() {
     const details = this.ratingDetails.playability;
     details.fingersUsed = this.assessPlayabilityFingersUsed();
     details.fingerSpread = this.assessPlayabilityFingerSpread();
-    details.mutedAmount = this.assessPlayabilityMuttedAmount();
+    details.mutedAmount = this.assessPlayabilityMutedAmount();
     details.fretHeight = this.assessPlayabilityFretHeight();
-    details.total = (details.fingersUsed + details.fingerSpread + details.mutedAmount + details.fretHeight) / 4;
+    details.mutedDifficulty = this.assessPlayabilityMutedDifficulty();
+    details.mutedReachability = this.assessPlayabilityMutedReachability();
+    details.barreAmount = this.assessPlayabilityBarreAmount();
+
+    details.total = (
+      details.fingersUsed * ChordVoicing.PLAYABILITY_WEIGHTS.fingersUsed +
+      details.fingerSpread * ChordVoicing.PLAYABILITY_WEIGHTS.fingerSpread +
+      details.mutedAmount * ChordVoicing.PLAYABILITY_WEIGHTS.mutedAmount +
+      details.fretHeight * ChordVoicing.PLAYABILITY_WEIGHTS.fretHeight +
+      details.mutedDifficulty * ChordVoicing.PLAYABILITY_WEIGHTS.mutedDifficulty +
+      details.mutedReachability * ChordVoicing.PLAYABILITY_WEIGHTS.mutedReachability +
+      details.barreAmount * ChordVoicing.PLAYABILITY_WEIGHTS.barreAmount
+    ) / Object.keys(ChordVoicing.PLAYABILITY_WEIGHTS).length;
 
     this.playabilityRating = details.total;
   }
@@ -571,39 +660,84 @@ export class ChordVoicing {
   assessPlayabilityFingersUsed() {
     // USe FInger Positions because They are MOst realibale and ALgorithmically Safe Way (Becaus of possible future Changes) to asses Finger COunt
     let maxUsableFingers = 4
-    let usedFingers = 0
-    for (let i = 0; i < 6; i++) {
-      if (this.fingerPositions[i] > usedFingers) {
-        usedFingers = this.fingerPositions[i]
-      }
-    }
     // INvert Rating so Many fingers used gets a low score
-    let rating = 1 - (usedFingers / maxUsableFingers)
+    let rating = 1 - (this.fingersUsed / maxUsableFingers)
     return rating
   }
 
   assessPlayabilityFingerSpread() {
-    let maxFret = this.minAboveZero
+    let maxFret = 0
     for (let i = 0; i < 6; i++) {
-      if (this.voicing[i] > this.minAboveZero) {
+      if (this.voicing[i] > maxFret) {
         maxFret = this.voicing[i]
       }
     }
-    return 1-((maxFret-this.minAboveZero) / settings.fingerFretRange)
+    return 1 - ((maxFret - this.minAboveZero) / settings.fingerFretRange)
   }
 
-  assessPlayabilityMuttedAmount(){
+  assessPlayabilityMutedAmount() {
     let mutedCount = 0
     for (let i = 0; i < 6; i++) {
       if (this.voicing[i] == -1) {
         mutedCount++
       }
     }
-    return 1-(mutedCount/6)
+    return 1 - (mutedCount / 6)
   }
 
-  assessPlayabilityFretHeight(){
-    return 1-(this.minAboveZero/24)
+  assessPlayabilityFretHeight() {
+    return 1 - Math.max((this.minAboveZero / 12), 0)
+  }
+
+  assessPlayabilityMutedDifficulty() {
+    let mutedDifficulty = 0
+    //Check Muting from the top
+    for (let i = 0; i < 4; i++) {
+      if (this.voicing[i] == -1) {
+        mutedDifficulty += (i + 1)
+      }
+    }
+    //Check Muting from the bottom
+    for (let i = 0; i < 4; i++) {
+      if (this.voicing[5 - i] == -1) {
+        mutedDifficulty += (i + 1)
+      }
+    }
+
+    return 1 - (mutedDifficulty / 12)
+
+  }
+
+  assessPlayabilityBarreAmount() {
+    return 1 - ((this.barres.length * this.barres.length) / (3 * 3))
+  }
+
+  assessPlayabilityMutedReachability() {
+    let mutedDifficulty = 0;
+    let totalUnreachableMutes = 0;
+
+    // Loop through the strings to check for muted strings surrounded by open strings
+    for (let i = 1; i < this.voicing.length - 1; i++) { // Start from the second string and go to the second-last
+      if (this.voicing[i] === -1) { // Check if the current string is muted
+        // Check if both neighboring strings are open
+        if (this.voicing[i - 1] === 0 && this.voicing[i + 1] === 0) {
+          totalUnreachableMutes++;
+        }
+      }
+    }
+
+    // Edge cases: Check the first and last string separately if needed
+    if (this.voicing[0] === -1 && this.voicing[1] === 0) { // First string muted and second string open
+      totalUnreachableMutes++;
+    }
+    if (this.voicing[this.voicing.length - 1] === -1 && this.voicing[this.voicing.length - 2] === 0) { // Last string muted and the one before it open
+      totalUnreachableMutes++;
+    }
+
+    // Normalize the difficulty score: the more muted strings surrounded by open strings, the higher the difficulty
+    mutedDifficulty = totalUnreachableMutes / (this.voicing.filter(v => v === -1).length || 1); // Avoid division by zero
+
+    return 1 - mutedDifficulty; // Invert to match scale where 1 is easy and 0 is difficult
   }
 
 
@@ -612,7 +746,18 @@ export class ChordVoicing {
 
 
 
-  //1 Best SOund, 0 worst sound
+
+
+  static SOUND_QUALITY_WEIGHTS = {
+    harmonicCompleteness: 1,
+    openStrings: 1,
+    playedStrings: 1,
+    fretBoardHeight: 1,
+    voicingRange: 1,
+    doubleNotes: 1
+  };
+
+  // 1 Best Sound, 0 worst sound
   rateSoundQuality() {
     const details = this.ratingDetails.soundQuality;
     details.harmonicCompleteness = this.assessSoundHarmonicCompleteness();
@@ -621,7 +766,15 @@ export class ChordVoicing {
     details.fretBoardHeight = this.assessSoundFretBoardHeight();
     details.voicingRange = this.assessSoundVoicingRange();
     details.doubleNotes = this.assessSoundDoubleNotes();
-    details.total = ((details.harmonicCompleteness + details.openStrings + details.playedStrings + details.fretBoardHeight + details.voicingRange + details.doubleNotes)/6);
+
+    details.total = (
+      details.harmonicCompleteness * ChordVoicing.SOUND_QUALITY_WEIGHTS.harmonicCompleteness +
+      details.openStrings * ChordVoicing.SOUND_QUALITY_WEIGHTS.openStrings +
+      details.playedStrings * ChordVoicing.SOUND_QUALITY_WEIGHTS.playedStrings +
+      details.fretBoardHeight * ChordVoicing.SOUND_QUALITY_WEIGHTS.fretBoardHeight +
+      details.voicingRange * ChordVoicing.SOUND_QUALITY_WEIGHTS.voicingRange +
+      details.doubleNotes * ChordVoicing.SOUND_QUALITY_WEIGHTS.doubleNotes
+    ) / Object.keys(ChordVoicing.SOUND_QUALITY_WEIGHTS).length;
 
     this.soundQualityRating = details.total;
   }
@@ -629,10 +782,10 @@ export class ChordVoicing {
   assessSoundHarmonicCompleteness() {
     // Transform chordFactoryNotes to modulo 12 and store as a Set
     const uniqueDesiredNotes = new Set(this.chordFactoryNotes.map(note => note % 12));
-  
+
     // Transform actuallyPlayedNotes to modulo 12 and store as a Set
     const playedNotesModuloSet = new Set(this.actuallyPlayedNotes.map(note => note % 12));
-  
+
     // Calculate the number of overlapping notes using set intersection
     let overlapCount = 0;
     uniqueDesiredNotes.forEach(note => {
@@ -640,7 +793,7 @@ export class ChordVoicing {
         overlapCount++;
       }
     });
-  
+
     // Calculate harmonic completeness score
     const completenessScore = overlapCount / uniqueDesiredNotes.size;
     return completenessScore;
@@ -798,11 +951,7 @@ File: constants.js
 Path: chord-factory\constants.js
 
 // constants.js
-export const NOTE_INDEX_MAP = {
-  'C': 0, 'C#': 1, 'D': 2, 'D#': 3, 'E': 4,
-  'F': 5, 'F#': 6, 'G': 7, 'G#': 8, 'A': 9,
-  'A#': 10, 'B': 11
-};
+
 export const BARRE_RATING = 1
 export const MAX_FRETS = 24
 
@@ -975,7 +1124,37 @@ console.log(`Time taken with Array Check: ${timeWithArrayCheck} milliseconds`);
 File: utils.js
 Path: chord-factory\utils.js
 
-import { NOTE_INDEX_MAP } from './constants.js';
+// Mapping of musical notes to their respective index numbers
+export const NOTE_INDEX_MAP = {
+  'C': 0, 'C#': 1, 'DB': 1, 'D': 2, 'D#': 3, 'EB': 3, 'E': 4, 'FB': 4,
+  'F': 5, 'F#': 6, 'GB': 6, 'G': 7, 'G#': 8, 'AB': 8, 'A': 9, 'A#': 10,
+  'BB': 10, 'B': 11, 'CB': 11
+};
+
+// Reverse mapping for number to note conversion
+const NOTE_ARRAY = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+// Convert a note to its respective index number
+export function noteToNumber(note) {
+  if (typeof note !== 'string') {
+    return "Invalid input";
+  }
+  
+  const normalizedNote = note.toUpperCase().replace(/[\s#]+/g, '#').replace(/[\sB]+/g, 'B');
+  
+  return NOTE_INDEX_MAP.hasOwnProperty(normalizedNote) 
+    ? NOTE_INDEX_MAP[normalizedNote] 
+    : "Invalid note";
+}
+
+// Convert a number to its respective musical note
+export function numberToNote(number) {
+  if (typeof number !== 'number' || number < 0) {
+    return "Invalid number";
+  }
+  
+  return NOTE_ARRAY[number % 12];
+}
 
 export function parseNotes(input) {
   return input.toUpperCase()
@@ -994,11 +1173,6 @@ export function removeDuplicateArrays(arrays) {
     }
     return
   });
-}
-
-export function numberToNote(number) {
-  const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-  return number >= 0 ? notes[number % 12] : "Invalid number";
 }
 
 
@@ -1023,81 +1197,80 @@ export class ChordLibrary {
         this.noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
         this.chordStructures = {
-            '': { notes: [0, 4, 7] }, // Major
-            'm': { notes: [0, 3, 7] }, // Minor
-            '7': { notes: [0, 4, 7, 10] }, // Dominant 7th
-            'M7': { notes: [0, 4, 7, 11] }, // Major 7th
-            'm7': { notes: [0, 3, 7, 10] }, // Minor 7th
-            'mM7': { notes: [0, 3, 7, 11] }, // Minor Major 7th
-            'sus2': { notes: [0, 2, 7] }, // Suspended 2nd
-            'sus4': { notes: [0, 5, 7] }, // Suspended 4th
-            'dim': { notes: [0, 3, 6] }, // Diminished
-            'aug': { notes: [0, 4, 8] }, // Augmented
-            '9': { notes: [0, 4, 7, 10, 14] }, // Dominant 9th
-            'M9': { notes: [0, 4, 7, 11, 14] }, // Major 9th
-            'm9': { notes: [0, 3, 7, 10, 14] }, // Minor 9th
-            '11': { notes: [0, 4, 7, 10, 14, 17] }, // Dominant 11th
-            '13': { notes: [0, 4, 7, 10, 14, 17, 21] }, // Dominant 13th
-            'add9': { notes: [0, 2, 4, 7] }, // Added 9th
-            'm6': { notes: [0, 3, 7, 9] }, // Minor 6th
-            '6': { notes: [0, 4, 7, 9] }, // Major 6th
-            '5': { notes: [0, 7] }, // Power chord
-            '6/9': { notes: [0, 4, 7, 9, 14] }, // Major 6/9
-            'm11': { notes: [0, 3, 7, 10, 14, 17] }, // Minor 11
-            'M7#11': { notes: [0, 4, 7, 11, 18] }, // Major 7#11
-            'm7b5': { notes: [0, 3, 6, 10] }, // Half-Diminished
-            '+7': { notes: [0, 4, 8, 10] }, // Augmented 7th
-            'dim7': { notes: [0, 3, 6, 9] }, // Diminished 7th
-            'M7+5': { notes: [0, 4, 8, 11] }, // Augmented Major 7th
-            'mM9': { notes: [0, 3, 7, 11, 14] }, // Minor Major 9th
-            'dimM7': { notes: [0, 3, 6, 11] }, // Diminished Major 7th - check if real
-            '7alt': { notes: [0, 4, 6, 10, 13] }, // Altered Dominant (using 6 and 13)
-            'M13': { notes: [0, 4, 7, 11, 14, 17, 21] }, // Major 13th
-            'M11': { notes: [0, 4, 7, 11, 14, 17] }, // Major 11th
-            'M7sus4': { notes: [0, 5, 7, 11] }, // Major 7th Suspended 4th
-            'm7#5': { notes: [0, 3, 8, 10] }, // Minor 7th #5
-            'M#5': { notes: [0, 4, 8] }, // Major #5
-            '9#11': { notes: [0, 4, 7, 10, 14, 18] }, // Dominant 9th #11
-            '13#11': { notes: [0, 4, 7, 10, 14, 18, 21] }, // Dominant 13th #11
-            '7b5': { notes: [0, 4, 6, 10] }, // Dominant 7th Flat Five
-            'M7b5': { notes: [0, 4, 6, 11] }, // Major 7th Flat Five
-            'M7#5': { notes: [0, 4, 8, 11] }, // Major 7th Sharp Five
-            'm7b9': { notes: [0, 3, 7, 10, 13] }, // Minor 7th Flat Nine
-            '9b5': { notes: [0, 4, 6, 10, 14] }, // 9th Flat Five
-            '9#5': { notes: [0, 4, 8, 10, 14] }, // 9th Sharp Five
-            '7b9': { notes: [0, 4, 7, 10, 13] }, // Dominant 7th Flat Nine
-            '7#9': { notes: [0, 4, 7, 10, 15] }, // Dominant 7th Sharp Nine
-            '7#11': { notes: [0, 4, 7, 10, 18] }, // Dominant 7th Sharp Eleven
-            'm7add11': { notes: [0, 3, 7, 10, 17] }, // Minor 7th Add 11
-            'add2': { notes: [0, 2, 4, 7] }, // Major Add 2
-            'add4': { notes: [0, 4, 5, 7] }, // Major Add 4
-            '6add9': { notes: [0, 4, 7, 9, 14] }, // Major 6 Add 9
+            '': { notes: [0, 4, 7], priority: 1 }, // Major
+            'm': { notes: [0, 3, 7], priority: 2 }, // Minor
+            '7': { notes: [0, 4, 7, 10], priority: 3 }, // Dominant 7th
+            'M7': { notes: [0, 4, 7, 11], priority: 4 }, // Major 7th
+            'm7': { notes: [0, 3, 7, 10], priority: 5 }, // Minor 7th
+            'mM7': { notes: [0, 3, 7, 11], priority: 18 }, // Minor Major 7th
+            'sus2': { notes: [0, 2, 7], priority: 7 }, // Suspended 2nd
+            'sus4': { notes: [0, 5, 7], priority: 6 }, // Suspended 4th
+            'dim': { notes: [0, 3, 6], priority: 9 }, // Diminished
+            'aug': { notes: [0, 4, 8], priority: 8 }, // Augmented
+            '9': { notes: [0, 4, 7, 10, 14], priority: 11 }, // Dominant 9th
+            'M9': { notes: [0, 4, 7, 11, 14], priority: 12 }, // Major 9th
+            'm9': { notes: [0, 3, 7, 10, 14], priority: 13 }, // Minor 9th
+            '11': { notes: [0, 4, 7, 10, 14, 17], priority: 16 }, // Dominant 11th
+            '13': { notes: [0, 4, 7, 10, 14, 17, 21], priority: 24 }, // Dominant 13th
+            'add9': { notes: [0, 2, 4, 7], priority: 17 }, // Added 9th
+            'm6': { notes: [0, 3, 7, 9], priority: 14 }, // Minor 6th
+            '6': { notes: [0, 4, 7, 9], priority: 15 }, // Major 6th
+            '5': { notes: [0, 7], priority: 10 }, // Power chord
+            '6/9': { notes: [0, 4, 7, 9, 14], priority: 42 }, // Major 6/9
+            'm11': { notes: [0, 3, 7, 10, 14, 17], priority: 39 }, // Minor 11
+            'M7#11': { notes: [0, 4, 7, 11, 18], priority: 29 }, // Major 7#11
+            'm7b5': { notes: [0, 3, 6, 10], priority: 19 }, // Half-Diminished
+            '+7': { notes: [0, 4, 8, 10], priority: 21 }, // Augmented 7th
+            'dim7': { notes: [0, 3, 6, 9], priority: 20 }, // Diminished 7th
+            'M7+5': { notes: [0, 4, 8, 11], priority: 28 }, // Augmented Major 7th
+            'mM9': { notes: [0, 3, 7, 11, 14], priority: 18 }, // Minor Major 9th
+            'dimM7': { notes: [0, 3, 6, 11], priority: 22 }, // Diminished Major 7th
+            '7alt': { notes: [0, 4, 6, 10, 13], priority: 23 }, // Altered Dominant
+            'M13': { notes: [0, 4, 7, 11, 14, 17, 21], priority: 24 }, // Major 13th
+            'M11': { notes: [0, 4, 7, 11, 14, 17], priority: 25 }, // Major 11th
+            'M7sus4': { notes: [0, 5, 7, 11], priority: 26 }, // Major 7th Suspended 4th
+            'm7#5': { notes: [0, 3, 8, 10], priority: 27 }, // Minor 7th #5
+            'M#5': { notes: [0, 4, 8], priority: 28 }, // Major #5
+            '9#11': { notes: [0, 4, 7, 10, 14, 18], priority: 29 }, // Dominant 9th #11
+            '13#11': { notes: [0, 4, 7, 10, 14, 18, 21], priority: 30 }, // Dominant 13th #11
+            '7b5': { notes: [0, 4, 6, 10], priority: 31 }, // Dominant 7th Flat Five
+            'M7b5': { notes: [0, 4, 6, 11], priority: 32 }, // Major 7th Flat Five
+            'M7#5': { notes: [0, 4, 8, 11], priority: 33 }, // Major 7th Sharp Five
+            'm7b9': { notes: [0, 3, 7, 10, 13], priority: 34 }, // Minor 7th Flat Nine
+            '9b5': { notes: [0, 4, 6, 10, 14], priority: 34 }, // 9th Flat Five
+            '9#5': { notes: [0, 4, 8, 10, 14], priority: 35 }, // 9th Sharp Five
+            '7b9': { notes: [0, 4, 7, 10, 13], priority: 36 }, // Dominant 7th Flat Nine
+            '7#9': { notes: [0, 4, 7, 10, 15], priority: 37 }, // Dominant 7th Sharp Nine
+            '7#11': { notes: [0, 4, 7, 10, 18], priority: 38 }, // Dominant 7th Sharp Eleven
+            'm7add11': { notes: [0, 3, 7, 10, 17], priority: 39 }, // Minor 7th Add 11
+            'add2': { notes: [0, 2, 4, 7], priority: 40 }, // Major Add 2
+            'add4': { notes: [0, 4, 5, 7], priority: 41 }, // Major Add 4
+            '6add9': { notes: [0, 4, 7, 9, 14], priority: 42 }, // Major 6 Add 9
 
-            '/C': { notes: [0, 4, 7], root: 0 }, // C Major
-            'm/C': { notes: [0, 3, 7], root: 0 }, // C Minor
-            '/C#': { notes: [0, 4, 7], root: 1 }, // C# Major
-            'm/C#': { notes: [0, 3, 7], root: 1 }, // C# Minor
-            '/D': { notes: [0, 4, 7], root: 2 }, // D Major
-            'm/D': { notes: [0, 3, 7], root: 2 }, // D Minor
-            '/D#': { notes: [0, 4, 7], root: 3 }, // D# Major
-            'm/D#': { notes: [0, 3, 7], root: 3 }, // D# Minor
-            '/E': { notes: [0, 4, 7], root: 4 }, // E Major
-            'm/E': { notes: [0, 3, 7], root: 4 }, // E Minor
-            '/F': { notes: [0, 4, 7], root: 5 }, // F Major
-            'm/F': { notes: [0, 3, 7], root: 5 }, // F Minor
-            '/F#': { notes: [0, 4, 7], root: 6 }, // F# Major
-            'm/F#': { notes: [0, 3, 7], root: 6 }, // F# Minor
-            '/G': { notes: [0, 4, 7], root: 7 }, // G Major
-            'm/G': { notes: [0, 3, 7], root: 7 }, // G Minor
-            '/G#': { notes: [0, 4, 7], root: 8 }, // G# Major
-            'm/G#': { notes: [0, 3, 7], root: 8 }, // G# Minor
-            '/A': { notes: [0, 4, 7], root: 9 }, // A Major
-            'm/A': { notes: [0, 3, 7], root: 9 }, // A Minor
-            '/A#': { notes: [0, 4, 7], root: 10 }, // A# Major
-            'm/A#': { notes: [0, 3, 7], root: 10 }, // A# Minor
-            '/B': { notes: [0, 4, 7], root: 11 }, // B Major
-            'm/B': { notes: [0, 3, 7], root: 11 } // B Minor
-
+            '/C': { notes: [0, 4, 7], root: 0, priority: 43 }, // C Major
+            'm/C': { notes: [0, 3, 7], root: 0, priority: 44 }, // C Minor
+            '/C#': { notes: [0, 4, 7], root: 1, priority: 43 }, // C# Major
+            'm/C#': { notes: [0, 3, 7], root: 1, priority: 44 }, // C# Minor
+            '/D': { notes: [0, 4, 7], root: 2, priority: 43 }, // D Major
+            'm/D': { notes: [0, 3, 7], root: 2, priority: 44 }, // D Minor
+            '/D#': { notes: [0, 4, 7], root: 3, priority: 43 }, // D# Major
+            'm/D#': { notes: [0, 3, 7], root: 3, priority: 44 }, // D# Minor
+            '/E': { notes: [0, 4, 7], root: 4, priority: 43 }, // E Major
+            'm/E': { notes: [0, 3, 7], root: 4, priority: 44 }, // E Minor
+            '/F': { notes: [0, 4, 7], root: 5, priority: 43 }, // F Major
+            'm/F': { notes: [0, 3, 7], root: 5, priority: 44 }, // F Minor
+            '/F#': { notes: [0, 4, 7], root: 6, priority: 43 }, // F# Major
+            'm/F#': { notes: [0, 3, 7], root: 6, priority: 44 }, // F# Minor
+            '/G': { notes: [0, 4, 7], root: 7, priority: 43 }, // G Major
+            'm/G': { notes: [0, 3, 7], root: 7, priority: 44 }, // G Minor
+            '/G#': { notes: [0, 4, 7], root: 8, priority: 43 }, // G# Major
+            'm/G#': { notes: [0, 3, 7], root: 8, priority: 44 }, // G# Minor
+            '/A': { notes: [0, 4, 7], root: 9, priority: 43 }, // A Major
+            'm/A': { notes: [0, 3, 7], root: 9, priority: 44 }, // A Minor
+            '/A#': { notes: [0, 4, 7], root: 10, priority: 43 }, // A# Major
+            'm/A#': { notes: [0, 3, 7], root: 10, priority: 44 }, // A# Minor
+            '/B': { notes: [0, 4, 7], root: 11, priority: 43 }, // B Major
+            'm/B': { notes: [0, 3, 7], root: 11, priority: 44 } // B Minor
         };
 
         this.generateChords();
@@ -1111,19 +1284,23 @@ export class ChordLibrary {
                 let notes = structure.notes.map(interval => (i + interval) % 12);
                 const chordName = `${this.noteNames[i]}${suffix}`;
                 if (structure.root !== undefined) {
-                    //Filter Dumb Chord Like C/C D/D
+                    // Filter Dumb Chord Like C/C D/D
                     if (structure.root == rootNote) {
-                        continue
+                        continue;
                     }
-                    rootNote = structure.root
-                    customRoot = true
-                    notes.push(rootNote)
+                    rootNote = structure.root;
+                    customRoot = true;
+                    notes.push(rootNote);
                 }
 
-
-                this.chords.push(new Chord(rootNote, notes, chordName, customRoot));
+                const chord = new Chord(rootNote, notes, chordName, customRoot);
+                chord.priority = structure.priority;
+                this.chords.push(chord);
             }
         });
+
+        // Sort chords by priority
+        this.chords.sort((a, b) => a.priority - b.priority);
     }
 
     async searchChords(noteArray, rootNote, threshold = 50) {
@@ -1205,6 +1382,173 @@ export class ChordLibrary {
 
 
 
+File: index.html
+Path: chordviewer\index.html
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piano2Guitar</title>
+    <!-- STYLESHEETS -->
+    <link rel="stylesheet" href="../piano/style.css" />
+    <link rel="stylesheet" href="../progression-generator/style.css" />
+    <link rel="stylesheet" href="../css/output-styles.css" />
+    <link rel="stylesheet" href="../css/input-styles.css" />
+    <link rel="stylesheet" href="../css/slider-styles.css" />
+    <link rel="stylesheet" href="../css/settings-styles.css" />
+    <link rel="stylesheet" href="styles.css" />
+
+
+
+
+    <!-- FONT -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+
+
+    <!-- SCRIPTS -->
+    <script type="module" src="./index.js"></script>
+</head>
+
+<body>
+
+    <div class="inputWrapper">
+        <div class="header">
+            PianoToGuitar.com - ChordViewer
+            <svg class="visualPianoIcon" id="settingsIcon" xmlns="http://www.w3.org/2000/svg" onclick="toggleSettings()"
+                height="24" viewBox="0 -960 960 960" width="24">
+                <path
+                    d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z" />
+            </svg>
+        </div>
+        <div class="searchContainer">
+            <div class="searchContainerWrapper">
+                <div class="searchContainer">
+
+                    <div class="searchWordContainer">
+                        <div class="blackFadeBottom"></div>
+                        <input class="searchBox" type="text" id="itemSearch" placeholder="Search chords by name...">
+                        <div class="searchChordList" id="itemsContainer">
+                            <!-- Items will be populated here by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="selectedItemWrapper">
+
+                <div class="selectedItemsHeading">
+                    <div>Your Selected Chord</div>
+                </div>
+                <div class="selectedItemsWrapper">
+                    <div class="selectedItems" id="selectedItems">
+                        <!-- Dragged items will appear here -->
+                    </div>
+
+                    <svg class="visualPianoIcon" xmlns="http://www.w3.org/2000/svg" onclick="clearProgression()"
+                        height="24" viewBox="0 -960 960 960" width="24">
+                        <path fill="currentColor"
+                            d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm80-160h80v-360h-80v360Zm160 0h80v-360h-80v360Z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="outputWrapper" id="outputWrapper">
+        <div class="progression">
+
+
+            <div class="progressionWrapper" id="dynamicProgressionWrapper"></div>
+            <div class="progressionInfo">
+                <div class="progressionInfoText">
+                    <div class="progressionInfoTextName"><i>DYNAMIC</i></div>
+                    <div class="progressionInfoTextSubtitle">Adjust the slider to transition from simple chords to the
+                        most beautifully sounding ones!
+                    </div>
+                </div>
+                <div class="soundQualityWrapper">
+                    <input id="soundQualitySlider" type="range" min="0" max="100" value="50">
+                    <div class="soundQualityLables">
+                        <div>EASY</div>
+                        <div>BEST SOUND</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+</body>
+
+</html>
+
+File: index.js
+Path: chordviewer\index.js
+
+import DragAndDropList from '../drag-drop/script.js';
+import { ChordLibrary } from "../chord-library/script.js"
+import { ProgressionGenerator } from '../progression-generator/main.js';
+import { settings } from '../chord-factory/constants.js';
+
+
+document.addEventListener('DOMContentLoaded', () => {
+
+
+    // Get All Chords From the Libaray
+    const chordLibrary = new ChordLibrary
+
+    // Create the Search and Drag and Drop
+
+    const allChordLibraryItems = chordLibrary.getAllChords()
+
+
+    const dropzone = 'selectedItems';
+    const itemsContainer = "itemsContainer";
+    const itemSearch = "itemSearch";
+    const selectedItems = "selectedItems";
+    const emptyMessageContainer = "emptyMessageContainer";
+    const dragAndDropList = new DragAndDropList(allChordLibraryItems, dropzone, itemsContainer, itemSearch, selectedItems, emptyMessageContainer);
+
+    window.clearProgression = function () {
+        dragAndDropList.clearSelectedList();
+        console.log("Selected Items cleared");
+    };
+
+
+
+    let soundQualityValue = 1;
+    let progressionGenerator = new ProgressionGenerator([], true, settings.tuning, "#ffffff", "onNote", true)
+
+    document.addEventListener('selectedItemsUpdated', async function (event) {
+        console.log('Updated Selected Items:', event.detail.selectedItems[0]);
+        
+        await progressionGenerator.setProgression([event.detail.selectedItems[0]])
+        await updateProgressionDynamic(soundQualityValue)
+        dragAndDropList.clearSelectedList();
+    });
+
+
+    const soundQualitySlider = document.getElementById("soundQualitySlider");
+    soundQualitySlider.addEventListener('input', async (e) => {
+        soundQualityValue = e.target.value / 100;
+        console.log("Slider Value:", soundQualityValue);
+        await updateProgressionDynamic(soundQualityValue)
+    });
+
+    async function updateProgressionDynamic(soundQualityValue) {
+        let progressionHTML = await progressionGenerator.getProgressionDynamicHTML(soundQualityValue, 20);
+        document.getElementById("dynamicProgressionWrapper").innerHTML = "";
+        document.getElementById("dynamicProgressionWrapper").appendChild(progressionHTML);
+    };
+
+
+    //Update the Progressions to get the PLaceholders:
+    updateProgressionDynamic(soundQualityValue)
+})
+
+
 File: createChatGPTContext.js
 Path: createChatGPTContext.js
 
@@ -1223,7 +1567,7 @@ function getDirectoryStructure(dir, fileStructure = {}, parentPath = '') {
     if (stats.isDirectory()) {
       fileStructure[item] = {};
       getDirectoryStructure(fullPath, fileStructure[item], path.join(parentPath, item));
-    } else {
+    } else if (isHtmlOrJsFile(item)) {
       fileStructure[item] = {
         path: fullPath,
         relativePath: path.join(parentPath, item),
@@ -1693,7 +2037,7 @@ Path: index.html
             <div class="settingsheader">Settings</div>
             <div class="settingsitem">
                 <div>Guitar Tuning</div>
-                <select name="cars" id="cars">
+                <select name="string1" id="string1">
                     <option value="0">C</option>
                     <option value="1">C#</option>
                     <option value="2">D</option>
@@ -1707,7 +2051,63 @@ Path: index.html
                     <option value="10">A#</option>
                     <option value="11">B</option>
                 </select>
-                <select name="cars" id="cars">
+                <select name="string2" id="string2">
+                    <option value="0">C</option>
+                    <option value="1">C#</option>
+                    <option value="2">D</option>
+                    <option value="3">D#</option>
+                    <option value="4">E</option>
+                    <option value="5">F</option>
+                    <option value="6">F#</option>
+                    <option value="7">G</option>
+                    <option value="8">G#</option>
+                    <option value="9">A</option>
+                    <option value="10">A#</option>
+                    <option value="11">B</option>
+                </select>
+                <select name="string3" id="string3">
+                    <option value="0">C</option>
+                    <option value="1">C#</option>
+                    <option value="2">D</option>
+                    <option value="3">D#</option>
+                    <option value="4">E</option>
+                    <option value="5">F</option>
+                    <option value="6">F#</option>
+                    <option value="7">G</option>
+                    <option value="8">G#</option>
+                    <option value="9">A</option>
+                    <option value="10">A#</option>
+                    <option value="11">B</option>
+                </select>
+                <select name="string4" id="string4">
+                    <option value="0">C</option>
+                    <option value="1">C#</option>
+                    <option value="2">D</option>
+                    <option value="3">D#</option>
+                    <option value="4">E</option>
+                    <option value="5">F</option>
+                    <option value="6">F#</option>
+                    <option value="7">G</option>
+                    <option value="8">G#</option>
+                    <option value="9">A</option>
+                    <option value="10">A#</option>
+                    <option value="11">B</option>
+                </select>
+                <select name="string5" id="string5">
+                    <option value="0">C</option>
+                    <option value="1">C#</option>
+                    <option value="2">D</option>
+                    <option value="3">D#</option>
+                    <option value="4">E</option>
+                    <option value="5">F</option>
+                    <option value="6">F#</option>
+                    <option value="7">G</option>
+                    <option value="8">G#</option>
+                    <option value="9">A</option>
+                    <option value="10">A#</option>
+                    <option value="11">B</option>
+                </select>
+                <select name="string6" id="string6">
                     <option value="0">C</option>
                     <option value="1">C#</option>
                     <option value="2">D</option>
@@ -1790,7 +2190,8 @@ Path: index.html
             <div class="progressionInfo">
                 <div class="progressionInfoText">
                     <div class="progressionInfoTextName"><i>DYNAMIC</i></div>
-                    <div class="progressionInfoTextSubtitle">Adjust the slider to transition from simple chords to the
+                    <div class="progressionInfoTextSubtitle">Adjust the slider to transition from simple chords to
+                        the
                         most beautifully sounding ones!
                     </div>
                 </div>
@@ -1932,7 +2333,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    document.querySelector('.pianoContainer').addEventListener('notesChanged',async (e) => {
+    document.querySelector('.pianoContainer').addEventListener('notesChanged', async (e) => {
         console.log('Piano notes changed:', e.detail.notes, e.detail.rootNote);
         let items
         if (e.detail.notes.length > 0) {
@@ -2074,6 +2475,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //Update the Progressions to get the PLaceholders:
     updateProgressionDynamic(soundQualityValue)
+
+
+
+
+
+
+    // Function to load tuning settings into the select elements
+    function loadTuningSettings() {
+        const storedTuning = JSON.parse(localStorage.getItem('guitarTuning'));
+        const tuning = storedTuning || settings.tuning;
+        for (let i = 0; i < tuning.length; i++) {
+            const selectElement = document.getElementById(`string${i + 1}`);
+            selectElement.value = (tuning[i] % 12).toString();
+        }
+    }
+
+    // Function to update the tuning settings when select elements change
+    function updateTuningSettings() {
+        const newTuning = [];
+        for (let i = 0; i < 6; i++) {
+            const selectElement = document.getElementById(`string${i + 1}`);
+            const noteIndex = parseInt(selectElement.value);
+            newTuning.push(noteIndex + 28 + (i * 5));
+        }
+        settings.tuning = newTuning;
+        localStorage.setItem('guitarTuning', JSON.stringify(newTuning));
+    }
+
+    // Add event listeners to the select elements
+    for (let i = 0; i < 6; i++) {
+        const selectElement = document.getElementById(`string${i + 1}`);
+        selectElement.addEventListener('change', updateTuningSettings);
+    }
+
+    // Load the tuning settings on page load
+    loadTuningSettings();
 })
 
 
@@ -2459,12 +2896,13 @@ export default Piano;
 File: main.js
 Path: progression-generator\main.js
 
-import { settings, NOTE_INDEX_MAP, BARRE_RATING } from '../chord-factory/constants.js';
-import { parseNotes, removeDuplicateArrays } from '../chord-factory/utils.js';
+import { settings, BARRE_RATING } from '../chord-factory/constants.js';
+import { parseNotes, removeDuplicateArrays, NOTE_INDEX_MAP} from '../chord-factory/utils.js';
 import { ChordFactory } from '../chord-factory/chordfactory.js';
 import { Chord } from '../chord-library/script.js';
 import { numberToNote } from '../chord-factory/utils.js';
 import TabGenerator from "../tab-generator/script.js"
+import { TabHTML } from './tabhtml.js';
 
 
 
@@ -2638,7 +3076,7 @@ export class ProgressionGenerator {
 
             // Assuming TabGenerator can handle this static data
             try {
-                const chordDiagram = new TabGenerator(voicing, fingerPositions, barreSize, null, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
+                const chordDiagram = new TabGenerator(voicing, fingerPositions, 0, null, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
                 const svg = chordDiagram.generateChordSVG();
                 diagramsContainer.appendChild(svg);
             } catch (error) {
@@ -2667,7 +3105,7 @@ export class ProgressionGenerator {
             if (chordVoicing) {
                 // Assuming TabGenerator takes chord details and returns an SVG element
                 try {
-                    const chordDiagram = new TabGenerator(chordVoicing.voicing, chordVoicing.fingerPositions, chordVoicing.barreSize, chordVoicing.barre, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
+                    const chordDiagram = new TabGenerator(chordVoicing.voicing, chordVoicing.fingerPositions, chordVoicing.minAboveZero, chordVoicing.barres, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
                     const svg = chordDiagram.generateChordSVG();
                     diagramsContainer.appendChild(svg);
                 } catch (error) {
@@ -2691,45 +3129,33 @@ export class ProgressionGenerator {
     }
 
 
-    async getProgressionDynamicHTML(soundQuality = 0.5) {
-        // Iterate over each entry in the progression, sort by combined rating, and get the first playable chord
+    async getProgressionDynamicHTML(soundQuality = 0.5, ammount = 1) {
+        // Check if there are any chords in the progression
         if (this.progression.length < 1) {
-            return this.getPlaceholderHTML()
+            return this.getPlaceholderHTML();
         }
-        this.progression.forEach(chordFactory => {
-            chordFactory.sortPlayableChordsByCombinedRating(soundQuality);
-        });
-
+    
+        // Create the container for the chord diagrams
         let diagramsContainer = document.createElement('div'); // Container for chord diagrams
-        diagramsContainer.classList.add("progressionGeneratorContainer")
-        console.log(this.progression)
-
-
+        diagramsContainer.classList.add("progressionGeneratorContainer");
+    
+        // Iterate over each ChordFactory instance in the progression
         this.progression.forEach(chordFactory => {
-            // Extract first playable chord from each ChordFactory instance
-            if (chordFactory.playableChords[0]) {
-                // Assuming TabGenerator takes chord details and returns an SVG element
-                try {
-                    const chordDiagram = new TabGenerator(chordFactory.playableChords[0].voicing, chordFactory.playableChords[0].fingerPositions, chordFactory.playableChords[0].barreSize, chordFactory.playableChords[0].barre, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
-                    const svg = chordDiagram.generateChordSVG();
-                    let svgContainer = document.createElement('div'); // Container for chord diagrams
-                    svgContainer.classList.add("progressionGeneratorSvgContainer")
+            // Create an instance of TabHTML for the current chordFactory
+            const tabHTML = new TabHTML(chordFactory, this.color, this.fingerNumbers, this.showOpenStrings);
+    
+            // Generate the HTML for the current chordFactory
+            const chordDiagrams = tabHTML.generateHTML(soundQuality, ammount);
+    
+            // Append the generated HTML to the main container
+            chordDiagrams.forEach(element=>{
+                diagramsContainer.appendChild(element);
 
-                    let svgNameContainer = document.createElement('div'); // Container for chord diagrams
-                    svgNameContainer.innerHTML = chordFactory.identifier
-                    svgNameContainer.classList.add("progressionGeneratorSvgChordName")
-
-
-                    svgContainer.appendChild(svg);
-                    svgContainer.appendChild(svgNameContainer)
-                    diagramsContainer.appendChild(svgContainer)
-                } catch (error) {
-                    console.error('Error generating chord diagram:', error);
-                }
-            }
+            })
         });
-
-        return diagramsContainer; // Return the container with all SVGs
+    
+        // Return the container with all chord diagrams
+        return diagramsContainer;
     }
 
     invertColor(hex) {
@@ -2753,6 +3179,230 @@ export class ProgressionGenerator {
         }).join('');
     }
 }
+
+File: tabhtml.js
+Path: progression-generator\tabhtml.js
+
+import TabGenerator from "../tab-generator/script.js";
+
+export class TabHTML {
+    constructor(chordFactory, color, fingerNumbers = "belowString", showOpenStrings = true) {
+        this.chordFactory = chordFactory; // Pointer to the ChordFactory instance
+        this.color = color;
+        this.fingerNumbers = fingerNumbers;
+        this.showOpenStrings = showOpenStrings;
+        this.currentIndex = 0; // Track the current index of playable chords
+        this.maxChords = chordFactory.playableChords.length
+
+    }
+
+    invertColor(hex) {
+        // Remove the hash at the start if it's there
+        hex = hex.startsWith('#') ? hex.slice(1) : hex;
+
+        // Convert hex to RGB
+        let r = parseInt(hex.substr(0, 2), 16);
+        let g = parseInt(hex.substr(2, 2), 16);
+        let b = parseInt(hex.substr(4, 2), 16);
+
+        // Invert each component by subtracting from 255
+        r = 255 - r;
+        g = 255 - g;
+        b = 255 - b;
+
+        // Convert the inverted RGB values back to hex
+        return '#' + [r, g, b].map(x => {
+            const hex = x.toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
+        }).join('');
+    }
+
+    vibrateElement(element) {
+        element.classList.add('vibrate');
+        setTimeout(() => {
+            element.classList.remove('vibrate');
+        }, 200); // Match this duration with the animation duration in CSS
+    }
+
+    updateChordDiagram(svgContainer, svgNameContainer,voicingInfoDiv, direction) {
+        const playableChords = this.chordFactory.playableChords;
+        voicingInfoDiv.innerHTML=this.currentIndex+1 + " / " + this.maxChords
+        if (this.currentIndex < playableChords.length && this.currentIndex >= 0) {
+            let slideOutClass, slideInClass;
+
+            if (direction === 'next') {
+                slideOutClass = 'slide-out-left';
+                slideInClass = 'slide-in-right';
+            } else if (direction === 'previous') {
+                slideOutClass = 'slide-out-right';
+                slideInClass = 'slide-in-left';
+            }
+
+            // Apply slide-out animation to the current SVG
+            svgContainer.classList.remove('slide-in-left', 'slide-in-right', 'slide-out-right', 'slide-out-left');
+            svgContainer.classList.add(slideOutClass);
+
+            // Wait for the slide-out animation to complete
+            setTimeout(() => {
+                const chord = playableChords[this.currentIndex];
+                const chordDiagram = new TabGenerator(
+                    chord.voicing,
+                    chord.fingerPositions,
+                    chord.minAboveZero,
+                    chord.barres,
+                    this.color,
+                    this.invertColor(this.color),
+                    this.fingerNumbers,
+                    this.showOpenStrings
+                );
+                const newSvg = chordDiagram.generateChordSVG();
+
+                // Replace the old SVG with the new one
+                svgContainer.innerHTML = '';
+                svgContainer.appendChild(newSvg);
+                svgNameContainer.innerHTML = this.chordFactory.identifier;
+
+                // Apply slide-in animation to the new SVG
+                svgContainer.classList.remove(slideOutClass);
+                svgContainer.classList.add(slideInClass);
+                setTimeout(() => {
+                    svgContainer.classList.remove('slide-in-left', 'slide-in-right', 'slide-out-right', 'slide-out-left');
+                },100)
+            }, 100); // Match this duration with the animation duration in CSS
+
+        }
+    }
+
+    generateHTML(soundQuality = 0.5, ammount = 1) {
+        // Sort the playable chords by combined rating
+        this.chordFactory.sortPlayableChordsByCombinedRating(soundQuality);
+
+        let diagrams = [];
+
+        // Extract first 'ammount' playable chords from the ChordFactory instance
+        for (let i = 0; i < ammount; i++) {
+            if (this.chordFactory.playableChords[i]) {
+                // Assuming TabGenerator takes chord details and returns an SVG element
+                try {
+                    this.currentIndex = i;
+                    const chord = this.chordFactory.playableChords[this.currentIndex];
+                    const chordDiagram = new TabGenerator(
+                        chord.voicing,
+                        chord.fingerPositions,
+                        chord.minAboveZero,
+                        chord.barres,
+                        this.color,
+                        this.invertColor(this.color),
+                        this.fingerNumbers,
+                        this.showOpenStrings
+                    );
+                    const svg = chordDiagram.generateChordSVG();
+                    let svgInfoContainer = document.createElement('div');
+                    svgInfoContainer.classList.add("progressionGeneratorSvgInfoContainer");
+
+                    let voicingInfoContainer = document.createElement('div');
+                    voicingInfoContainer.classList.add("progressionGeneratorVoicingInfoContainer");
+
+                    let voicingInfoDiv = document.createElement('div');
+                    voicingInfoDiv.innerHTML = this.currentIndex + 1 + " / " + this.maxChords;
+
+                    let svgContainer = document.createElement('div'); // Container for chord diagrams
+                    svgContainer.classList.add("progressionGeneratorSvgContainer");
+
+                    let svgNameContainer = document.createElement('div'); // Container for chord diagrams
+                    svgNameContainer.innerHTML = this.chordFactory.identifier;
+                    svgNameContainer.classList.add("progressionGeneratorSvgChordName");
+
+                    // SVG for next button
+                    const nextButton = document.createElement('div');
+                    nextButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" ><path fill="currentColor" d="M579-480 285-774q-15-15-14.5-35.5T286-845q15-15 35.5-15t35.5 15l307 308q12 12 18 27t6 30q0 15-6 30t-18 27L356-115q-15 15-35 14.5T286-116q-15-15-15-35.5t15-35.5l293-293Z"/></svg>';
+
+                    nextButton.classList.add("progressionGeneratorChordButton");
+
+                    nextButton.onclick = () => {
+                        if (this.currentIndex + 1 < this.chordFactory.playableChords.length) {
+                            this.currentIndex++;
+                            this.updateChordDiagram(svgContainer, svgNameContainer, voicingInfoDiv, 'next');
+                        } else {
+                            this.vibrateElement(svgContainer);
+                        }
+                    };
+
+                    // SVG for previous button
+                    const prevButton = document.createElement('div');
+                    prevButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" ><path fill="currentColor" d="m142-480 294 294q15 15 14.5 35T435-116q-15 15-35 15t-35-15L57-423q-12-12-18-27t-6-30q0-15 6-30t18-27l308-308q15-15 35.5-14.5T436-844q15 15 15 35t-15 35L142-480Z"/></svg>';
+                    prevButton.classList.add("progressionGeneratorChordButton");
+
+                    prevButton.onclick = () => {
+                        if (this.currentIndex > 0) {
+                            this.currentIndex--;
+                            this.updateChordDiagram(svgContainer, svgNameContainer, voicingInfoDiv, 'previous');
+                        } else {
+                            this.vibrateElement(svgContainer);
+                        }
+                    };
+
+                    svgContainer.appendChild(svg);
+                    voicingInfoContainer.appendChild(prevButton);
+                    voicingInfoContainer.appendChild(voicingInfoDiv);
+                    svgInfoContainer.appendChild(svgNameContainer);
+                    voicingInfoContainer.appendChild(nextButton);
+                    let diagramsContainer = document.createElement('div');
+                    diagramsContainer.classList.add("progressionGeneratorDiagramsContainer");
+
+
+                    diagramsContainer.appendChild(svgContainer);
+                    diagramsContainer.appendChild(voicingInfoContainer);
+                    diagramsContainer.appendChild(svgInfoContainer);
+                    diagrams.push(diagramsContainer);
+                } catch (error) {
+                    console.error('Error generating chord diagram:', error);
+                }
+            }
+        }
+
+        return diagrams; // Return the container with all SVGs
+    }
+}
+
+File: settings.js
+Path: settings.js
+
+import { noteToNumber, numberToNote } from "./chord-factory/utils.js";
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Function to load tuning settings into the select elements
+    function loadTuningSettings() {
+        const storedTuning = JSON.parse(localStorage.getItem('guitarTuning'));
+        const tuning = storedTuning || settings.tuning;
+        for (let i = 0; i < tuning.length; i++) {
+            const selectElement = document.getElementById(`string${i + 1}`);
+            selectElement.value = (tuning[i] % 12);
+        }
+    }
+
+    // Function to update the tuning settings when select elements change
+    function updateTuningSettings() {
+        const newTuning = [];
+        for (let i = 0; i < 6; i++) {
+            const selectElement = document.getElementById(`string${i + 1}`);
+            const noteIndex = parseInt(selectElement.value);
+            newTuning.push(noteIndex + 28 + (i * 5));
+        }
+        settings.tuning = newTuning;
+        localStorage.setItem('guitarTuning', JSON.stringify(newTuning));
+    }
+
+    // Add event listeners to the select elements
+    for (let i = 0; i < 6; i++) {
+        const selectElement = document.getElementById(`string${i + 1}`);
+        selectElement.addEventListener('change', updateTuningSettings);
+    }
+
+    // Load the tuning settings on page load
+    loadTuningSettings();
+})
 
 File: index.html
 Path: tab-generator\index.html
@@ -2778,16 +3428,17 @@ Path: tab-generator\index.html
     <script type="module">
         import TabGenerator from "./script.js"
 
-        const fingerPositions = ['-1', '13', '12', '5', '0', '0'];
-        const fingerNumbers = ['9', '1', '2', '1', '', ''];
-        const barreSize = 3;
+        const fingerPositions = ['-1', '5', '6', '5', '0', '0'];
+        const fingerNumbers = ['1', '1', '2', '1', '', ''];
         const barre = 10;
+        const minAboveZero = 15
+        const barres = [[5,1,3], [3,0,5]]
         const color = "#fff";
         const textColor = "#000";
         const showOpenStrings = true;
 
         try {
-            const chordDiagram = new TabGenerator(fingerPositions, fingerNumbers, barreSize, barre, color, textColor, 'belowString', showOpenStrings);
+            const chordDiagram = new TabGenerator(fingerPositions, fingerNumbers, minAboveZero, barres, color, textColor, 'belowString', showOpenStrings);
             const svg = chordDiagram.generateChordSVG();
             document.getElementById('diagram').appendChild(svg);
         } catch (error) {
@@ -2818,19 +3469,13 @@ class TabGenerator {
      * @param {string} [numberPosition='onNote'] - Position of the numbers, 'onNote' to place them on the note, or any other value to place them separately.
      * @param {boolean} showOpenStrings - Whether to display open strings in the diagram.
      */
-    constructor(fingerPositions, fingerNumbers, barreSize = null, barre = null, elementColor = "#000", textColor = "#fff", numberPosition = 'onNote', showOpenStrings) {
+    constructor(fingerPositions, fingerNumbers, minAboveZero = 0, barres = [], elementColor = "#000", textColor = "#fff", numberPosition = 'onNote', showOpenStrings) {
 
         if (!Array.isArray(fingerPositions) || fingerPositions.length !== 6) {
             console.error("Error: fingerPositions must be an array of length 6.");
         }
         if (fingerNumbers && (!Array.isArray(fingerNumbers) || fingerNumbers.length !== 6)) {
             console.error("Error: fingerNumbers must be an array of length 6 or null.");
-        }
-        if (barreSize !== null && (typeof barreSize !== 'number' || barreSize < 1 || barreSize > 6)) {
-            console.error("Error: barreSize must be a number between 1 and 6 or null.");
-        }
-        if (barre !== null && (typeof barre !== 'number' || !/^\d+$/.test(barre))) {
-            console.error("Error: barre must be a string representing a number or null.");
         }
         if (typeof elementColor !== 'string') {
             console.error("Error: elementColor must be a string.");
@@ -2844,26 +3489,48 @@ class TabGenerator {
         if (typeof showOpenStrings !== 'boolean') {
             console.error("Error: showOpenStrings must be a boolean.");
         }
-
+        // Assign instance variables
         this.fingerPositions = fingerPositions;
         this.fingerNumbers = fingerNumbers;
-        this.barreSize = barreSize;
-        this.barre = barre;
-        this.numberPosition = numberPosition;
-        this.showOpenStrings = showOpenStrings;
+        this.barres = barres;               // Specific fret where the barre is placed
+        this.color = elementColor; // Color for diagram elements
+        this.textColor = textColor;       // Color for the text
+        this.numberPosition = numberPosition; // Position of the numbers
+        this.showOpenStrings = showOpenStrings; // Whether to display open strings
+        this.maxFret = Math.max(...fingerPositions)
+
+
+
+        // Diagram layout constants
         this.topSpacing = 25;
-        this.indicatorTopSpacing = 19;
-        this.textTopSpacing = 190
-        this.topBarHeight = 5
-        this.color = elementColor
-        this.textColor = textColor
+        this.topBarHeight = 7;
+        this.fretSpacing = 25;
+        this.stringSpacing = 25;
+        this.paddingLeft = 10;
+        this.barreSidesOverflow = 10;
+        this.stringOverflowBotom = 10;
+        this.fretCount = 4;
+        this.circleRadius = 10;
+        this.infoPadding = 10;
+        this.openStringRadius = 7;
+
+
+        //Offset
+        this.offset = 1
+        if (this.maxFret > this.fretCount){
+            this.offset = minAboveZero
+        }
+
+        //Global Framw Width
+        this.width = 185;
+        this.height = 145
     }
 
     generateChordSVG() {
         const svgAttributes = {
-            width: '200',
-            height: '200',
-            viewBox: '0 0 200 200'  // This sets the viewBox attribute
+            width:  this.width,
+            height: this.height,
+            viewBox: "0 0 " +  this.width + " " +this.height  // This sets the viewBox attribute
         };
         const svg = this.createSVGElement('svg', svgAttributes);
         this.drawDiagramComponents(svg);
@@ -2872,8 +3539,11 @@ class TabGenerator {
 
     drawDiagramComponents(svg) {
         this.drawTopBar(svg);
-        if (this.barreSize !== null) {
-            this.drawBarre(svg);
+        if (this.barres) {
+            this.barres.forEach(element => {
+                this.drawBarre(svg, element[0], element[1], element[2]);
+
+            });
         }
         this.drawStrings(svg);
         this.drawFrets(svg);
@@ -2882,6 +3552,7 @@ class TabGenerator {
         }
         this.drawNotes(svg);
         this.drawMuteIndicators(svg);
+        this.drawFretHeight(svg)
     }
 
 
@@ -2895,9 +3566,9 @@ class TabGenerator {
 
     drawTopBar(svg) {
         const topBar = this.createSVGElement('rect', {
-            x: "29.5",
-            y: 14 + this.topSpacing,
-            width: '125',
+            x: this.paddingLeft,
+            y: this.topSpacing,
+            width: this.stringSpacing * 5,
             height: this.topBarHeight,
             fill: this.color,
             stroke: this.color,
@@ -2909,8 +3580,8 @@ class TabGenerator {
     drawStrings(svg) {
         for (let i = 0; i < 6; i++) {
             const line = this.createSVGElement('line', {
-                x1: 30 + i * 25, y1: this.topSpacing + 13,
-                x2: 30 + i * 25, y2: 140 + this.topSpacing,
+                x1: this.paddingLeft + i * this.stringSpacing, y1: this.topSpacing,
+                x2: this.paddingLeft + i * this.stringSpacing, y2: this.fretSpacing * this.fretCount + this.topSpacing + this.stringOverflowBotom + this.topBarHeight,
                 stroke: this.color, 'stroke-width': ((6 - i) / 3) + 1
             });
             svg.appendChild(line);
@@ -2918,10 +3589,10 @@ class TabGenerator {
     }
 
     drawFrets(svg) {
-        for (let j = 0; j < 5; j++) {
+        for (let j = 0; j < this.fretCount + 1; j++) {
             const line = this.createSVGElement('line', {
-                x1: '30', y1: 20 + this.topSpacing + j * 25,
-                x2: '155', y2: 20 + this.topSpacing + j * 25,
+                x1: this.paddingLeft, y1: this.topSpacing + j * this.fretSpacing + this.topBarHeight,
+                x2: this.paddingLeft + this.stringSpacing * 5, y2: this.topSpacing + j * this.fretSpacing + this.topBarHeight,
                 stroke: this.color, 'stroke-width': '2'
             });
             svg.appendChild(line);
@@ -2929,22 +3600,21 @@ class TabGenerator {
     }
 
     drawNotes(svg) {
-        const barreFret = this.barre ? parseInt(this.barre) : 1;
-        for (let k = 0; k < 6; k++) {
-            if (this.fingerPositions[k] !== 'x') {
-                const fret = parseInt(this.fingerPositions[k]);
+        for (let string = 0; string < 6; string++) {
+            if (this.fingerPositions[string] > 0) {
+                let fret = parseInt(this.fingerPositions[string]);
                 if (fret > 0) {
-                    const position = 40 + (fret - barreFret) * 25;
-                    const circle = this.createSVGElement('circle', {
-                        cx: 30 + k * 25, cy: position + this.topSpacing - 8,
-                        r: '10', fill: this.color
+                    let position = this.topSpacing + this.topBarHeight + ((fret) - this.offset) * this.fretSpacing - this.circleRadius / 2;
+                    let circle = this.createSVGElement('circle', {
+                        cx: this.paddingLeft + string * this.stringSpacing, cy: position + this.topSpacing - 8,
+                        r: this.circleRadius, fill: this.color
                     });
                     svg.appendChild(circle);
 
-                    if (this.fingerNumbers && this.fingerNumbers[k]) {
-                        const textPositionY = this.numberPosition === 'onNote' ? position + this.topSpacing : this.textTopSpacing;
+                    if (this.fingerNumbers && this.fingerNumbers[string]) {
+                        const textPositionY = this.numberPosition === 'onNote' ? position + this.topSpacing : this.topSpacing + this.topBarHeight + (this.fretCount + 1) * this.fretSpacing + this.stringOverflowBotom;
                         const text = this.createSVGElement('text', {
-                            x: 30 + k * 25,
+                            x: this.paddingLeft + string * this.stringSpacing,
                             y: textPositionY,
                             'font-family': 'Arial',
                             'font-size': '20',
@@ -2952,7 +3622,7 @@ class TabGenerator {
                             fill: this.numberPosition === 'onNote' ? this.textColor : this.color,
                             'text-anchor': 'middle'
                         });
-                        text.textContent = this.fingerNumbers[k];
+                        text.textContent = this.fingerNumbers[string];
                         svg.appendChild(text);
                     }
                 }
@@ -2961,25 +3631,24 @@ class TabGenerator {
     }
 
     drawMuteIndicators(svg) {
-        const ofsetX = 0;
-        const ofsetY = -15 + this.indicatorTopSpacing;
-        const strokeLength = 13;
+        const radius = 10
+        const height = radius * Math.sqrt(2)
+
         for (let i = 0; i < 6; i++) {
             if (this.fingerPositions[i] == -1) {
-                const halfStroke = strokeLength / 2;
                 const line1 = this.createSVGElement('line', {
-                    x1: 30 + i * 25 - halfStroke + ofsetX,
-                    y1: 10 + ofsetY,
-                    x2: 30 + i * 25 + halfStroke + ofsetX,
-                    y2: 10 + strokeLength + ofsetY,
+                    x1: this.paddingLeft + i * this.stringSpacing - height / 2,
+                    y1: this.topSpacing - height - this.infoPadding,
+                    x2: this.paddingLeft + i * this.stringSpacing + height / 2,
+                    y2: this.topSpacing - this.infoPadding,
                     stroke: this.color,
                     'stroke-width': '2'
                 });
                 const line2 = this.createSVGElement('line', {
-                    x1: 30 + i * 25 + halfStroke + ofsetX,
-                    y1: 10 + ofsetY,
-                    x2: 30 + i * 25 - halfStroke + ofsetX,
-                    y2: 10 + strokeLength + ofsetY,
+                    x1: this.paddingLeft + i * this.stringSpacing - height / 2,
+                    y1: this.topSpacing - this.infoPadding,
+                    x2: this.paddingLeft + i * this.stringSpacing + height / 2,
+                    y2: this.topSpacing - height - this.infoPadding,
                     stroke: this.color,
                     'stroke-width': '2'
                 });
@@ -2993,9 +3662,9 @@ class TabGenerator {
         for (let i = 0; i < 6; i++) {
             if (this.fingerPositions[i] === '0') {
                 const circle = this.createSVGElement('circle', {
-                    cx: 30 + i * 25,
-                    cy: this.indicatorTopSpacing,
-                    r: '7',
+                    cx: this.paddingLeft + i * this.stringSpacing,
+                    cy: this.topSpacing - this.infoPadding - this.openStringRadius,
+                    r: this.openStringRadius,
                     fill: 'none',
                     stroke: this.color,
                     'stroke-width': '2'
@@ -3005,28 +3674,35 @@ class TabGenerator {
         }
     }
 
-    drawBarre(svg) {
-        const index = 6 - this.barreSize;
-        const barreWidth = this.barreSize * 25 - 15;
-        const barreHeight = 10;
-        const barreX = 25 + index * 25 - 5;
-        const barreY = 25 + (7.5 - barreHeight / 2) + this.topSpacing;
+    drawBarre(svg, barreFret, barreStartString, barreEndString) {
+        if (barreFret != 0) {
+            barreFret = barreFret - this.offset 
+            const barreWidth = barreEndString - barreStartString
+            const barreHeight = 10;
+            const barreX = this.paddingLeft - this.barreSidesOverflow + barreStartString * this.stringSpacing;
+            const barreY = barreFret * this.fretSpacing + this.topSpacing + this.topBarHeight + (this.fretSpacing / 2) - barreHeight / 2;
 
-        const rect = this.createSVGElement('rect', {
-            x: barreX, y: barreY,
-            width: barreWidth + 10, height: barreHeight,
-            rx: '5', ry: '5',
-            fill: this.color
-        });
-        svg.appendChild(rect);
-
-        if (this.barre) {
-            const text = this.createSVGElement('text', {
-                x: barreX + barreWidth + 15, y: barreY + barreHeight,
-                'font-family': 'Arial', 'font-size': '20', fill: this.color,
-                'text-anchor': 'left'
+            const rect = this.createSVGElement('rect', {
+                x: barreX, y: barreY,
+                width: barreWidth * this.stringSpacing + 2 * this.barreSidesOverflow, height: barreHeight,
+                rx: '5', ry: '5',
+                fill: this.color
             });
-            text.textContent = this.barre + "fr";
+            svg.appendChild(rect);
+
+
+        }
+    }
+
+    drawFretHeight(svg) {
+        if (this.offset  > 1) {
+            const text = this.createSVGElement('text', {
+                x:this.paddingLeft + this.stringSpacing*5 + this.infoPadding, y: this.topSpacing + this.topBarHeight + this.fretSpacing * 0.5,
+                'font-family': 'Arial', 'font-size': '20', fill: this.color,
+                'text-anchor': 'left',
+                "alignment-baseline": "central"
+            });
+            text.textContent = this.offset  + "fr";
             svg.appendChild(text);
         }
     }

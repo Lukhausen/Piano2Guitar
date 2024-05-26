@@ -1,4 +1,34 @@
-import { NOTE_INDEX_MAP } from './constants.js';
+// Mapping of musical notes to their respective index numbers
+export const NOTE_INDEX_MAP = {
+  'C': 0, 'C#': 1, 'DB': 1, 'D': 2, 'D#': 3, 'EB': 3, 'E': 4, 'FB': 4,
+  'F': 5, 'F#': 6, 'GB': 6, 'G': 7, 'G#': 8, 'AB': 8, 'A': 9, 'A#': 10,
+  'BB': 10, 'B': 11, 'CB': 11
+};
+
+// Reverse mapping for number to note conversion
+const NOTE_ARRAY = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+// Convert a note to its respective index number
+export function noteToNumber(note) {
+  if (typeof note !== 'string') {
+    return "Invalid input";
+  }
+  
+  const normalizedNote = note.toUpperCase().replace(/[\s#]+/g, '#').replace(/[\sB]+/g, 'B');
+  
+  return NOTE_INDEX_MAP.hasOwnProperty(normalizedNote) 
+    ? NOTE_INDEX_MAP[normalizedNote] 
+    : "Invalid note";
+}
+
+// Convert a number to its respective musical note
+export function numberToNote(number) {
+  if (typeof number !== 'number' || number < 0) {
+    return "Invalid number";
+  }
+  
+  return NOTE_ARRAY[number % 12];
+}
 
 export function parseNotes(input) {
   return input.toUpperCase()
@@ -17,9 +47,4 @@ export function removeDuplicateArrays(arrays) {
     }
     return
   });
-}
-
-export function numberToNote(number) {
-  const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-  return number >= 0 ? notes[number % 12] : "Invalid number";
 }

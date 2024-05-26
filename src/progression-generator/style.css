@@ -39,25 +39,42 @@
     color: var(--dark2);
     box-shadow: 0 0 10px #00000056, inset 0 0 3px #ffffff6e;
     position: relative;
-margin-right: calc(max(10vh, 7vw)/4);
+margin-right: calc(max(10vh, 7vw)/5);
 }
 
 .progressionGeneratorSvgContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
+    
+}
+
+.progressionGeneratorSvgContainer svg{
+    width: calc(max(10vh, 7vw));
+    height: auto;
 }
 .progressionGeneratorVoicingInfoContainer{
     color: var(--light2);
+
+
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    margin-right: calc(max(10vh, 7vw)/4);
+    margin-right: calc(max(10vh, 7vw)/5);
+    font-size: calc(max(10vh, 7vw)/8)
+}
 
+.progressionGeneratorChordButton svg path{
+    fill: var(--light2);
 }
 .progressionGeneratorChordButton{
     display: flex;
+    cursor: pointer;
+}
+.progressionGeneratorChordButton svg{
+    height: calc(max(10vh, 7vw)/8);
+
 }
 
 

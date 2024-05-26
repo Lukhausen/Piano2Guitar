@@ -1,3 +1,16 @@
+:root {
+    --light0: rgb(240, 240, 240);
+    --light1: rgb(220, 220, 220);
+    --light2: rgb(208, 208, 208);
+    --light3: rgb(143, 142, 142);
+    --dark1: rgb(50, 57, 57);
+    --dark2: rgb(35, 42, 42);
+    --dark3: rgb(10, 20, 20);
+    --accent1: rgb(255, 136, 0);
+    --padding: 10px;
+    --rounding: 7px;
+}
+
 #settings {
     height: calc(100% - var(--padding) * 2);
     position: absolute;
@@ -21,11 +34,91 @@
     opacity: 1;
     visibility: visible;
 }
-.settingsheader{
+
+.settingsHeader {
+    font-size: large;
 
 }
 
-.settingsitem{
-    flex:1;
+.settingsContent {
+    display: flex;
+
+}
+.settingsItemContent{
+    display: flex;
+    gap: var(--padding);
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.settingsItem {
+    flex: 1;
     width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;    gap: var(--padding)
+
+}
+
+#closeSettings {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    z-index: 4;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+
+}
+
+#closeSettings.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+select {
+    background-color: var(--light0);
+    color: #000000;
+    border: 0;
+    font-weight: 700;
+    border-radius: var(--rounding);
+    padding: calc(var(--padding) / 2) var(--padding);
+    outline: none;
+    font-size: large;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    position: relative;
+}
+
+/* Styling for the dropdown arrow */
+select::-ms-expand {
+    display: block;
+
+}
+
+select:focus {
+    box-shadow: 0px 0px 10px var(--accent1);
+}
+
+/* Change the background color of selected option */
+select option:checked {
+    background-color: var(--light0);
+    color: #000000;
+    /* Optional: Change text color for selected option */
+}
+
+
+/* Additional styling for dropdown options */
+select option {
+    background-color: var(--light0);
+    color: #000000;
+}
+
+
+@media only screen and (max-width: 1200px) {
+
+    select {
+        font-size: x-small;
+    }
+
 }

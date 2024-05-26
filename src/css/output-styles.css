@@ -34,6 +34,7 @@
     /*background: linear-gradient(90deg, rgba(141, 141, 141, 0) 0%, var(--dark2) 100%);*/
     border-radius: 0 var(--rounding) var(--rounding) 0;
     max-width: 25%;
+    min-width: 25%;
 }
 
 .progressionInfoText {
@@ -71,7 +72,8 @@
 
 .progressionWrapper {
     user-select: none;
-
+    display: flex;
+    align-items: center;
 }
 
 

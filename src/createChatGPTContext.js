@@ -13,7 +13,7 @@ function getDirectoryStructure(dir, fileStructure = {}, parentPath = '') {
     if (stats.isDirectory()) {
       fileStructure[item] = {};
       getDirectoryStructure(fullPath, fileStructure[item], path.join(parentPath, item));
-    } else {
+    } else if (isHtmlOrJsFile(item)) {
       fileStructure[item] = {
         path: fullPath,
         relativePath: path.join(parentPath, item),

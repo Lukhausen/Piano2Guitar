@@ -19,12 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    //Make Settings Button functional
-    window.toggleSettings = function () {
-        let settingsScreen = document.getElementById("settings");
-        // Toggle a class that controls the visibility and opacity
-        settingsScreen.classList.toggle('visible');
-    }
+
 
 
 
@@ -119,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    document.querySelector('.pianoContainer').addEventListener('notesChanged',async (e) => {
+    document.querySelector('.pianoContainer').addEventListener('notesChanged', async (e) => {
         console.log('Piano notes changed:', e.detail.notes, e.detail.rootNote);
         let items
         if (e.detail.notes.length > 0) {
@@ -236,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     let soundQualityValue = 1;
-    let progressionGenerator = new ProgressionGenerator([], true, settings.tuning, "#ffffff", "onNote", true)
+    let progressionGenerator = new ProgressionGenerator([], true, "#ffffff", "onNote", true)
 
     document.addEventListener('selectedItemsUpdated', async function (event) {
         console.log('Updated Selected Items:', event.detail.selectedItems);
@@ -261,4 +256,75 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //Update the Progressions to get the PLaceholders:
     updateProgressionDynamic(soundQualityValue)
+
+
+
+
+
+//SETTINGS
+    let reloadFlag = false
+
+    //Make Settings Button functional
+    window.toggleSettings = function () {
+        let settingsScreen = document.getElementById("settings");
+        let closeSettings = document.getElementById("closeSettings");
+
+        // Toggle a class that controls the visibility and opacity
+        settingsScreen.classList.toggle('visible');
+        closeSettings.classList.toggle('visible');
+        if (reloadFlag){
+            progressionGenerator.reloadProgression()
+            updateProgressionDynamic(soundQualityValue)
+
+            reloadFlag = false
+        }
+    }
+
+    window.closeSettings = function(){
+        let settingsScreen = document.getElementById("settings");
+        let closeSettings = document.getElementById("closeSettings");
+
+        // Toggle a class that controls the visibility and opacity
+        settingsScreen.classList.toggle('visible');
+        closeSettings.classList.toggle('visible');
+        if (reloadFlag){
+            progressionGenerator.reloadProgression()
+            updateProgressionDynamic(soundQualityValue)
+
+            reloadFlag = false
+        }
+    }
+
+    // Function to load tuning settings into the select elements
+    function loadTuningSettings() {
+        const storedTuning = JSON.parse(localStorage.getItem('guitarTuning'));
+        const tuning = storedTuning || settings.tuning;
+        for (let i = 0; i < tuning.length; i++) {
+            const selectElement = document.getElementById(`string${i + 1}`);
+            selectElement.value = (tuning[i] % 12);
+        }
+        settings.tuning = tuning
+    }
+
+    // Function to update the tuning settings when select elements change
+    function updateTuningSettings() {
+        const newTuning = [];
+        for (let i = 0; i < 6; i++) {
+            const selectElement = document.getElementById(`string${i + 1}`);
+            const noteIndex = parseInt(selectElement.value);
+            newTuning.push(noteIndex);
+        }
+        settings.tuning = newTuning;
+        localStorage.setItem('guitarTuning', JSON.stringify(newTuning));
+        reloadFlag = true
+    }
+
+    // Add event listeners to the select elements
+    for (let i = 0; i < 6; i++) {
+        const selectElement = document.getElementById(`string${i + 1}`);
+        selectElement.addEventListener('change', updateTuningSettings);
+    }
+
+    // Load the tuning settings on page load
+    loadTuningSettings();
 })
