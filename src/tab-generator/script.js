@@ -52,7 +52,7 @@ class TabGenerator {
         this.topBarHeight = 7;
         this.fretSpacing = 25;
         this.stringSpacing = 25;
-        this.paddingLeft = 15;
+        this.paddingLeft = 10;
         this.barreSidesOverflow = 10;
         this.stringOverflowBotom = 10;
         this.fretCount = 4;
@@ -69,7 +69,7 @@ class TabGenerator {
 
         //Global Framw Width
         this.width = 185;
-        this.height = 175
+        this.height = 145
     }
 
     generateChordSVG() {

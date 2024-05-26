@@ -70,20 +70,10 @@
 }
 
 .progressionWrapper {
-    display: flex;
-    flex: 1;
-    align-items: center;
     user-select: none;
 
 }
 
-.progressionWrapper div svg {
-    height: max(10vh, 7vw);
-    min-height: 50x;
-    width: auto;
-    filter: drop-shadow(0 0 0.5vw #00000058);
-
-}
 
 
 @media screen and (orientation: portrait) {

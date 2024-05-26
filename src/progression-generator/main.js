@@ -4,6 +4,7 @@ import { ChordFactory } from '../chord-factory/chordfactory.js';
 import { Chord } from '../chord-library/script.js';
 import { numberToNote } from '../chord-factory/utils.js';
 import TabGenerator from "../tab-generator/script.js"
+import { TabHTML } from './tabhtml.js';
 
 
 
@@ -231,46 +232,32 @@ export class ProgressionGenerator {
 
 
     async getProgressionDynamicHTML(soundQuality = 0.5, ammount = 1) {
-        // Iterate over each entry in the progression, sort by combined rating, and get the first playable chord
+        // Check if there are any chords in the progression
         if (this.progression.length < 1) {
-            return this.getPlaceholderHTML()
+            return this.getPlaceholderHTML();
         }
-        this.progression.forEach(chordFactory => {
-            chordFactory.sortPlayableChordsByCombinedRating(soundQuality);
-        });
-
+    
+        // Create the container for the chord diagrams
         let diagramsContainer = document.createElement('div'); // Container for chord diagrams
-        diagramsContainer.classList.add("progressionGeneratorContainer")
-        console.log(this.progression)
-
-
+        diagramsContainer.classList.add("progressionGeneratorContainer");
+    
+        // Iterate over each ChordFactory instance in the progression
         this.progression.forEach(chordFactory => {
-            // Extract first playable chord from each ChordFactory instance
-            for (let i = 0; i < ammount; i++) {
-                if (chordFactory.playableChords[i]) {
-                    // Assuming TabGenerator takes chord details and returns an SVG element
-                    try {
-                        const chordDiagram = new TabGenerator(chordFactory.playableChords[i].voicing, chordFactory.playableChords[i].fingerPositions, chordFactory.playableChords[i].minAboveZero, chordFactory.playableChords[i].barres, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
-                        const svg = chordDiagram.generateChordSVG();
-                        let svgContainer = document.createElement('div'); // Container for chord diagrams
-                        svgContainer.classList.add("progressionGeneratorSvgContainer")
+            // Create an instance of TabHTML for the current chordFactory
+            const tabHTML = new TabHTML(chordFactory, this.color, this.fingerNumbers, this.showOpenStrings);
+    
+            // Generate the HTML for the current chordFactory
+            const chordDiagrams = tabHTML.generateHTML(soundQuality, ammount);
+    
+            // Append the generated HTML to the main container
+            chordDiagrams.forEach(element=>{
+                diagramsContainer.appendChild(element);
 
-                        let svgNameContainer = document.createElement('div'); // Container for chord diagrams
-                        svgNameContainer.innerHTML = chordFactory.identifier
-                        svgNameContainer.classList.add("progressionGeneratorSvgChordName")
-
-
-                        svgContainer.appendChild(svg);
-                        svgContainer.appendChild(svgNameContainer)
-                        diagramsContainer.appendChild(svgContainer)
-                    } catch (error) {
-                        console.error('Error generating chord diagram:', error);
-                    }
-                }
-            }
+            })
         });
-
-        return diagramsContainer; // Return the container with all SVGs
+    
+        // Return the container with all chord diagrams
+        return diagramsContainer;
     }
 
     invertColor(hex) {

@@ -330,7 +330,10 @@ export class ChordFactory {
         return; // Skip processing if voicing is already in the set
       }
 
-
+      //Remove Chords Below two fingers used.
+      if (fingerPositionsAmmount < 2) {
+        return
+      }
 
       //Take a Look at the Ammount of fingers Required. If is less than 5 no barre needs to be caluclated.
       if (fingerPositionsAmmount > 4) {
