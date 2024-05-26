@@ -304,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const displayElement = document.getElementById(`settingsStringValue${index + 1}`);
 
             displayElement.innerHTML = numberToNote(element);
-            selectElement.value = element
+            selectElement.value = element % 12
         });
     }
 

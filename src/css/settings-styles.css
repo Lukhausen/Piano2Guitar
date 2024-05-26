@@ -1,15 +1,4 @@
-:root {
-    --light0: rgb(240, 240, 240);
-    --light1: rgb(220, 220, 220);
-    --light2: rgb(208, 208, 208);
-    --light3: rgb(143, 142, 142);
-    --dark1: rgb(50, 57, 57);
-    --dark2: rgb(35, 42, 42);
-    --dark3: rgb(10, 20, 20);
-    --accent1: rgb(255, 136, 0);
-    --padding: 10px;
-    --rounding: 7px;
-}
+
 
 #settings {
     height: calc(100% - var(--padding) * 2);
