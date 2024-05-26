@@ -10,9 +10,6 @@ const NOTE_ARRAY = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 
 
 // Convert a note to its respective index number
 export function noteToNumber(note) {
-  if (typeof note !== 'string') {
-    return "Invalid input";
-  }
   
   const normalizedNote = note.toUpperCase().replace(/[\s#]+/g, '#').replace(/[\sB]+/g, 'B');
   
@@ -23,10 +20,6 @@ export function noteToNumber(note) {
 
 // Convert a number to its respective musical note
 export function numberToNote(number) {
-  if (typeof number !== 'number' || number < 0) {
-    return "Invalid number";
-  }
-  
   return NOTE_ARRAY[number % 12];
 }
 

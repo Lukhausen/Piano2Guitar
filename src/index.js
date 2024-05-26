@@ -4,6 +4,8 @@ import { Chord, ChordLibrary } from "./chord-library/script.js"
 import MIDIAccessManager from "./midi-integration/script.js"
 import { ProgressionGenerator } from './progression-generator/main.js';
 import { settings } from './chord-factory/constants.js';
+import { noteToNumber, numberToNote } from "./chord-factory/utils.js";
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -244,7 +246,9 @@ document.addEventListener('DOMContentLoaded', () => {
     soundQualitySlider.addEventListener('input', async (e) => {
         soundQualityValue = e.target.value / 100;
         console.log("Slider Value:", soundQualityValue);
+
         await updateProgressionDynamic(soundQualityValue)
+        console.log(progressionGenerator)
     });
 
     async function updateProgressionDynamic(soundQualityValue) {
@@ -259,72 +263,117 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+    let reloadFlag = false;
 
-
-//SETTINGS
-    let reloadFlag = false
-
-    //Make Settings Button functional
+    // Make Settings Button functional
     window.toggleSettings = function () {
         let settingsScreen = document.getElementById("settings");
         let closeSettings = document.getElementById("closeSettings");
 
-        // Toggle a class that controls the visibility and opacity
-        settingsScreen.classList.toggle('visible');
-        closeSettings.classList.toggle('visible');
-        if (reloadFlag){
-            progressionGenerator.reloadProgression()
-            updateProgressionDynamic(soundQualityValue)
-
-            reloadFlag = false
-        }
-    }
-
-    window.closeSettings = function(){
-        let settingsScreen = document.getElementById("settings");
-        let closeSettings = document.getElementById("closeSettings");
+        console.log("Toggle Settings clicked");
 
         // Toggle a class that controls the visibility and opacity
         settingsScreen.classList.toggle('visible');
         closeSettings.classList.toggle('visible');
-        if (reloadFlag){
-            progressionGenerator.reloadProgression()
-            updateProgressionDynamic(soundQualityValue)
 
-            reloadFlag = false
+        console.log("Settings screen visibility toggled:", settingsScreen.classList.contains('visible'));
+
+        if (reloadFlag) {
+            console.log("Reload flag is true, updating tuning settings.");
+            localStorage.setItem('guitarTuning', JSON.stringify(settings.tuning));
+
+            console.log("New tuning saved to localStorage:", settings.tuning);
+
+            progressionGenerator.reloadProgression();
+            updateProgressionDynamic(soundQualityValue);
+            reloadFlag = false;
+            console.log("Progression reloaded and updated.");
         }
-    }
+    };
 
     // Function to load tuning settings into the select elements
     function loadTuningSettings() {
-        const storedTuning = JSON.parse(localStorage.getItem('guitarTuning'));
-        const tuning = storedTuning || settings.tuning;
-        for (let i = 0; i < tuning.length; i++) {
-            const selectElement = document.getElementById(`string${i + 1}`);
-            selectElement.value = (tuning[i] % 12);
+        console.log("Loading tuning settings...");
+        if (localStorage.getItem('guitarTuning')) {
+            settings.tuning = JSON.parse(localStorage.getItem('guitarTuning'));
+            console.log("Stored tuning from localStorage:", settings.tuning);
+
         }
-        settings.tuning = tuning
+        settings.tuning.forEach((element, index) => {
+            const selectElement = document.getElementById(`settingsString${index + 1}`);
+            const displayElement = document.getElementById(`settingsStringValue${index + 1}`);
+
+            displayElement.innerHTML = numberToNote(element);
+            selectElement.value = element
+        });
     }
 
-    // Function to update the tuning settings when select elements change
-    function updateTuningSettings() {
-        const newTuning = [];
-        for (let i = 0; i < 6; i++) {
-            const selectElement = document.getElementById(`string${i + 1}`);
-            const noteIndex = parseInt(selectElement.value);
-            newTuning.push(noteIndex);
-        }
-        settings.tuning = newTuning;
-        localStorage.setItem('guitarTuning', JSON.stringify(newTuning));
-        reloadFlag = true
-    }
 
     // Add event listeners to the select elements
     for (let i = 0; i < 6; i++) {
-        const selectElement = document.getElementById(`string${i + 1}`);
-        selectElement.addEventListener('change', updateTuningSettings);
+        let selectElement = document.getElementById("settingsString" + (i + 1));
+        if (selectElement) {
+            selectElement.addEventListener('input', () => {
+                let displayElement = document.getElementById(`settingsStringValue${i + 1}`);
+                displayElement.innerHTML = numberToNote(parseInt(selectElement.value));
+                document.getElementById('settingsCommonTunings').value = ""
+                settings.tuning[i] = parseInt(selectElement.value);  // Ensure parsing as integer
+                reloadFlag = true;
+                console.log(`String ${i + 1} tuning changed to:`, settings.tuning[i]);
+                checkCommonTunings();  // Check if current tuning matches a common tuning
+
+            });
+            console.log(`Event listener added for string ${i + 1}`);
+        } else {
+            console.warn(`Element with ID settingsString${i + 1} not found.`);
+        }
     }
 
-    // Load the tuning settings on page load
     loadTuningSettings();
+
+
+
+    function setTuning(tuning) {
+        const tuningArray = tuning.split(' ').map(noteToNumber);
+        settings.tuning = tuningArray;
+
+        tuningArray.forEach((value, index) => {
+            const selectElement = document.getElementById(`settingsString${index+1}`);
+            const displayElement = document.getElementById(`settingsStringValue${index +1}`);
+
+            selectElement.value = value;
+            displayElement.innerHTML = numberToNote(value);
+        });
+
+        reloadFlag = true;
+        console.log("Tuning set to:", tuningArray);
+        checkCommonTunings(); // Check if the new tuning matches a common tuning
+    }
+
+    // Add event listener to dropdown
+    document.getElementById('settingsCommonTunings').addEventListener('change', function () {
+        if (this.value) {
+            setTuning(this.value);
+        }
+    });
+
+    // Function to compare current tuning with common tunings
+    function checkCommonTunings() {
+        const dropdown = document.getElementById('settingsCommonTunings');
+        const currentTuning = settings.tuning.map(numberToNote).join(' ');
+
+        let found = false;
+        for (let i = 0; i < dropdown.options.length; i++) {
+            if (dropdown.options[i].value === currentTuning) {
+                dropdown.value = currentTuning;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            dropdown.value = "";
+        }
+    }
+
 })

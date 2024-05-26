@@ -233,7 +233,7 @@ export class ChordVoicing {
     openStrings: 1,
     playedStrings: 1,
     fretBoardHeight: 1,
-    voicingRange: 1,
+    voicingRange: 0,
     doubleNotes: 1
   };
 
