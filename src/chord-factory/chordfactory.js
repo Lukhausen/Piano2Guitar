@@ -53,7 +53,9 @@ export class ChordFactory {
         const validPositions = this.getValidFretPositionsForNote(chordIndex, stringIndex % 12);
         positions.push(...validPositions);
       }
-      positions.push(-1); // Add -1 once for each string index
+      if (!positions.includes(0)) { // Check if positions array does not contain 0
+        positions.push(-1); // Add -1 only if there is no 0
+      }
       positions.sort((a, b) => a - b); // Sort the positions from lowest to highest
       fingerPositions.push(positions);
     }
@@ -83,7 +85,9 @@ export class ChordFactory {
 
     let maskScope = [];
     for (let i = 0; i < 6; i++) {
-      maskScope[i] = [-1]; // Each sub-array is separately instantiated
+      //Check If A Zero is present in the Valid Positions. Then We dont need to Mute The String Ever.
+      if (this.fingerPositions[i])
+        maskScope[i] = [this.fingerPositions[i][0]]; // Each sub-array is separately instantiated
     }
     //console.log("Initial maskScope array:", maskScope);
 
@@ -124,7 +128,7 @@ export class ChordFactory {
         // First Check If there is a New Element inside the Array
         if (fingerIndexStorage[string] < fingerIndexLength[string]) {
           // CHeck if its in range for Valid CHord, if so add it 
-          if (this.fingerPositions[string][fingerIndexStorage[string]] <= fret + settings.fingerFretRange -1) {
+          if (this.fingerPositions[string][fingerIndexStorage[string]] <= fret + settings.fingerFretRange - 1) {
             //console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]])
 
             maskScope[string].push(this.fingerPositions[string][fingerIndexStorage[string]])
@@ -391,14 +395,14 @@ export class ChordFactory {
             if (minAboveZero + fret == voicing[string] && fingerPositions[string] !== 1 && voicing[string] !== 0) {
               fingerPositionsCounter++
               fingerPositions[string] = fingerPositionsCounter
-              
+
             }
           }
         }
       }
 
       //IF minabove Zero Was note set, Set it to zero
-      if (minAboveZero == 99){
+      if (minAboveZero == 99) {
         minAboveZero = 0
       }
 

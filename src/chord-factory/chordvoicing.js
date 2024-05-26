@@ -113,8 +113,9 @@ export class ChordVoicing {
     details.mutedAmount = this.assessPlayabilityMuttedAmount();
     details.fretHeight = this.assessPlayabilityFretHeight();
     details.mutedDifficulty = this.assessPlayabilityMuttedDifficulty();
+    details.mutedRachability = this.assessPlayabilityMuttedRachability();
     details.barreAmmount = this.assessPlayabilityBarreAmmount();
-    details.total = (details.fingersUsed + details.fingerSpread + details.mutedAmount + details.fretHeight + details.mutedDifficulty + details.barreAmmount) / 6;
+    details.total = (details.fingersUsed + details.fingerSpread + details.mutedAmount + details.fretHeight + details.mutedDifficulty + details.barreAmmount + details.mutedRachability) / 7;
 
     this.playabilityRating = details.total;
   }
@@ -148,32 +149,59 @@ export class ChordVoicing {
   }
 
   assessPlayabilityFretHeight() {
-    return 1 - Math.max((this.minAboveZero / 12),0)
+    return 1 - Math.max((this.minAboveZero / 12), 0)
   }
 
-  assessPlayabilityMuttedDifficulty(){
+  assessPlayabilityMuttedDifficulty() {
     let mutedDifficulty = 0
     //Check Muting from the top
     for (let i = 0; i < 4; i++) {
       if (this.voicing[i] == -1) {
-        mutedDifficulty += (i+1)
+        mutedDifficulty += (i + 1)
       }
     }
     //Check Muting from the bottom
     for (let i = 0; i < 4; i++) {
-      if (this.voicing[5-i] == -1) {
-        mutedDifficulty += (i+1)
+      if (this.voicing[5 - i] == -1) {
+        mutedDifficulty += (i + 1)
       }
     }
 
-    return 1 - (mutedDifficulty/12)
+    return 1 - (mutedDifficulty / 12)
 
   }
 
-  assessPlayabilityBarreAmmount(){
-    return 1-(this.barres.length / 3)
+  assessPlayabilityBarreAmmount() {
+    return 1 - ((this.barres.length * this.barres.length) / (3 * 3))
   }
 
+  assessPlayabilityMuttedRachability() {
+    let mutedDifficulty = 0;
+    let totalUnreachableMutes = 0;
+
+    // Loop through the strings to check for muted strings surrounded by open strings
+    for (let i = 1; i < this.voicing.length - 1; i++) { // Start from the second string and go to the second-last
+      if (this.voicing[i] === -1) { // Check if the current string is muted
+        // Check if both neighboring strings are open
+        if (this.voicing[i - 1] === 0 && this.voicing[i + 1] === 0) {
+          totalUnreachableMutes++;
+        }
+      }
+    }
+
+    // Edge cases: Check the first and last string separately if needed
+    if (this.voicing[0] === -1 && this.voicing[1] === 0) { // First string muted and second string open
+      totalUnreachableMutes++;
+    }
+    if (this.voicing[this.voicing.length - 1] === -1 && this.voicing[this.voicing.length - 2] === 0) { // Last string muted and the one before it open
+      totalUnreachableMutes++;
+    }
+
+    // Normalize the difficulty score: the more muted strings surrounded by open strings, the higher the difficulty
+    mutedDifficulty = totalUnreachableMutes / (this.voicing.filter(v => v === -1).length || 1); // Avoid division by zero
+
+    return 1 - mutedDifficulty; // Invert to match scale where 1 is easy and 0 is difficult
+  }
 
 
 
