@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     loadTuningSettings();
-
+    checkCommonTunings()
 
 
     function setTuning(tuning) {
