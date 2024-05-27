@@ -299,7 +299,7 @@ select option {
 }
 
 
-@media only screen and (max-height: 1000px) {
+@media only screen and (max-height: 700px) {
     #settings {
         position: fixed;
         top: 0;
@@ -321,7 +321,15 @@ select option {
 }
 
 @media screen and (orientation: portrait) {
-
+    #settings {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        height: 100dvh;
+        width: 100vw;
+        width: 100dvw;
+    }
     .settingsStringTuning {
         width: 80vw;
     }
