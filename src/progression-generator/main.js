@@ -234,7 +234,9 @@ export class ProgressionGenerator {
     }
 
 
-    
+    async getProgressionEasyHTML() {
+        //First Find The Easiest to play Chords With this Gutar Tuning
+
 
     invertColor(hex) {
         // Remove the hash at the start if it's there
