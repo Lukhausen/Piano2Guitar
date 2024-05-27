@@ -3,269 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guitar Tuning Selector</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
         }
-        
-        .container {
-            width: 300px;
-            margin: 50px auto;
-            text-align: center;
-        }
-        
-        #tuning-search {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-        }
-        
-        .dropdown-content {
-            display: none;
+        .slider-container {
             position: relative;
-            background-color: #f9f9f9;
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            z-index: 1;
-            transition: max-height 0.3s ease;
+            width: 80%;
+            max-width: 600px;
+            height: 40px;
         }
-        
-        .dropdown-content a {
-            padding: 8px 16px;
-            text-decoration: none;
-            display: block;
-            text-align: left;
+        .slider-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: #ddd;
+            border-radius: 2.5px;
+            transform: translateY(-50%);
         }
-        
-        .dropdown-content a:hover,
-        .dropdown-content a:focus {
-            background-color: #f1f1f1;
+        .slider-container::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            height: 30px;
+            width: 2px;
+            background: #000;
+            transform: translateY(-50%);
         }
-        
-        .dropdown-content a.active {
-            background-color: #e0e0e0;
+        .slider-container .separator:nth-child(1) {
+            left: 20%;
         }
-        
-        button {
-            padding: 8px 16px;
-            margin-top: 10px;
+        .slider-container .separator:nth-child(2) {
+            left: 60%;
         }
-        
-        .modal {
-            display: none;
-            position: fixed;
+        .slider-container .separator:nth-child(3) {
+            left: 80%;
+        }
+        .slider-point {
+            position: absolute;
+            top: 50%;
+            width: 30px;
+            height: 20px;
+            background: #4CAF50;
+            border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
+            transform: translateY(-50%);
+        }
+        .slider-point.fixed {
+            left: 0;
+        }
+        .slider-point.slidable {
+            pointer-events: none;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 40px;
+            background: transparent;
+            outline: none;
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 2;
+            z-index: 1;
         }
-        
-        .modal-content {
-            background-color: white;
-            padding: 20px;
-            margin: 15% auto;
-            width: 80%;
-            max-width: 400px;
-            position: relative;
-        }
-        
-        .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            font-size: 20px;
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 30px;
+            height: 20px;
+            background: #4CAF50;
+            border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
             cursor: pointer;
         }
-
-        .feedback {
-            display: none;
-            color: green;
-            margin-top: 10px;
+        input[type="range"]::-moz-range-thumb {
+            width: 30px;
+            height: 20px;
+            background: #4CAF50;
+            border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
             cursor: pointer;
         }
     </style>
+    <title>Custom Slider</title>
 </head>
 <body>
-    <div class="container">
-        <label for="tuning-search">Select Guitar Tuning:</label>
-        <input type="text" id="tuning-search" placeholder="Search or Add Custom Tuning" aria-haspopup="listbox" aria-expanded="false" aria-controls="tuning-dropdown">
-        <div id="tuning-dropdown" class="dropdown-content" role="listbox">
-            <!-- Dynamically populated options -->
-        </div>
-        <button id="add-custom-btn">Add Custom Tuning</button>
-        <div class="feedback" id="feedback-message">Custom tuning added successfully! (Click to dismiss)</div>
+    <div class="slider-container">
+        <div class="slider-point fixed"></div>
+        <div class="slider-point slidable"></div>
+        <input type="range" min="0" max="100" value="50" />
     </div>
-
-    <!-- Modal for Custom Tuning -->
-    <div id="custom-modal" class="modal" aria-hidden="true">
-        <div class="modal-content">
-            <span class="close-btn" role="button" aria-label="Close">&times;</span>
-            <h2>Add Custom Tuning</h2>
-            <form id="custom-tuning-form">
-                <label for="string1">String 1:</label>
-                <input type="text" id="string1" name="string1" required>
-                <label for="string2">String 2:</label>
-                <input type="text" id="string2" name="string2" required>
-                <label for="string3">String 3:</label>
-                <input type="text" id="string3" name="string3" required>
-                <label for="string4">String 4:</label>
-                <input type="text" id="string4" name="string4" required>
-                <label for="string5">String 5:</label>
-                <input type="text" id="string5" name="string5" required>
-                <label for="string6">String 6:</label>
-                <input type="text" id="string6" name="string6" required>
-                <button type="submit">Save Tuning</button>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const tuningSearch = document.getElementById('tuning-search');
-            const tuningDropdown = document.getElementById('tuning-dropdown');
-            const addCustomBtn = document.getElementById('add-custom-btn');
-            const customModal = document.getElementById('custom-modal');
-            const closeBtn = document.querySelector('.close-btn');
-            const customTuningForm = document.getElementById('custom-tuning-form');
-            const feedbackMessage = document.getElementById('feedback-message');
-
-            const tunings = [
-                'Standard E',
-                'Drop D',
-                'DADGAD',
-                'Open G',
-                'Open D',
-                'Half Step Down',
-                'Full Step Down',
-                // Add more predefined tunings here
-            ];
-
-            let activeOptionIndex = -1;
-
-            function populateDropdown(tunings) {
-                tuningDropdown.innerHTML = '';
-                tunings.forEach((tuning, index) => {
-                    const option = document.createElement('a');
-                    option.href = '#';
-                    option.textContent = tuning;
-                    option.setAttribute('role', 'option');
-                    option.tabIndex = 0;
-                    option.addEventListener('click', () => selectTuning(tuning));
-                    tuningDropdown.appendChild(option);
-                });
-            }
-
-            function selectTuning(tuning) {
-                tuningSearch.value = tuning;
-                toggleDropdownVisibility(false);
-                activeOptionIndex = -1;
-            }
-
-            function toggleDropdownVisibility(visible) {
-                tuningDropdown.style.display = visible ? 'block' : 'none';
-                tuningSearch.setAttribute('aria-expanded', visible.toString());
-                tuningDropdown.style.maxHeight = visible ? '200px' : '0';
-            }
-
-            function handleArrowKeys(event) {
-                const options = tuningDropdown.getElementsByTagName('a');
-                if (options.length > 0) {
-                    if (event.key === 'ArrowDown') {
-                        event.preventDefault();
-                        activeOptionIndex = (activeOptionIndex + 1) % options.length;
-                        updateActiveOption(options);
-                    } else if (event.key === 'ArrowUp') {
-                        event.preventDefault();
-                        activeOptionIndex = (activeOptionIndex - 1 + options.length) % options.length;
-                        updateActiveOption(options);
-                    } else if (event.key === 'Enter' && activeOptionIndex > -1) {
-                        event.preventDefault();
-                        selectTuning(options[activeOptionIndex].textContent);
-                    }
-                }
-            }
-
-            function updateActiveOption(options) {
-                Array.from(options).forEach(option => option.classList.remove('active'));
-                if (activeOptionIndex > -1) {
-                    options[activeOptionIndex].classList.add('active');
-                    options[activeOptionIndex].focus();
-                }
-            }
-
-            tuningSearch.addEventListener('input', function() {
-                const filter = tuningSearch.value.toLowerCase();
-                const filteredTunings = tunings.filter(tuning => tuning.toLowerCase().includes(filter));
-                populateDropdown(filteredTunings);
-                toggleDropdownVisibility(filteredTunings.length > 0);
-            });
-
-            tuningSearch.addEventListener('focus', function() {
-                const filter = tuningSearch.value.toLowerCase();
-                const filteredTunings = tunings.filter(tuning => tuning.toLowerCase().includes(filter));
-                populateDropdown(filteredTunings);
-                toggleDropdownVisibility(filteredTunings.length > 0);
-            });
-
-            tuningSearch.addEventListener('keydown', handleArrowKeys);
-
-            addCustomBtn.addEventListener('click', function() {
-                customModal.style.display = 'block';
-                customModal.setAttribute('aria-hidden', 'false');
-                closeBtn.focus();
-            });
-
-            closeBtn.addEventListener('click', function() {
-                customModal.style.display = 'none';
-                customModal.setAttribute('aria-hidden', 'true');
-            });
-
-            window.addEventListener('click', function(event) {
-                if (event.target === customModal) {
-                    customModal.style.display = 'none';
-                    customModal.setAttribute('aria-hidden', 'true');
-                }
-            });
-
-            window.addEventListener('keydown', function(event) {
-                if (event.key === 'Escape' && customModal.style.display === 'block') {
-                    customModal.style.display = 'none';
-                    customModal.setAttribute('aria-hidden', 'true');
-                }
-            });
-
-            customTuningForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const customTuning = Array.from(new FormData(customTuningForm)).map(([key, value]) => value).join(' ');
-                tunings.push(customTuning);
-                customModal.style.display = 'none';
-                customModal.setAttribute('aria-hidden', 'true');
-                tuningSearch.value = customTuning;
-                populateDropdown(tunings);
-                feedbackMessage.style.display = 'block';
-                setTimeout(() => {
-                    feedbackMessage.style.display = 'none';
-                }, 3000);
-                customTuningForm.reset();
-            });
-
-            feedbackMessage.addEventListener('click', function() {
-                feedbackMessage.style.display = 'none';
-            });
-
-            // Close dropdown when clicking outside
-            window.addEventListener('click', function(event) {
-                if (!event.target.matches('#tuning-search')) {
-                    toggleDropdownVisibility(false);
-                }
-            });
-
-            populateDropdown(tunings);
-        });
-    </script>
 </body>
 </html>
