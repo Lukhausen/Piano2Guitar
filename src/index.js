@@ -259,9 +259,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     async function updateProgressionEasy() {
-        let progressionHTML = await progressionGenerator.getProgressionEasyHTML();
+        let [progressionHTML, capo] = await progressionGenerator.getProgressionEasyHTML();
         document.getElementById("easyProgressionWrapper").innerHTML = "";
         document.getElementById("easyProgressionWrapper").appendChild(progressionHTML);
+        
+        document.getElementById("easyProgressionCapo").innerHTML = "Capo: "+capo+"fr";
+
     };
 
 

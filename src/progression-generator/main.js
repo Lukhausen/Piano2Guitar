@@ -7,19 +7,39 @@ import TabGenerator from "../tab-generator/script.js"
 import { TabHTML } from './tabhtml.js';
 
 
+class ChordFactoryManager {
+    constructor(useRoot) {
+        this.chordFactoryMap = {};
+        this.useRoot = useRoot;
+    }
+
+    getChordFactory(chord) {
+        if (this.chordFactoryMap[chord.name]) {
+            console.log('ChordFactory retrieved for:', chord.name);
+            return this.chordFactoryMap[chord.name];
+        } else {
+            const chordFactory = new ChordFactory(chord, this.useRoot, settings.tuning);
+            this.chordFactoryMap[chord.name] = chordFactory;
+            console.log('New ChordFactory created for:', chord.name);
+            return chordFactory;
+        }
+    }
+}
+
 
 export class ProgressionGenerator {
     constructor(initialProgression = [], useRoot = true, chordLibrary, color, fingerNumbers = "belowString", showOpenStrings = true) {
-        this.tuning = settings.tuning;
         this.color = color;
         this.fingerNumbers = fingerNumbers;
         this.showOpenStrings = showOpenStrings;
         this.progression = [];
         this.progressionChords = [];
         this.useRoot = useRoot; // This flag determines if the root note should be the starting note
-        this.chordFactoryMap = {}; // HashMap to store ChordFactory instances
         this.keyAnalysis = []
         this.chordLibrary = chordLibrary
+
+        // Initialize ChordFactoryManager
+        this.chordFactoryManager = new ChordFactoryManager(this.useRoot);
 
         // Call the asynchronous initialization function
         this.initialize(initialProgression);
@@ -104,37 +124,23 @@ export class ProgressionGenerator {
 
     // Set initial progression with ChordFactory instances for each chord
     async setProgression(initialProgression) {
-        //only do this if progression is there...
         if (!initialProgression) {
-            return
+            return;
         }
-        this.progressionChords = initialProgression
-        const newChordFactoryMap = {};
 
-        // Create or reuse ChordFactory instances
+        this.progressionChords = initialProgression;
 
-        initialProgression.forEach(chord => {
+        // Populate this.progression with ChordFactory instances
+        this.progression = initialProgression.map(chord => {
             if (chord instanceof Chord) {
-                let chordFactory;
-                if (this.chordFactoryMap[chord.name]) {
-                    chordFactory = this.chordFactoryMap[chord.name];
-                    console.log('ChordFactory retrieved for:', chord.name);
-
-                } else {
-                    chordFactory = new ChordFactory(chord, this.useRoot, this.tuning);
-                    console.log('New ChordFactory created for:', chord.name);
-                }
-                newChordFactoryMap[chord.name] = chordFactory;
+                return this.chordFactoryManager.getChordFactory(chord);
             } else {
                 console.error('ProgressionGenerator: Invalid chord object in initial progression. Each chord must be an instance of Chord.');
+                return null;
             }
-        });
-
-        // Update the hashmap and clear out unused ChordFactories
-        this.chordFactoryMap = newChordFactoryMap;
+        }).filter(chordFactory => chordFactory !== null);
 
         // Populate this.progression with references from the new map
-        this.progression = initialProgression.map(chord => this.chordFactoryMap[chord.name]);
         if (this.progression.length > 1) {
             this.analyzeKey()
             console.log("analyzeKey: ", this.keyAnalysis)
@@ -151,10 +157,10 @@ export class ProgressionGenerator {
 
     async reloadProgression() {
         this.tuning = settings.tuning;
-        this.chordFactoryMap = {};
-        this.progression = []
-        this.initialize(this.progressionChords)
-        console.log("ProgressionGenerator: Reloaded Progression")
+        this.chordFactoryManager = new ChordFactoryManager(this.useRoot);
+        this.progression = [];
+        this.initialize(this.progressionChords);
+        console.log("ProgressionGenerator: Reloaded Progression");
     }
 
 
@@ -207,38 +213,28 @@ export class ProgressionGenerator {
 
 
 
-    async getProgressionDynamicHTML(soundQuality = 0.5, ammount = 1) {
-        // Check if there are any chords in the progression
+    async getProgressionDynamicHTML(soundQuality = 0.5, amount = 1) {
         if (this.progression.length < 1) {
             return this.getPlaceholderHTML();
         }
 
-        // Create the container for the chord diagrams
-        let diagramsContainer = document.createElement('div'); // Container for chord diagrams
+        let diagramsContainer = document.createElement('div');
         diagramsContainer.classList.add("progressionGeneratorContainer");
 
-        // Iterate over each ChordFactory instance in the progression
         this.progression.forEach(chordFactory => {
-            // Create an instance of TabHTML for the current chordFactory
             const tabHTML = new TabHTML(chordFactory, this.color, this.fingerNumbers, this.showOpenStrings);
-
-            // Generate the HTML for the current chordFactory
-            const chordDiagrams = tabHTML.generateHTML(soundQuality, ammount);
-
-            // Append the generated HTML to the main container
+            const chordDiagrams = tabHTML.generateHTML(soundQuality, amount);
             chordDiagrams.forEach(element => {
                 diagramsContainer.appendChild(element);
-
-            })
+            });
         });
 
-        // Return the container with all chord diagrams
         return diagramsContainer;
     }
 
 
     async getProgressionEasyHTML() {
-        const originalProgression = [...this.progressionChords]; // Make a copy of the progression chords
+        const originalProgression = structuredClone(this.progressionChords); // Make a copy of the progression chords
         let bestTransposition = 0;
         let maxOverlap = 0;
 
@@ -253,7 +249,7 @@ export class ProgressionGenerator {
 
             transposedProgression.forEach(chord => {
                 this.easiestChords.forEach(easyChord => {
-                    if (chord.name === easyChord.name) {
+                    if (chord.name == easyChord.name) {
                         overlapCount++;
                     }
                 });
@@ -267,19 +263,31 @@ export class ProgressionGenerator {
 
         // Transpose the original progression to the best transposition
         let bestTransposedProgression = originalProgression.map(chord => transposeChord(chord, bestTransposition));
-        this.setProgression(bestTransposedProgression); // Update the progression with the best transposed progression
+
+
+
+
+        bestTransposedProgression = bestTransposedProgression.map(chord => {
+            if (chord instanceof Chord) {
+                return this.chordFactoryManager.getChordFactory(chord);
+            } else {
+                console.error('ProgressionGenerator: Invalid chord object in initial progression. Each chord must be an instance of Chord.');
+                return null;
+            }
+        });
+
 
         // Generate the HTML for the best transposed progression
         let diagramsContainer = document.createElement('div'); // Container for chord diagrams
         diagramsContainer.classList.add("progressionGeneratorContainer");
 
         // Iterate over each ChordFactory instance in the progression
-        this.progression.forEach(chordFactory => {
+        bestTransposedProgression.forEach(chordFactory => {
             // Create an instance of TabHTML for the current chordFactory
-            const tabHTML = new TabHTML(chordFactory, this.color, this.fingerNumbers, this.showOpenStrings);
+            let tabHTML = new TabHTML(chordFactory, this.color, this.fingerNumbers, this.showOpenStrings);
 
             // Generate the HTML for the current chordFactory
-            const chordDiagrams = tabHTML.generateHTML(0.2, 1);
+            let chordDiagrams = tabHTML.generateHTML(0.3, 1);
 
             // Append the generated HTML to the main container
             chordDiagrams.forEach(element => {
@@ -288,30 +296,30 @@ export class ProgressionGenerator {
         });
 
         // Return the container with all chord diagrams
-        return diagramsContainer;
+        return [diagramsContainer, bestTransposition];
     }
 
     async getEasiestChords() {
         const easiestChordsArray = [
-            [0, 2, 2, 0, 0, 0],   // E minor (Em)
-            [-1, 0, 2, 2, 1, 0],  // A minor (Am)
-            [3, 2, 0, 0, 0, 3],   // G major (G)
-            [-1, 3, 2, 0, 1, 0],  // C major (C)
-            [-1, 0, 0, 2, 3, 2],  // D major (D)
             [-1, 0, 2, 2, 2, 0],  // A major (A)
-            [0, 2, 2, 1, 0, 0],   // E major (E)
+            [-1, 0, 2, 2, 1, 0],  // A minor (Am)
+            [-1, 0, 2, 0, 1, 0],  // A minor 7 (Am7)
             [-1, 2, 2, 2, 0, 0],  // A7
+            [-1, 0, 2, 0, 1, 3],  // A7sus4
+            [-1, 3, 2, 0, 1, 0],  // C major (C)
+            [0, 3, 2, 0, 1, 0],   // C major 7 (Cmaj7)
+            [-1, 3, 2, 2, 1, 3],  // C7
+            [-1, -1, 0, 2, 3, 2], // D major (D)
+            [-1, -1, 0, 2, 1, 2], // D minor (Dm)
+            [3, 2, 0, 0, 0, 3],   // G major (G)
+            [3, 2, 0, 0, 3, 3],   // G7
+            [0, 2, 2, 1, 0, 0],   // E major (E)
             [0, 2, 0, 1, 0, 0],   // E7
-            [-1, 0, 0, 2, 1, 2],  // D minor (Dm)
+            [0, 0, 2, 2, 1, 2],   // E minor 7 (Em7)
+            [0, 2, 2, 0, 0, 0],   // E minor (Em)
             [1, 3, 3, 2, 1, 1],   // F major (F)
             [1, 1, 3, 3, 2, 1],   // F major 7 (Fmaj7)
             [-1, 1, 3, 3, 3, 1],  // F7
-            [0, 3, 2, 0, 1, 0],   // C major 7 (Cmaj7)
-            [-1, 0, 2, 0, 1, 0],  // A minor 7 (Am7)
-            [-1, 3, 2, 2, 1, 3],  // C7
-            [3, 2, 0, 0, 3, 3],   // G7
-            [0, 0, 2, 2, 1, 2],   // E minor 7 (Em7)
-            [-1, 0, 2, 0, 1, 3],  // A7sus4
         ];
 
         let easiestChords = [];
