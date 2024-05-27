@@ -1,3 +1,5 @@
+# PianoToGuitar
+
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) (Ensure you have the latest LTS version installed)
@@ -62,6 +64,6 @@ The `package.json` file is essential for Node.js projects. It includes metadata 
 
 ## License
 
-This project is proprietary.
+This project is proprietary and confidential; all rights are reserved, and no use, modification, distribution, or access is permitted without explicit written permission from the owner.
 
 ---
