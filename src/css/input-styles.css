@@ -302,7 +302,7 @@ body {
 }
 
 .dragDropItem:active {
-    transform: scale(0.5) translate(-50);
+    transform: scale(0.99);
 }
 
 .dragDropItem span {

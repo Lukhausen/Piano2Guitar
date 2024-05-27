@@ -85,7 +85,7 @@ function formatStructure(fileStructure, indent = 0) {
   for (const key in fileStructure) {
     if (typeof fileStructure[key] === 'object' && 'relativePath' in fileStructure[key]) {
       const { relativePath, size, lastModified } = fileStructure[key];
-      structureText += `${indentString}${key} (Path: ${relativePath}, Size: ${size} bytes)\n`;
+      structureText += `${indentString}${key} (Path: ${relativePath})\n`;
     } else {
       structureText += `${indentString}${key}/\n`;
       structureText += formatStructure(fileStructure[key], indent + 2);
@@ -98,7 +98,7 @@ try {
   const targetDir = path.join(__dirname, ''); // Change '' to your target folder
   const outputFilePath = path.join(__dirname, 'output.txt');
   const removeWhitespaceSetting = true; // Set to true to remove whitespace
-  const removeCommentsSetting = true; // Set to true to remove comments
+  const removeCommentsSetting = false; // Set to true to remove comments
 
   // Get the folder and file structure
   const fileStructure = getDirectoryStructure(targetDir);

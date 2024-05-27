@@ -1,0 +1,16 @@
+{
+    "compress": {
+        "defaults": true,
+        "drop_console": true,
+        "booleans_as_integers": true,
+        "hoist_funs": false,
+        "passes": 3,
+        "unsafe_Function": true,
+        "unsafe_methods": true
+    },
+    "mangle": {
+        "keep_fnames": false
+    },
+    "keep_classnames": false,
+    "keep_fnames": false
+}

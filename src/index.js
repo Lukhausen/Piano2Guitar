@@ -276,26 +276,31 @@ document.addEventListener('DOMContentLoaded', () => {
     window.toggleSettings = async function () {
         let settingsScreen = document.getElementById("settings");
         let closeSettings = document.getElementById("closeSettings");
-
+    
         console.log("Toggle Settings clicked");
-
+    
         // Toggle a class that controls the visibility and opacity
         settingsScreen.classList.toggle('visible');
         closeSettings.classList.toggle('visible');
-
+    
         console.log("Settings screen visibility toggled:", settingsScreen.classList.contains('visible'));
-
+    
         if (reloadFlag) {
             console.log("Reload flag is true, updating tuning settings.");
             localStorage.setItem('guitarTuning', JSON.stringify(settings.tuning));
-
+    
             console.log("New tuning saved to localStorage:", settings.tuning);
-
-            await progressionGenerator.reloadProgression();
-            await updateProgressionDynamic(soundQualityValue);
-            await updateProgressionEasy();
+    
+            progressionGenerator.reloadProgression();
+            console.log("Progression reloaded.");
+            
+            updateProgressionDynamic(soundQualityValue);
+            console.log("Progression dynamic updated.");
+    
+            updateProgressionEasy();
+            console.log("Progression easy updated.");
+    
             reloadFlag = false;
-            console.log("Progression reloaded and updated.");
         }
     };
 
@@ -436,6 +441,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const storedFretRange = parseInt(localStorage.getItem('fretRange'));
             setFretRange(storedFretRange);
             console.log("Stored fret range from localStorage:", storedFretRange);
+        } else{
+            setFretRange(settings.fingerFretRange)
         }
     }
 

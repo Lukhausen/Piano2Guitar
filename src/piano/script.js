@@ -1,3 +1,4 @@
+
 class Piano {
     constructor(containerSelector, options = {}) {
         this.container = document.querySelector(containerSelector);
@@ -70,7 +71,7 @@ class Piano {
                 whiteCounter++;
             }
             this.container.appendChild(key);
-            this.audioElements[index] = new Audio(`./audio/${index % 24}.mp3`);
+            this.audioElements[index] = new Audio(`../audio/${index % 24}.mp3`);
             this.audioElements[index].preload = 'auto'; // This tells the browser to load the audio as soon as the page is loaded
 
 
