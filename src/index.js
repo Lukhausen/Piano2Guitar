@@ -338,8 +338,8 @@ document.addEventListener('DOMContentLoaded', () => {
         settings.tuning = tuningArray;
 
         tuningArray.forEach((value, index) => {
-            const selectElement = document.getElementById(`settingsString${index+1}`);
-            const displayElement = document.getElementById(`settingsStringValue${index +1}`);
+            const selectElement = document.getElementById(`settingsString${index + 1}`);
+            const displayElement = document.getElementById(`settingsStringValue${index + 1}`);
 
             selectElement.value = value;
             displayElement.innerHTML = numberToNote(value);
@@ -375,5 +375,65 @@ document.addEventListener('DOMContentLoaded', () => {
             dropdown.value = "";
         }
     }
+
+
+
+
+    //FretRange
+
+    // Function to set fret range
+    function setFretRange(fret) {
+        // Update the fret range display
+        const fretValueDisplay = document.getElementById('settingsFretValue');
+        fretValueDisplay.textContent = `${fret} Frets`;
+
+        // Update the settings.fretRange
+        settings.fingerFretRange = fret;
+
+        // Set the reloadFlag to true
+        reloadFlag = true;
+
+        // Update the localStorage
+        localStorage.setItem('fretRange', fret);
+
+        // Update the selected fret bar
+        const fretBars = document.querySelectorAll('.settingsFretBar');
+        fretBars.forEach((bar, index) => {
+            if (index < fret) {
+                bar.classList.add('selected');
+                bar.setAttribute('data-fret', index + 1); // Set data attribute for the selected fret
+
+            } else {
+                bar.classList.remove('selected');
+                bar.removeAttribute('data-fret'); // Remove data attribute for unselected frets
+
+            }
+            bar.textContent = index + 1;
+        });
+
+        console.log(`Fret range set to: ${fret} frets`);
+    }
+
+    // Add event listeners to the fret bars
+    const fretBars = document.querySelectorAll('.settingsFretBar');
+    fretBars.forEach((bar, index) => {
+        bar.addEventListener('click', () => {
+            setFretRange(index + 1);
+        });
+        console.log(`Event listener added for fret ${index + 1}`);
+    });
+
+    // Load the fret range setting from localStorage
+    function loadFretRangeSetting() {
+        console.log("Loading fret range setting...");
+        if (localStorage.getItem('fretRange')) {
+            const storedFretRange = parseInt(localStorage.getItem('fretRange'));
+            setFretRange(storedFretRange);
+            console.log("Stored fret range from localStorage:", storedFretRange);
+        }
+    }
+
+    // Initialize the fret range setting
+    loadFretRangeSetting();
 
 })

@@ -154,14 +154,6 @@ export class ProgressionGenerator {
         console.log("ProgressionGenerator: Reloaded Progression")
     }
 
-    getProgression(type = 'basic') {
-        if (this.progressionTypes[type]) {
-            return this.progressionTypes[type].call(this); // Ensures the method is called with correct this context
-        } else {
-            console.error('ProgressionGenerator: Invalid progression type requested.');
-            return [];
-        }
-    }
 
     getPlaceholderHTML() {
         const placeholderCount = 4; // Generate 1 to 3 placeholders
@@ -186,7 +178,8 @@ export class ProgressionGenerator {
 
             // Populate the chosen indices with random numbers between -1 and 4
             indices.forEach(index => {
-                voicing[index] = Math.floor(Math.random() * 6) - 1; // Generates values from -1 to 4
+                // Generate random values from -1 to fretifinger - 1
+                voicing[index] = Math.floor(Math.random() * (settings.fingerFretRange + 1));
             });
 
             const fingerPositions = [0, 0, 0, 0, 0, 0]; // Positions for C major
@@ -209,42 +202,6 @@ export class ProgressionGenerator {
         return diagramsContainer; // Return the container with all placeholder SVGs
     }
 
-    getProgressionHTML(desiredClasses = [], progressionType = "basic") {
-        // Create an instance of ProgressionGenerator with the given progression and tuning
-        const progression = this.getProgression(progressionType); // Get the basic progression
-
-        const diagramsContainer = document.createElement('div'); // Container for chord diagrams
-        desiredClasses.forEach(desiredClass => {
-            diagramsContainer.classList.add(desiredClass)
-        });
-
-        progression.forEach(chordVoicing => {
-            // Extract first playable chord from each ChordFactory instance
-            if (chordVoicing) {
-                // Assuming TabGenerator takes chord details and returns an SVG element
-                try {
-                    const chordDiagram = new TabGenerator(chordVoicing.voicing, chordVoicing.fingerPositions, chordVoicing.minAboveZero, chordVoicing.barres, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
-                    const svg = chordDiagram.generateChordSVG();
-                    diagramsContainer.appendChild(svg);
-                } catch (error) {
-                    console.error('Error generating chord diagram:', error);
-                }
-            }
-        });
-
-        return diagramsContainer; // Return the container with all SVGs
-    }
-
-    getProgressionBasic() {
-        // Iterate over each entry in the progression and get the first playable chord
-        return this.progression.map(chordFactory => {
-            if (chordFactory.playableChords && chordFactory.playableChords.length > 0) {
-                return chordFactory.playableChords[0];
-            } else {
-                return null; // Return null if there are no playable chords available
-            }
-        }).filter(chord => chord !== null); // Filter out any null entries
-    }
 
 
     async getProgressionDynamicHTML(soundQuality = 0.5, ammount = 1) {
@@ -275,6 +232,9 @@ export class ProgressionGenerator {
         // Return the container with all chord diagrams
         return diagramsContainer;
     }
+
+
+    
 
     invertColor(hex) {
         // Remove the hash at the start if it's there

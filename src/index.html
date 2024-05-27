@@ -34,11 +34,14 @@
             <div class="settingsHeader">Settings</div>
             <div class="settingsContent">
                 <div class="settingsItem">
-                    <div class="settingsSubHeader">
-                        <div>Guitar Tuning</div>
-                    </div>
-                    <div class="settingSubDescription">
-                        Choose a preset tuning from the dropdown or adjust each string's pitch with the sliders.
+                    <div class="settingsInfo">
+
+                        <div class="settingsSubHeader">
+                            <div>Guitar Tuning</div>
+                        </div>
+                        <div class="settingSubDescription">
+                            Choose a common tuning from the dropdown or adjust each string's pitch manually with the sliders.
+                        </div>
                     </div>
                     <select id="settingsCommonTunings" onchange="setTuning(this.value)">
                         <option value="E A D G B E">Standard (E A D G B E)</option>
@@ -86,24 +89,30 @@
 
                 </div>
                 <div class="settingsItem">
-                    <div class="settingsSubHeader">
-                        <div>Maximum Fret Range</div>
-                    </div>
-                    <div class="settingSubDescription">
-                        Choose the ammunt of Frets a Chord can have.
+                    <div class="settingsInfo">
+                        <div class="settingsSubHeader">
+                            <div>Maximum Frets</div>
+                        </div>
+                        <div class="settingSubDescription">
+                            Set the maximum number of frets a chord can span.
+                        </div>
                     </div>
                     <div class="settingsFretWrapper">
-                        <div id="settingsFretValue">A</div>
                         <div class="settingsFretSliderWrapper">
-                            <div class="settingsFretBar bar1"></div>
-                            <div class="settingsFretBar bar2"></div>
-                            <div class="settingsFretBar bar3"></div>
-                            <div class="settingsFretBar bar4"></div>
-                            <div class="settingsFretBar bar5"></div>
-                            <div class="settingsFretBar bar6"></div>
-
-                            <input id="settingsFretSlider" type="range" min="1" max="5" value="0">
+                            <div class="settingsFretBarSeparator"></div>
+                            <div class="settingsFretBar selected">1</div>
+                            <div class="settingsFretBarSeparator"></div>
+                            <div class="settingsFretBar ">2</div>
+                            <div class="settingsFretBarSeparator"></div>
+                            <div class="settingsFretBar ">3</div>
+                            <div class="settingsFretBarSeparator"></div>
+                            <div class="settingsFretBar ">4</div>
+                            <div class="settingsFretBarSeparator"></div>
+                            <div class="settingsFretBar ">5</div>
+                            <div class="settingsFretBarSeparator"></div>
                         </div>
+                        <div id="settingsFretValue">4 Frets</div>
+
                     </div>
                 </div>
             </div>

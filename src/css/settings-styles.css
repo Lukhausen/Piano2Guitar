@@ -3,7 +3,6 @@
     position: absolute;
     z-index: 5;
     width: calc(100% - var(--padding) * 2);
-    box-sizing: border-box;
     box-shadow: 0px 0px 50px max(100vh, 100vw) #0000006a;
     border-radius: var(--rounding);
     padding: var(--padding);
@@ -14,12 +13,21 @@
     visibility: hidden;
     transition: opacity 0.2s, visibility 0.2s;
     flex-direction: column;
-    gap: var(--padding)
+    gap: var(--padding);
+    box-sizing: border-box;
+
 }
 
 #settings.visible {
     opacity: 1;
     visibility: visible;
+}
+
+.settingsInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .settingsHeader {
@@ -33,6 +41,8 @@
 
 .settingSubDescription {
     color: var(--light1);
+    text-align: center;
+
 }
 
 .settingsContent {
@@ -88,8 +98,7 @@
 .settingsStringTuning {
     display: flex;
     flex-direction: column;
-    width: 80vw;
-    max-width: 500px;
+    width: min(40vw, 500px);
 }
 
 .settingsStringWrapper {
@@ -235,92 +244,89 @@ select option {
 }
 
 
-@media only screen and (max-width: 1200px) {}
 
-
-
-
+.settingsFretWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: var(--padding);
+    font-weight: 800;
+}
 
 .settingsFretSliderWrapper {
-    position: relative;
     display: flex;
-
+    flex-direction: row;
+    width: min(40vw, 500px);
+    height: 70px;
+    justify-content: center;
+    align-items: center;
 }
 
 .settingsFretBar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    height: 80%;
+    background: var(--dark2);
+    box-sizing: border-box;
+    border-top: var(--dark1) solid 2px;
+    border-bottom: var(--dark3) solid 2px;
+
+}
+
+.settingsFretBar.selected::after {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: absolute;
+    content: attr(data-fret);
+    /* Use the data-fret attribute to set the content */
+    border-radius: 100%;
+    width: 50%;
+    aspect-ratio: 1 / 1;
+    background-color: var(--accent1);
+    color: #fff;
+}
+
+.settingsFretBarSeparator {
     height: 100%;
     width: var(--padding);
     background-color: var(--light0);
-    transform: translateX(-50%);
-    box-sizing: border-box;
-    z-index:3
-}
-
-.settingsFretBar.bar2 {
-    left: 0%
-}
-
-.settingsFretBar.bar2 {
-    left: 20%
-}
-
-.settingsFretBar.bar3 {
-    left: 40%
-}
-
-.settingsFretBar.bar4 {
-    left: 60%
-}
-
-.settingsFretBar.bar5 {
-    left: 80%
-}
-
-.settingsFretBar.bar6 {
-    left: 100%
+    border-radius: var(--rounding);
 }
 
 
-
-
-#settingsFretSlider {
-    -webkit-appearance: none;
-    width: 100%;
-    height: calc(var(--padding)*5);
-    background: var(--dark0);
-    opacity: 0.9;
-    outline: none;
-    transition: opacity .2s;
-    margin-left: calc(var(--padding)*1.5);
-    margin-right: calc(var(--padding)*1.5);
-    box-shadow: calc(var(--padding)*1.5) 0px 0px var(--dark0),calc(var(--padding)*-1.5) 0px 0px var(--dark0);
+@media only screen and (max-height: 1000px) {
+    #settings {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        height: 100dvh;
+        width: 100vw;
+        width: 100dvw;
+    }
 }
 
-#settingsFretSlider:hover {
-    opacity: 1;
-}
+@media screen and (orientation: landscape) {
 
-#settingsFretSlider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    height: calc(2*var(--padding));
-    width: calc(2*var(--padding));
-    background: #ffa600;
-    cursor: pointer;
-    border-radius: 100%;
-    box-shadow: 0 0 1vw rgba(0, 0, 0, 0.312);
+    .settingsContent {
+        flex-direction: row;
+    }
+
 
 }
 
-#settingsFretSlider::-moz-range-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    height: calc(2*var(--padding));
-    width: calc(2*var(--padding));
-    background: #ffa600;
-    cursor: pointer;
-    border-radius: 100%;
+@media screen and (orientation: portrait) {
 
-    box-shadow: 0 0 1vw rgba(0, 0, 0, 0.312);
+    .settingsStringTuning {
+        width: 80vw;
+    }
+    .settingsFretSliderWrapper{
+        width: 80vw;
+
+    }
 }
