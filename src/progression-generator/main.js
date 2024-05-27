@@ -46,8 +46,8 @@ export class ProgressionGenerator {
     }
 
     async initialize(initialProgression) {
-        this.easiestChords = await this.getEasiestChords();
         this.setProgression(initialProgression);
+        this.easiestChords = await this.getEasiestChords();
 
     }
 
@@ -234,6 +234,9 @@ export class ProgressionGenerator {
 
 
     async getProgressionEasyHTML() {
+        if (this.progression.length < 1) {
+            return [this.getPlaceholderHTML(), 0];
+        }
         const originalProgression = structuredClone(this.progressionChords); // Make a copy of the progression chords
         let bestTransposition = 0;
         let maxOverlap = 0;
@@ -264,9 +267,6 @@ export class ProgressionGenerator {
         // Transpose the original progression to the best transposition
         let bestTransposedProgression = originalProgression.map(chord => transposeChord(chord, bestTransposition));
 
-
-
-
         bestTransposedProgression = bestTransposedProgression.map(chord => {
             if (chord instanceof Chord) {
                 return this.chordFactoryManager.getChordFactory(chord);
@@ -287,7 +287,7 @@ export class ProgressionGenerator {
             let tabHTML = new TabHTML(chordFactory, this.color, this.fingerNumbers, this.showOpenStrings);
 
             // Generate the HTML for the current chordFactory
-            let chordDiagrams = tabHTML.generateHTML(0.3, 1);
+            let chordDiagrams = tabHTML.generateHTML(0, 1);
 
             // Append the generated HTML to the main container
             chordDiagrams.forEach(element => {

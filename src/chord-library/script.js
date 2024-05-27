@@ -239,8 +239,18 @@ export class ChordLibrary {
         const transposedNotes = chord.notes.map(note => (note + semitones) % 12);
     
         // Determine the transposed main chord name
-        const rootNoteName = noteNames[chord.rootNote];
-        const transposedMainChordName = noteNames[transposedRootNote] + mainChordName.slice(rootNoteName.length);
+        const originalRootNoteName = noteNames[chord.rootNote];
+        const transposedRootNoteName = noteNames[transposedRootNote];
+    
+        // Adjust the main chord name by replacing the root note part
+        let transposedMainChordName = mainChordName.replace(originalRootNoteName, transposedRootNoteName);
+    
+        // Handle the case where the original root note is a single character and the transposed root note is two characters (e.g., C -> C#)
+        if (originalRootNoteName.length === 1 && transposedRootNoteName.length === 2) {
+            transposedMainChordName = transposedRootNoteName + mainChordName.slice(1);
+        } else if (originalRootNoteName.length === 2 && transposedRootNoteName.length === 1) {
+            transposedMainChordName = transposedRootNoteName + mainChordName.slice(2);
+        }
     
         let transposedBassNoteName = '';
     
@@ -259,6 +269,7 @@ export class ChordLibrary {
     
         return new Chord(transposedRootNote, transposedNotes, transposedName, chord.customRoot);
     }
+    
     
 
 }

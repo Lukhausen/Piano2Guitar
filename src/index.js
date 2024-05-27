@@ -262,7 +262,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let [progressionHTML, capo] = await progressionGenerator.getProgressionEasyHTML();
         document.getElementById("easyProgressionWrapper").innerHTML = "";
         document.getElementById("easyProgressionWrapper").appendChild(progressionHTML);
-        
         document.getElementById("easyProgressionCapo").innerHTML = "Capo: "+capo+"fr";
 
     };
@@ -270,13 +269,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //Update the Progressions to get the PLaceholders:
     updateProgressionDynamic(soundQualityValue)
+    updateProgressionEasy()
 
 
 
     let reloadFlag = false;
 
     // Make Settings Button functional
-    window.toggleSettings = function () {
+    window.toggleSettings = async function () {
         let settingsScreen = document.getElementById("settings");
         let closeSettings = document.getElementById("closeSettings");
 
@@ -294,8 +294,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             console.log("New tuning saved to localStorage:", settings.tuning);
 
-            progressionGenerator.reloadProgression();
-            updateProgressionDynamic(soundQualityValue);
+            await progressionGenerator.reloadProgression();
+            await updateProgressionDynamic(soundQualityValue);
+            await updateProgressionEasy();
             reloadFlag = false;
             console.log("Progression reloaded and updated.");
         }
