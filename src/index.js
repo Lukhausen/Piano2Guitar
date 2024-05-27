@@ -233,12 +233,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     let soundQualityValue = 1;
-    let progressionGenerator = new ProgressionGenerator([], true, "#ffffff", "onNote", true)
+    let progressionGenerator = new ProgressionGenerator([], true, chordLibrary, "#ffffff", "onNote", true)
 
     document.addEventListener('selectedItemsUpdated', async function (event) {
         console.log('Updated Selected Items:', event.detail.selectedItems);
         await progressionGenerator.setProgression(event.detail.selectedItems)
         await updateProgressionDynamic(soundQualityValue)
+        await updateProgressionEasy()
     });
 
 
@@ -255,6 +256,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let progressionHTML = await progressionGenerator.getProgressionDynamicHTML(soundQualityValue);
         document.getElementById("dynamicProgressionWrapper").innerHTML = "";
         document.getElementById("dynamicProgressionWrapper").appendChild(progressionHTML);
+    };
+
+    async function updateProgressionEasy() {
+        let progressionHTML = await progressionGenerator.getProgressionEasyHTML();
+        document.getElementById("easyProgressionWrapper").innerHTML = "";
+        document.getElementById("easyProgressionWrapper").appendChild(progressionHTML);
     };
 
 

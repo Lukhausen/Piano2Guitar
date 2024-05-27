@@ -1,11 +1,35 @@
 import { DragAndDropItem } from "../drag-drop/script.js";
-
+/**
+ * Represents a musical chord.
+ * 
+ * @class Chord
+ * @constructor
+ * @param {number} rootNote - The root note of the chord, represented as an integer from 0 to 11. 
+ *                            0 corresponds to C, 1 to C#, 2 to D, and so on.
+ * @param {number[]} notes - An array of integers representing the notes of the chord. 
+ *                           Each note is represented as an integer from 0 to 11.
+ * @param {string} name - The full name of the chord, e.g., "Gm", "Asus4".
+ * @param {boolean} customRoot - A flag indicating if the root note is custom.
+ * 
+ * @example
+ * // Create a G minor chord
+ * const gMinor = new Chord(7, [7, 10, 2], "Gm", false);
+ * 
+ * @example
+ * // Create an A suspended 4th chord with a custom root
+ * const aSus4 = new Chord(9, [9, 0, 5], "Asus4", true);
+ * 
+ * @property {number} rootNote - The root note of the chord.
+ * @property {number[]} notes - The notes that make up the chord.
+ * @property {string} name - The name of the chord.
+ * @property {boolean} customRoot - Indicates if the root note is custom.
+ */
 export class Chord {
     constructor(rootNote, notes, name, customRoot) {
         this.rootNote = rootNote; // Integer 0-11, where 0 = C, 1 = C#, 2 = D, etc.
         this.notes = notes; // Array of integers representing notes of the chord
         this.name = name; // String representing the full name of the chord, e.g., "Gm", "Asus4"
-        this.customRoot = customRoot 
+        this.customRoot = customRoot
         console.log("Constructed Chord: " + this.name + " Root: " + this.rootNote + " Notes: " + this.notes)
     }
 }
@@ -137,7 +161,7 @@ export class ChordLibrary {
 
             //console.log("Comparing to: " + chord.name)
             //Add the Root note to the Chords For Cases like A/D
-            
+
             //console.log("Input Notes Set: ", inputNotesSet);
 
             const commonNotes = new Set([...chordNotes].filter(note => inputNotesSet.has(note)));
@@ -197,5 +221,45 @@ export class ChordLibrary {
             return null;
         }
     }
+
+
+    //USing this ugly transpose Chord function as its computationaly faster
+    transposeChord(chord, semitones) {
+        const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        let mainChordName = chord.name;
+        let bassNote = null;
+    
+        // Check if the chord is a slash chord
+        if (chord.name.includes('/')) {
+            [mainChordName, bassNote] = chord.name.split('/');
+        }
+    
+        // Transpose the root note of the main chord
+        const transposedRootNote = (chord.rootNote + semitones) % 12;
+        const transposedNotes = chord.notes.map(note => (note + semitones) % 12);
+    
+        // Determine the transposed main chord name
+        const rootNoteName = noteNames[chord.rootNote];
+        const transposedMainChordName = noteNames[transposedRootNote] + mainChordName.slice(rootNoteName.length);
+    
+        let transposedBassNoteName = '';
+    
+        if (bassNote) {
+            // Find the index of the bass note
+            const bassNoteIndex = noteNames.indexOf(bassNote);
+            // Transpose the bass note
+            const transposedBassNote = (bassNoteIndex + semitones) % 12;
+            transposedBassNoteName = noteNames[transposedBassNote];
+        }
+    
+        // Construct the transposed chord name
+        const transposedName = transposedBassNoteName
+            ? `${transposedMainChordName}/${transposedBassNoteName}`
+            : transposedMainChordName;
+    
+        return new Chord(transposedRootNote, transposedNotes, transposedName, chord.customRoot);
+    }
+    
+
 }
 

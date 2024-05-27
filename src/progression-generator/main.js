@@ -9,7 +9,7 @@ import { TabHTML } from './tabhtml.js';
 
 
 export class ProgressionGenerator {
-    constructor(initialProgression = [], useRoot = true, color, fingerNumbers = "belowString", showOpenStrings = true) {
+    constructor(initialProgression = [], useRoot = true, chordLibrary, color, fingerNumbers = "belowString", showOpenStrings = true) {
         this.tuning = settings.tuning;
         this.color = color;
         this.fingerNumbers = fingerNumbers;
@@ -19,13 +19,16 @@ export class ProgressionGenerator {
         this.useRoot = useRoot; // This flag determines if the root note should be the starting note
         this.chordFactoryMap = {}; // HashMap to store ChordFactory instances
         this.keyAnalysis = []
+        this.chordLibrary = chordLibrary
 
+        // Call the asynchronous initialization function
+        this.initialize(initialProgression);
+    }
+
+    async initialize(initialProgression) {
+        this.easiestChords = await this.getEasiestChords();
         this.setProgression(initialProgression);
 
-        this.progressionTypes = {
-            basic: this.getProgressionBasic,
-            // Add more progression types as methods here
-        };
     }
 
     addKeyAnalysis(root, keyscale, prob) {
@@ -150,7 +153,7 @@ export class ProgressionGenerator {
         this.tuning = settings.tuning;
         this.chordFactoryMap = {};
         this.progression = []
-        this.setProgression(this.progressionChords);
+        this.initialize(this.progressionChords)
         console.log("ProgressionGenerator: Reloaded Progression")
     }
 
@@ -235,8 +238,101 @@ export class ProgressionGenerator {
 
 
     async getProgressionEasyHTML() {
-        //First Find The Easiest to play Chords With this Gutar Tuning
+        const originalProgression = [...this.progressionChords]; // Make a copy of the progression chords
+        let bestTransposition = 0;
+        let maxOverlap = 0;
 
+        // Function to transpose a chord by a given number of semitones
+        const transposeChord = (chord, semitones) => {
+            return this.chordLibrary.transposeChord(chord, semitones);
+        };
+
+        for (let i = 0; i < 12; i++) {
+            let overlapCount = 0;
+            let transposedProgression = originalProgression.map(chord => transposeChord(chord, i));
+
+            transposedProgression.forEach(chord => {
+                this.easiestChords.forEach(easyChord => {
+                    if (chord.name === easyChord.name) {
+                        overlapCount++;
+                    }
+                });
+            });
+
+            if (overlapCount > maxOverlap) {
+                maxOverlap = overlapCount;
+                bestTransposition = i;
+            }
+        }
+
+        // Transpose the original progression to the best transposition
+        let bestTransposedProgression = originalProgression.map(chord => transposeChord(chord, bestTransposition));
+        this.setProgression(bestTransposedProgression); // Update the progression with the best transposed progression
+
+        // Generate the HTML for the best transposed progression
+        let diagramsContainer = document.createElement('div'); // Container for chord diagrams
+        diagramsContainer.classList.add("progressionGeneratorContainer");
+
+        // Iterate over each ChordFactory instance in the progression
+        this.progression.forEach(chordFactory => {
+            // Create an instance of TabHTML for the current chordFactory
+            const tabHTML = new TabHTML(chordFactory, this.color, this.fingerNumbers, this.showOpenStrings);
+
+            // Generate the HTML for the current chordFactory
+            const chordDiagrams = tabHTML.generateHTML(0.2, 1);
+
+            // Append the generated HTML to the main container
+            chordDiagrams.forEach(element => {
+                diagramsContainer.appendChild(element);
+            });
+        });
+
+        // Return the container with all chord diagrams
+        return diagramsContainer;
+    }
+
+    async getEasiestChords() {
+        const easiestChordsArray = [
+            [0, 2, 2, 0, 0, 0],   // E minor (Em)
+            [-1, 0, 2, 2, 1, 0],  // A minor (Am)
+            [3, 2, 0, 0, 0, 3],   // G major (G)
+            [-1, 3, 2, 0, 1, 0],  // C major (C)
+            [-1, 0, 0, 2, 3, 2],  // D major (D)
+            [-1, 0, 2, 2, 2, 0],  // A major (A)
+            [0, 2, 2, 1, 0, 0],   // E major (E)
+            [-1, 2, 2, 2, 0, 0],  // A7
+            [0, 2, 0, 1, 0, 0],   // E7
+            [-1, 0, 0, 2, 1, 2],  // D minor (Dm)
+            [1, 3, 3, 2, 1, 1],   // F major (F)
+            [1, 1, 3, 3, 2, 1],   // F major 7 (Fmaj7)
+            [-1, 1, 3, 3, 3, 1],  // F7
+            [0, 3, 2, 0, 1, 0],   // C major 7 (Cmaj7)
+            [-1, 0, 2, 0, 1, 0],  // A minor 7 (Am7)
+            [-1, 3, 2, 2, 1, 3],  // C7
+            [3, 2, 0, 0, 3, 3],   // G7
+            [0, 0, 2, 2, 1, 2],   // E minor 7 (Em7)
+            [-1, 0, 2, 0, 1, 3],  // A7sus4
+        ];
+
+        let easiestChords = [];
+        let currentChord = new Set();
+
+        for (const element of easiestChordsArray) {
+            currentChord = new Set();
+            for (let i = 0; i < 6; i++) {
+                if (element[i] != -1) {
+                    currentChord.add((settings.tuning[i] + element[i]) % 12);
+                }
+            }
+            const foundChords = await this.chordLibrary.searchChords(Array.from(currentChord), null, 100);
+            if (foundChords[0]) {
+                easiestChords.push(foundChords[0]);
+            }
+        }
+
+        console.log("getEasiestChords:", easiestChords)
+        return easiestChords
+    }
 
     invertColor(hex) {
         // Remove the hash at the start if it's there
