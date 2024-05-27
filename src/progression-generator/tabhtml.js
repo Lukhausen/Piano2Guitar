@@ -1,13 +1,15 @@
 import TabGenerator from "../tab-generator/script.js";
+import { settings } from "../chord-factory/constants.js";
 
 export class TabHTML {
-    constructor(chordFactory, color, fingerNumbers = "belowString", showOpenStrings = true) {
+    constructor(chordFactory = [], color = "#fff", fingerNumbers = "belowString", showOpenStrings = true) {
         this.chordFactory = chordFactory; // Pointer to the ChordFactory instance
         this.color = color;
         this.fingerNumbers = fingerNumbers;
         this.showOpenStrings = showOpenStrings;
         this.currentIndex = 0; // Track the current index of playable chords
-        this.maxChords = chordFactory.playableChords.length
+        this.maxChords = chordFactory.playableChords?.length ?? 0;
+        
 
     }
 
@@ -39,9 +41,9 @@ export class TabHTML {
         }, 200); // Match this duration with the animation duration in CSS
     }
 
-    updateChordDiagram(svgContainer, svgNameContainer,voicingInfoDiv, direction) {
+    updateChordDiagram(svgContainer, svgNameContainer, voicingInfoDiv, direction) {
         const playableChords = this.chordFactory.playableChords;
-        voicingInfoDiv.innerHTML=this.currentIndex+1 + " / " + this.maxChords
+        voicingInfoDiv.innerHTML = this.currentIndex + 1 + " / " + this.maxChords
         if (this.currentIndex < playableChords.length && this.currentIndex >= 0) {
             let slideOutClass, slideInClass;
 
@@ -82,7 +84,7 @@ export class TabHTML {
                 svgContainer.classList.add(slideInClass);
                 setTimeout(() => {
                     svgContainer.classList.remove('slide-in-left', 'slide-in-right', 'slide-out-right', 'slide-out-left');
-                },100)
+                }, 100)
             }, 100); // Match this duration with the animation duration in CSS
 
         }
@@ -174,6 +176,73 @@ export class TabHTML {
                     console.error('Error generating chord diagram:', error);
                 }
             }
+        }
+
+        return diagrams; // Return the container with all SVGs
+    }
+
+    generatePlaceholder(placeholderCount = 4) {
+        let diagrams = [];
+
+        for (let i = 0; i < placeholderCount; i++) {
+            let voicing = [0, 0, 0, 0, 0, 0];
+            let indices = new Set();
+            while (indices.size < 4) {
+                let index = Math.floor(Math.random() * voicing.length);
+                indices.add(index);
+            }
+
+            indices.forEach(index => {
+                voicing[index] = Math.floor(Math.random() * (settings.fingerFretRange + 1));
+            });
+
+            const fingerPositions = [0, 0, 0, 0, 0, 0];
+            const barreSize = 0;
+
+            const chordDiagram = new TabGenerator(
+                voicing,
+                fingerPositions,
+                0,
+                [{ fromString: 6, toString: 1, fret: barreSize }],
+                this.color,
+                this.invertColor(this.color),
+                this.fingerNumbers,
+                this.showOpenStrings
+            );
+            const svg = chordDiagram.generateChordSVG();
+
+            let svgContainer = document.createElement('div');
+            svgContainer.classList.add("progressionGeneratorSvgContainer");
+            svgContainer.appendChild(svg);
+
+            let voicingInfoDiv = document.createElement('div');
+            voicingInfoDiv.innerHTML = `${i + 1} / ${placeholderCount}`;
+
+            let svgNameContainer = document.createElement('div');
+            svgNameContainer.classList.add("progressionGeneratorSvgChordName");
+            svgNameContainer.innerHTML = `.`;
+
+            let prevButton = document.createElement('div');
+            prevButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" ><path fill="currentColor" d="m142-480 294 294q15 15 14.5 35T435-116q-15 15-35 15t-35-15L57-423q-12-12-18-27t-6-30q0-15 6-30t18-27l308-308q15-15 35.5-14.5T436-844q15 15 15 35t-15 35L142-480Z"/></svg>';
+            prevButton.classList.add("progressionGeneratorChordButton");
+
+            let nextButton = document.createElement('div');
+            nextButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" ><path fill="currentColor" d="M579-480 285-774q-15-15-14.5-35.5T286-845q15-15 35.5-15t35.5 15l307 308q12 12 18 27t6 30q0 15-6 30t-18 27L356-115q-15 15-35 14.5T286-116q-15-15-15-35.5t15-35.5l293-293Z"/></svg>';
+            nextButton.classList.add("progressionGeneratorChordButton");
+
+            let voicingInfoContainer = document.createElement('div');
+            voicingInfoContainer.classList.add("progressionGeneratorVoicingInfoContainer");
+            voicingInfoContainer.appendChild(prevButton);
+            voicingInfoContainer.appendChild(voicingInfoDiv);
+            voicingInfoContainer.appendChild(nextButton);
+
+            let diagramContainer = document.createElement('div');
+            diagramContainer.classList.add("progressionGeneratorDiagramsContainer");
+            diagramContainer.appendChild(svgContainer);
+            diagramContainer.appendChild(voicingInfoContainer);
+            diagramContainer.appendChild(svgNameContainer);
+
+            diagrams.push(diagramContainer);
         }
 
         return diagrams; // Return the container with all SVGs

@@ -13,14 +13,18 @@ class ChordFactoryManager {
         this.useRoot = useRoot;
     }
 
-    getChordFactory(chord) {
-        if (this.chordFactoryMap[chord.name]) {
-            console.log('ChordFactory retrieved for:', chord.name);
-            return this.chordFactoryMap[chord.name];
+    getChordFactory(chord, key) {
+        if (!this.chordFactoryMap[key]) {
+            this.chordFactoryMap[key] = {};
+        }
+
+        if (this.chordFactoryMap[key][chord.name]) {
+            console.log(`ChordFactory retrieved for: ${chord.name} in key: ${key}`);
+            return this.chordFactoryMap[key][chord.name];
         } else {
             const chordFactory = new ChordFactory(chord, this.useRoot, settings.tuning);
-            this.chordFactoryMap[chord.name] = chordFactory;
-            console.log('New ChordFactory created for:', chord.name);
+            this.chordFactoryMap[key][chord.name] = chordFactory;
+            console.log(`New ChordFactory created for: ${chord.name} in key: ${key}`);
             return chordFactory;
         }
     }
@@ -133,7 +137,7 @@ export class ProgressionGenerator {
         // Populate this.progression with ChordFactory instances
         this.progression = initialProgression.map(chord => {
             if (chord instanceof Chord) {
-                return this.chordFactoryManager.getChordFactory(chord);
+                return this.chordFactoryManager.getChordFactory(chord, "dynamic");
             } else {
                 console.error('ProgressionGenerator: Invalid chord object in initial progression. Each chord must be an instance of Chord.');
                 return null;
@@ -165,49 +169,16 @@ export class ProgressionGenerator {
 
 
     getPlaceholderHTML() {
-        const placeholderCount = 4; // Generate 1 to 3 placeholders
-        const diagramsContainer = document.createElement('div'); // Container for chord diagrams
+        let diagramsContainer = document.createElement('div');
+        diagramsContainer.classList.add("progressionGeneratorContainer");
         diagramsContainer.style.opacity = 0.2
-        diagramsContainer.style.display = "flex"
 
-        for (let i = 0; i < placeholderCount; i++) {
-            // Example placeholder data
+        let placeholderhtml = new TabHTML().generatePlaceholder(3)
 
+        placeholderhtml.forEach(element => {
+            diagramsContainer.appendChild(element);
 
-            let voicing = [0, 0, 0, 0, 0, 0];
-
-            // Create a set to keep track of chosen indices (to ensure uniqueness)
-            let indices = new Set();
-
-            // Randomly choose 4 unique indices
-            while (indices.size < 4) {
-                let index = Math.floor(Math.random() * voicing.length);
-                indices.add(index);
-            }
-
-            // Populate the chosen indices with random numbers between -1 and 4
-            indices.forEach(index => {
-                // Generate random values from -1 to fretifinger - 1
-                voicing[index] = Math.floor(Math.random() * (settings.fingerFretRange + 1));
-            });
-
-            const fingerPositions = [0, 0, 0, 0, 0, 0]; // Positions for C major
-            const barreSize = 0; // No barre for this example
-
-            // Assuming TabGenerator can handle this static data
-            try {
-                const chordDiagram = new TabGenerator(voicing, fingerPositions, 0, null, this.color, this.invertColor(this.color), this.fingerNumbers, this.showOpenStrings);
-                const svg = chordDiagram.generateChordSVG();
-                diagramsContainer.appendChild(svg);
-            } catch (error) {
-                console.error('Error generating placeholder chord diagram:', error);
-            }
-        }
-        const textContent = document.createElement('div')
-        textContent.innerHTML = "Search for chords using the piano keys, the search bar, or connect your MIDI device."
-        textContent.style.display = "flex"
-        textContent.style.alignItems = "center"
-        diagramsContainer.appendChild(textContent);
+        })
         return diagramsContainer; // Return the container with all placeholder SVGs
     }
 
@@ -269,7 +240,7 @@ export class ProgressionGenerator {
 
         bestTransposedProgression = bestTransposedProgression.map(chord => {
             if (chord instanceof Chord) {
-                return this.chordFactoryManager.getChordFactory(chord);
+                return this.chordFactoryManager.getChordFactory(chord, "easy");
             } else {
                 console.error('ProgressionGenerator: Invalid chord object in initial progression. Each chord must be an instance of Chord.');
                 return null;
@@ -307,7 +278,7 @@ export class ProgressionGenerator {
             [-1, 2, 2, 2, 0, 0],  // A7
             [-1, 0, 2, 0, 1, 3],  // A7sus4
             [-1, 3, 2, 0, 1, 0],  // C major (C)
-            [0, 3, 2, 0, 1, 0],   // C major 7 (Cmaj7)
+            [-1, 3, 2, 0, 1, 0],   // C major 7 (Cmaj7)
             [-1, 3, 2, 2, 1, 3],  // C7
             [-1, -1, 0, 2, 3, 2], // D major (D)
             [-1, -1, 0, 2, 1, 2], // D minor (Dm)
@@ -319,7 +290,7 @@ export class ProgressionGenerator {
             [0, 2, 2, 0, 0, 0],   // E minor (Em)
             [1, 3, 3, 2, 1, 1],   // F major (F)
             [1, 1, 3, 3, 2, 1],   // F major 7 (Fmaj7)
-            [-1, 1, 3, 3, 3, 1],  // F7
+            [1, 1, 3, 3, 3, 1],  // F7
         ];
 
         let easiestChords = [];
@@ -332,7 +303,14 @@ export class ProgressionGenerator {
                     currentChord.add((settings.tuning[i] + element[i]) % 12);
                 }
             }
-            const foundChords = await this.chordLibrary.searchChords(Array.from(currentChord), null, 100);
+            let root = -1
+            for (let i = 0; i < 6; i++) {
+                if (element[i] != -1) {
+                    root = (settings.tuning[i] + element[i]) % 12
+                    break;
+                }
+            }
+            const foundChords = await this.chordLibrary.searchChords(Array.from(currentChord), root, 100);
             if (foundChords[0]) {
                 easiestChords.push(foundChords[0]);
             }

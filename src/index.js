@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to calculate the number of octaves based on screen width
     function calculateOctaves() {
         const screenWidth = window.innerWidth;
-        console.log((Math.sqrt(screenWidth)))
         const maxOctaves = 3; // Base octaves to start with
         const extraOctaves = Math.ceil((Math.sqrt(screenWidth)) / 25);
         visualPianoOctaves = Math.min(maxOctaves, extraOctaves)
@@ -267,9 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
-    //Update the Progressions to get the PLaceholders:
-    updateProgressionDynamic(soundQualityValue)
-    updateProgressionEasy()
+
 
 
 
@@ -340,8 +337,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    loadTuningSettings();
-    checkCommonTunings()
 
 
     function setTuning(tuning) {
@@ -446,5 +441,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize the fret range setting
     loadFretRangeSetting();
-
+    loadTuningSettings();
+    checkCommonTunings()
+    //Update the Progressions to get the PLaceholders:
+    updateProgressionDynamic(soundQualityValue)
+    updateProgressionEasy()
 })
