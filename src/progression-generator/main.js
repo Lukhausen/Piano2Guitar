@@ -1,9 +1,7 @@
-import { settings, BARRE_RATING } from '../chord-factory/constants.js';
-import { parseNotes, removeDuplicateArrays, NOTE_INDEX_MAP } from '../chord-factory/utils.js';
+import { settings } from '../chord-factory/constants.js';
 import { ChordFactory } from '../chord-factory/chordfactory.js';
 import { Chord } from '../chord-library/script.js';
 import { numberToNote } from '../chord-factory/utils.js';
-import TabGenerator from "../tab-generator/script.js"
 import { TabHTML } from './tabhtml.js';
 
 
