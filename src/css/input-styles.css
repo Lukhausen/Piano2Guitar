@@ -40,14 +40,13 @@ svg path {
 }
 
 html {
-    background-color: var(--dark3);
     color: #fff;
     font-size: larger;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    min-height: 100dvh;
+    min-width: 100vw;
     font-family: "Manrope", sans-serif;
     background: radial-gradient(circle, rgba(7, 24, 27, 1) 0%, rgba(9, 9, 9, 1) 100%);
     background-color: #171f1f;

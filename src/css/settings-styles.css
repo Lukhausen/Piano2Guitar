@@ -305,9 +305,7 @@ select option {
         top: 0;
         left: 0;
         height: 100vh;
-        height: 100dvh;
         width: 100vw;
-        width: 100dvw;
     }
 }
 
@@ -326,9 +324,7 @@ select option {
         top: 0;
         left: 0;
         height: 100vh;
-        height: 100dvh;
         width: 100vw;
-        width: 100dvw;
     }
     .settingsStringTuning {
         width: 80vw;

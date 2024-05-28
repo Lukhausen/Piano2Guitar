@@ -105,11 +105,11 @@ export class ChordVoicing {
 
   static PLAYABILITY_WEIGHTS = {
     fingersUsed: 1,
-    fingerSpread: 1,
+    fingerSpread: 4,
     mutedAmount: 1,
     fretHeight: 1,
-    mutedDifficulty: 1,
-    mutedReachability: 1,
+    mutedDifficulty: 2,
+    mutedReachability: 2,
     barreAmount: 1
   };
 
@@ -152,7 +152,7 @@ export class ChordVoicing {
         maxFret = this.voicing[i]
       }
     }
-    return 1 - ((maxFret - this.minAboveZero) / settings.fingerFretRange)
+    return 1 - ((1.5 ** (maxFret - this.minAboveZero)) / (1.5 ** settings.fingerFretRange))
   }
 
   assessPlayabilityMutedAmount() {
@@ -174,17 +174,17 @@ export class ChordVoicing {
     //Check Muting from the top
     for (let i = 0; i < 4; i++) {
       if (this.voicing[i] == -1) {
-        mutedDifficulty += (i + 1)
+        mutedDifficulty += (i * 1)
       }
     }
-    //Check Muting from the bottom
+    //Check Muting from the bottom  
     for (let i = 0; i < 4; i++) {
       if (this.voicing[5 - i] == -1) {
-        mutedDifficulty += (i + 1)
+        mutedDifficulty += (i * 1.5)
       }
     }
 
-    return 1 - (mutedDifficulty / 12)
+    return 1 - (mutedDifficulty / 15)
 
   }
 
@@ -232,7 +232,7 @@ export class ChordVoicing {
     harmonicCompleteness: 1,
     openStrings: 1,
     playedStrings: 1,
-    fretBoardHeight: 1,
+    fretBoardHeight: 0,
     voicingRange: 0,
     doubleNotes: 1
   };

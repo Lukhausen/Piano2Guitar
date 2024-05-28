@@ -97,8 +97,8 @@ function formatStructure(fileStructure, indent = 0) {
 try {
   const targetDir = path.join(__dirname, ''); // Change '' to your target folder
   const outputFilePath = path.join(__dirname, 'output.txt');
-  const removeWhitespaceSetting = true; // Set to true to remove whitespace
-  const removeCommentsSetting = false; // Set to true to remove comments
+  const removeWhitespaceSetting = false; // Set to true to remove whitespace
+  const removeCommentsSetting = true; // Set to true to remove comments
 
   // Get the folder and file structure
   const fileStructure = getDirectoryStructure(targetDir);
