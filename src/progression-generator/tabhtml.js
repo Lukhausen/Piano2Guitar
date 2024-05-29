@@ -9,7 +9,7 @@ export class TabHTML {
         this.showOpenStrings = showOpenStrings;
         this.currentIndex = 0; // Track the current index of playable chords
         this.maxChords = chordFactory.playableChords?.length ?? 0;
-        
+
 
     }
 
@@ -41,7 +41,7 @@ export class TabHTML {
         }, 200); // Match this duration with the animation duration in CSS
     }
 
-    updateChordDiagram(svgContainer, svgNameContainer, voicingInfoDiv, direction) {
+    updateChordDiagram(svgContainer, voicingInfoDiv, direction) {
         const playableChords = this.chordFactory.playableChords;
         voicingInfoDiv.innerHTML = this.currentIndex + 1 + " / " + this.maxChords
         if (this.currentIndex < playableChords.length && this.currentIndex >= 0) {
@@ -77,7 +77,6 @@ export class TabHTML {
                 // Replace the old SVG with the new one
                 svgContainer.innerHTML = '';
                 svgContainer.appendChild(newSvg);
-                svgNameContainer.innerHTML = this.chordFactory.identifier;
 
                 // Apply slide-in animation to the new SVG
                 svgContainer.classList.remove(slideOutClass);
@@ -113,64 +112,84 @@ export class TabHTML {
                         this.fingerNumbers,
                         this.showOpenStrings
                     );
+
+
                     const svg = chordDiagram.generateChordSVG();
-                    let svgInfoContainer = document.createElement('div');
-                    svgInfoContainer.classList.add("progressionGeneratorSvgInfoContainer");
 
-                    let voicingInfoContainer = document.createElement('div');
-                    voicingInfoContainer.classList.add("progressionGeneratorVoicingInfoContainer");
-
-                    let voicingInfoDiv = document.createElement('div');
-                    voicingInfoDiv.innerHTML = this.currentIndex + 1 + " / " + this.maxChords;
-
-                    let svgContainer = document.createElement('div'); // Container for chord diagrams
+                    //Container For The Acutal SVG Element
+                    let svgContainer = document.createElement('div');
                     svgContainer.classList.add("progressionGeneratorSvgContainer");
+                    svgContainer.appendChild(svg);
 
-                    let svgNameContainer = document.createElement('div'); // Container for chord diagrams
-                    svgNameContainer.innerHTML = this.chordFactory.identifier;
-                    svgNameContainer.classList.add("progressionGeneratorSvgChordName");
 
-                    // SVG for next button
+                    // Container for the ChordSwitching
+                    let chordSwitchContainer = document.createElement('div');
+                    chordSwitchContainer.classList.add("progressionGeneratorChordSwitchContainer");
+
+                    //Div For Displaying the current CHord Number
+                    let chordSwitchInfo = document.createElement('div');
+                    chordSwitchInfo.innerHTML = this.currentIndex + 1 + " / " + this.maxChords;
+
+                    //Next Button and Functions
                     const nextButton = document.createElement('div');
                     nextButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" ><path fill="currentColor" d="M579-480 285-774q-15-15-14.5-35.5T286-845q15-15 35.5-15t35.5 15l307 308q12 12 18 27t6 30q0 15-6 30t-18 27L356-115q-15 15-35 14.5T286-116q-15-15-15-35.5t15-35.5l293-293Z"/></svg>';
 
-                    nextButton.classList.add("progressionGeneratorChordButton");
+                    nextButton.classList.add("progressionGeneratorChordSwitchButton");
 
                     nextButton.onclick = () => {
                         if (this.currentIndex + 1 < this.chordFactory.playableChords.length) {
                             this.currentIndex++;
-                            this.updateChordDiagram(svgContainer, svgNameContainer, voicingInfoDiv, 'next');
+                            this.updateChordDiagram(svgContainer, chordSwitchInfo, 'next');
                         } else {
                             this.vibrateElement(svgContainer);
                         }
                     };
 
-                    // SVG for previous button
+
+                    //Previise Button and functions
                     const prevButton = document.createElement('div');
                     prevButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" ><path fill="currentColor" d="m142-480 294 294q15 15 14.5 35T435-116q-15 15-35 15t-35-15L57-423q-12-12-18-27t-6-30q0-15 6-30t18-27l308-308q15-15 35.5-14.5T436-844q15 15 15 35t-15 35L142-480Z"/></svg>';
-                    prevButton.classList.add("progressionGeneratorChordButton");
+                    prevButton.classList.add("progressionGeneratorChordSwitchButton");
 
                     prevButton.onclick = () => {
                         if (this.currentIndex > 0) {
                             this.currentIndex--;
-                            this.updateChordDiagram(svgContainer, svgNameContainer, voicingInfoDiv, 'previous');
+                            this.updateChordDiagram(svgContainer, chordSwitchInfo, 'previous');
                         } else {
                             this.vibrateElement(svgContainer);
                         }
                     };
 
-                    svgContainer.appendChild(svg);
-                    voicingInfoContainer.appendChild(prevButton);
-                    voicingInfoContainer.appendChild(voicingInfoDiv);
-                    svgInfoContainer.appendChild(svgNameContainer);
-                    voicingInfoContainer.appendChild(nextButton);
+
+                    //Adding THe Three Elements to the switch Div
+                    chordSwitchContainer.appendChild(prevButton);
+                    chordSwitchContainer.appendChild(chordSwitchInfo);
+                    chordSwitchContainer.appendChild(nextButton);
+
+
+                    //Crafting the CHordname contsainer
+                    let chordNameContainer = document.createElement('div'); // Container for chord diagrams
+                    chordNameContainer.innerHTML = this.chordFactory.identifier;
+                    chordNameContainer.classList.add("progressionGeneratorChordName");
+
+                    //Putting chordSwitchContainer and chordNameContainer into a div so they dont have any gap
+                    let chordInfoContainer = document.createElement('div');
+                    chordInfoContainer.classList.add("progressionGeneratorChordInfoContainer");
+                    chordInfoContainer.appendChild(chordNameContainer);
+
+                    chordInfoContainer.appendChild(chordSwitchContainer);
+
+
+                    //Creating the Full Container WIth everhting in it
                     let diagramsContainer = document.createElement('div');
                     diagramsContainer.classList.add("progressionGeneratorDiagramsContainer");
-
-
                     diagramsContainer.appendChild(svgContainer);
-                    diagramsContainer.appendChild(voicingInfoContainer);
-                    diagramsContainer.appendChild(svgInfoContainer);
+                    diagramsContainer.appendChild(chordInfoContainer);
+
+
+
+
+                    // Piushing It into the Giagrams
                     diagrams.push(diagramsContainer);
                 } catch (error) {
                     console.error('Error generating chord diagram:', error);
@@ -211,40 +230,78 @@ export class TabHTML {
             );
             const svg = chordDiagram.generateChordSVG();
 
+            // Container for the actual SVG element
             let svgContainer = document.createElement('div');
             svgContainer.classList.add("progressionGeneratorSvgContainer");
             svgContainer.appendChild(svg);
 
-            let voicingInfoDiv = document.createElement('div');
-            voicingInfoDiv.innerHTML = `${i + 1} / ${placeholderCount}`;
+            // Container for the chord switching
+            let chordSwitchContainer = document.createElement('div');
+            chordSwitchContainer.classList.add("progressionGeneratorChordSwitchContainer");
 
-            let svgNameContainer = document.createElement('div');
-            svgNameContainer.classList.add("progressionGeneratorSvgChordName");
-            svgNameContainer.innerHTML = `.`;
+            // Div for displaying the current chord number
+            let chordSwitchInfo = document.createElement('div');
+            let random = Math.floor(Math.random() * 500)
+            chordSwitchInfo.innerHTML = `1 / ${random}`;
 
-            let prevButton = document.createElement('div');
-            prevButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" ><path fill="currentColor" d="m142-480 294 294q15 15 14.5 35T435-116q-15 15-35 15t-35-15L57-423q-12-12-18-27t-6-30q0-15 6-30t18-27l308-308q15-15 35.5-14.5T436-844q15 15 15 35t-15 35L142-480Z"/></svg>';
-            prevButton.classList.add("progressionGeneratorChordButton");
-
-            let nextButton = document.createElement('div');
+            // Next button and functions
+            const nextButton = document.createElement('div');
             nextButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" ><path fill="currentColor" d="M579-480 285-774q-15-15-14.5-35.5T286-845q15-15 35.5-15t35.5 15l307 308q12 12 18 27t6 30q0 15-6 30t-18 27L356-115q-15 15-35 14.5T286-116q-15-15-15-35.5t15-35.5l293-293Z"/></svg>';
-            nextButton.classList.add("progressionGeneratorChordButton");
+            nextButton.classList.add("progressionGeneratorChordSwitchButton");
 
-            let voicingInfoContainer = document.createElement('div');
-            voicingInfoContainer.classList.add("progressionGeneratorVoicingInfoContainer");
-            voicingInfoContainer.appendChild(prevButton);
-            voicingInfoContainer.appendChild(voicingInfoDiv);
-            voicingInfoContainer.appendChild(nextButton);
+            nextButton.onclick = () => {
+                this.vibrateElement(svgContainer); // Placeholder does not actually switch
+            };
 
-            let diagramContainer = document.createElement('div');
-            diagramContainer.classList.add("progressionGeneratorDiagramsContainer");
-            diagramContainer.appendChild(svgContainer);
-            diagramContainer.appendChild(voicingInfoContainer);
-            diagramContainer.appendChild(svgNameContainer);
+            // Previous button and functions
+            const prevButton = document.createElement('div');
+            prevButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" ><path fill="currentColor" d="m142-480 294 294q15 15 14.5 35T435-116q-15 15-35 15t-35-15L57-423q-12-12-18-27t-6-30q0-15 6-30t18-27l308-308q15-15 35.5-14.5T436-844q15 15 15 35t-15 35L142-480Z"/></svg>';
+            prevButton.classList.add("progressionGeneratorChordSwitchButton");
 
-            diagrams.push(diagramContainer);
+            prevButton.onclick = () => {
+                this.vibrateElement(svgContainer); // Placeholder does not actually switch
+            };
+
+            // Adding the three elements to the switch div
+            chordSwitchContainer.appendChild(prevButton);
+            chordSwitchContainer.appendChild(chordSwitchInfo);
+            chordSwitchContainer.appendChild(nextButton);
+
+
+
+
+            //Crafting the CHordname contsainer
+            let chordNameContainer = document.createElement('div'); // Container for chord diagrams
+            random = Math.floor(Math.random() * 3) + 2;
+            let underscores = "_".repeat(random);
+            chordNameContainer.innerHTML = underscores; chordNameContainer.classList.add("progressionGeneratorChordName");
+
+            //Putting chordSwitchContainer and chordNameContainer into a div so they dont have any gap
+            let chordInfoContainer = document.createElement('div');
+            chordInfoContainer.classList.add("progressionGeneratorChordInfoContainer");
+            chordInfoContainer.appendChild(chordNameContainer);
+
+            chordInfoContainer.appendChild(chordSwitchContainer);
+
+
+            //Creating the Full Container WIth everhting in it
+            let diagramsContainer = document.createElement('div');
+            diagramsContainer.classList.add("progressionGeneratorDiagramsContainer");
+            diagramsContainer.appendChild(svgContainer);
+            diagramsContainer.appendChild(chordInfoContainer);
+
+
+
+
+
+
+
+
+            // Pushing it into the diagrams
+            diagrams.push(diagramsContainer);
         }
 
         return diagrams; // Return the container with all SVGs
     }
+
 }

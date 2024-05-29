@@ -10,7 +10,7 @@
     "log": false,
     "numbersToExpressions": true,
     "renameGlobals": true,
-    "renameProperties": true,
+    "renameProperties": false,
     "renamePropertiesMode": "safe",
     "reservedNames": [
         "^DragAndDropList",

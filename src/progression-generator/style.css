@@ -11,11 +11,10 @@
     --rounding: 7px;
 }
 
-.progressionGeneratorDiagramsContainer{
-    display: flex;
-    flex-direction: column;
-    gap: var(--padding);
-}
+
+
+
+
 .progressionGeneratorContainer {
     display: flex;
     gap: var(--padding);
@@ -23,40 +22,25 @@
     flex-direction: row;
 }
 
-.progressionGeneratorSvgInfoContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--padding)
-}
 
-.progressionGeneratorSvgChordName {
-    background-color: var(--light0);
-    padding: calc(var(--padding) / 2) var(--padding);
-    border-radius: var(--rounding);
-    font-weight: 800;
-    box-sizing: border-box;
-    color: var(--dark2);
-    box-shadow: 0 0 10px #00000056, inset 0 0 3px #ffffff6e;
-    position: relative;
-margin-right: calc(max(10vh, 7vw)/5);
-}
 
 .progressionGeneratorSvgContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
-    
+
 }
 
-.progressionGeneratorSvgContainer svg{
+.progressionGeneratorSvgContainer svg {
     width: calc(max(10vh, 7vw));
     height: auto;
 }
-.progressionGeneratorVoicingInfoContainer{
+
+
+
+
+.progressionGeneratorChordSwitchContainer {
     color: var(--light2);
-
-
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -65,17 +49,65 @@ margin-right: calc(max(10vh, 7vw)/5);
     font-size: calc(max(10vh, 7vw)/8)
 }
 
-.progressionGeneratorChordButton svg path{
+
+
+.progressionGeneratorChordName {
+    border-radius: var(--rounding);
+    background-color: var(--light1);
+    padding: calc(var(--padding)/2)  var(--padding);
+    font-weight: 800;
+    box-sizing: border-box;
+    color: var(--dark3);
+    box-shadow: 0 0 10px #00000056, inset 0 0 3px #ffffff6e;
+    margin-right: calc(max(10vh, 7vw)/5);
+}
+
+
+
+
+.progressionGeneratorChordSwitchButton svg path {
     fill: var(--light2);
 }
-.progressionGeneratorChordButton{
+
+.progressionGeneratorChordSwitchButton {
     display: flex;
     cursor: pointer;
 }
-.progressionGeneratorChordButton svg{
+
+.progressionGeneratorChordSwitchButton svg {
     height: calc(max(10vh, 7vw)/8);
 
 }
+
+.progressionGeneratorDiagramsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding);
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+
+.progressionGeneratorChordInfoContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @keyframes slideInRight {
@@ -85,6 +117,7 @@ margin-right: calc(max(10vh, 7vw)/5);
 
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         filter: blur(0);
@@ -100,6 +133,7 @@ margin-right: calc(max(10vh, 7vw)/5);
 
         opacity: 1;
     }
+
     to {
         transform: translateX(-50%);
         filter: blur(1);
@@ -115,6 +149,7 @@ margin-right: calc(max(10vh, 7vw)/5);
 
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         filter: blur(0);
@@ -130,6 +165,7 @@ margin-right: calc(max(10vh, 7vw)/5);
 
         opacity: 1;
     }
+
     to {
         transform: translateX(50%);
         filter: blur(1);
@@ -155,11 +191,25 @@ margin-right: calc(max(10vh, 7vw)/5);
 
 
 @keyframes vibrate {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-2px); }
-    50% { transform: translateX(2px); }
-    75% { transform: translateX(-2px); }
-    100% { transform: translateX(0); }
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-2px);
+    }
+
+    50% {
+        transform: translateX(2px);
+    }
+
+    75% {
+        transform: translateX(-2px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
 }
 
 .vibrate {
