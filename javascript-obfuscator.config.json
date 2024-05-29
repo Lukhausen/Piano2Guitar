@@ -109,7 +109,22 @@
         "/A#",
         "m/A#",
         "/B",
-        "m/B"
+        "m/B",
+
+
+
+
+        "Major",
+        "Minor",
+        "Minor Pentatonic",
+        "Major Pentatonic",
+        "Harmonic Minor",
+        "Blues",
+        "Mixolydian",
+        "Dorian",
+        "Phrygian",
+        "Lydian",
+        "Locrian"
     ],
     "selfDefending": true,
     "simplify": true,

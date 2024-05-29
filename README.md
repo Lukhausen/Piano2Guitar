@@ -53,7 +53,7 @@ The `.parcelrc` file configures [Parcel](https://parceljs.org/), a web applicati
 
 The `javascript-obfuscator.config.json` file contains settings for the [JavaScript Obfuscator](https://github.com/javascript-obfuscator/javascript-obfuscator). These settings help obfuscate the JavaScript code to make it more difficult to understand and reverse-engineer. For more information on the available settings, refer to the [JavaScript Obfuscator README](https://github.com/javascript-obfuscator/javascript-obfuscator?tab=readme-ov-file#preset-options).
 
-When adding new Chords, make sure that the Names of them are in the javascript-obfuscator.config.json reservedNames. Otherwise they will be Gibberish.
+When adding new Chords, make sure that the Names of them are in the javascript-obfuscator.config.json reservedNames. Otherwise they will be Gibberish. The Same For the Scale Names.
 
 ### package.json
 
