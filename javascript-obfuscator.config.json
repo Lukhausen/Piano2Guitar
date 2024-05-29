@@ -11,21 +11,9 @@
     "numbersToExpressions": true,
     "renameGlobals": true,
     "renameProperties": true,
-    "renamePropertiesMode": "safe",
+    "renamePropertiesMode": "unsafe",
     "reservedNames": [
-        "^DragAndDropList",
-        "^Piano",
-        "^Chord",
-        "^ChordLibrary",
-        "^MIDIAccessManager",
-        "^ProgressionGenerator",
         "^settings",
-        "^noteToNumber",
-        "^numberToNote",
-        "^TabGenerator",
-        "^ChordFactory",
-        "^TabHTML",
-        "^MAX_FRETS",
         "^ChordVoicing",
         "^clearPiano",
         "^playPiano",
@@ -37,7 +25,7 @@
 
 
 
-
+        " ",
         "m",
         "7",
         "M7",

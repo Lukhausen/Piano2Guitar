@@ -40,7 +40,7 @@ export class ChordLibrary {
         this.noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
         this.chordStructures = {
-            '': { notes: [0, 4, 7], priority: 1 }, // Major
+            ' ': { notes: [0, 4, 7], priority: 1 }, // Major
             'm': { notes: [0, 3, 7], priority: 2 }, // Minor
             '7': { notes: [0, 4, 7, 10], priority: 3 }, // Dominant 7th
             'M7': { notes: [0, 4, 7, 11], priority: 4 }, // Major 7th
