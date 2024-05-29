@@ -53,6 +53,8 @@ The `.parcelrc` file configures [Parcel](https://parceljs.org/), a web applicati
 
 The `javascript-obfuscator.config.json` file contains settings for the [JavaScript Obfuscator](https://github.com/javascript-obfuscator/javascript-obfuscator). These settings help obfuscate the JavaScript code to make it more difficult to understand and reverse-engineer. For more information on the available settings, refer to the [JavaScript Obfuscator README](https://github.com/javascript-obfuscator/javascript-obfuscator?tab=readme-ov-file#preset-options).
 
+When adding new Chords, make sure that the Names of them are in the javascript-obfuscator.config.json reservedNames. Otherwise they will be Gibberish.
+
 ### package.json
 
 The `package.json` file is essential for Node.js projects. It includes metadata about the project and lists the dependencies. In this project, there is a `staticFiles` section that defines the static audio files to be bundled by the Parcel plugin `parcel-reporter-static-files-copy`. For more details, check the [parcel-reporter-static-files-copy documentation](https://www.npmjs.com/package/parcel-reporter-static-files-copy).

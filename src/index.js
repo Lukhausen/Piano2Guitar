@@ -116,7 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     document.querySelector('.pianoContainer').addEventListener('notesChanged', async (e) => {
-        console.log('Piano notes changed:', e.detail.notes, e.detail.rootNote);
         let items
         if (e.detail.notes.length > 0) {
             console.log("Reviced notesChanged Event: " + e.detail.notes + " Root: " + e.detail.rootNote)
@@ -245,10 +244,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const soundQualitySlider = document.getElementById("soundQualitySlider");
     soundQualitySlider.addEventListener('input', async (e) => {
         soundQualityValue = e.target.value / 100;
-        console.log("Slider Value:", soundQualityValue);
-
+        console.log("Slider Value:", soundQualityValue, progressionGenerator);
         await updateProgressionDynamic(soundQualityValue)
-        console.log(progressionGenerator)
     });
 
     async function updateProgressionDynamic(soundQualityValue) {
@@ -317,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const displayElement = document.getElementById(`settingsStringValue${index + 1}`);
 
             displayElement.innerHTML = numberToNote(element);
-            selectElement.value = element % 12
+            selectElement.value = element
         });
     }
 
@@ -345,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function setTuning(tuning) {
-        const tuningArray = tuning.split(' ').map(noteToNumber);
+        const tuningArray = tuning.split(' ').map(Number);
         settings.tuning = tuningArray;
 
         tuningArray.forEach((value, index) => {
@@ -371,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to compare current tuning with common tunings
     function checkCommonTunings() {
         const dropdown = document.getElementById('settingsCommonTunings');
-        const currentTuning = settings.tuning.map(numberToNote).join(' ');
+        const currentTuning = settings.tuning.join(' ');
 
         let found = false;
         for (let i = 0; i < dropdown.options.length; i++) {
