@@ -116,7 +116,9 @@
     font-weight: 900;
     text-align: left;
     /*     border: 1px, solid #fff;
+    
  */
+ min-height: 30px;
     border-right: var(--padding) var(--light0) solid;
 
 
@@ -148,9 +150,10 @@
 .settingsStringSlider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    height: calc(2*var(--padding));
+    aspect-ratio: 1 / 1;
     width: calc(2*var(--padding));
-    background: #ffa600;
+    min-width: 25px;
+    background: var(--accent1);
     cursor: pointer;
     border-radius: 100%;
     box-shadow: 0 0 1vw rgba(0, 0, 0, 0.312);
@@ -162,7 +165,7 @@
     appearance: none;
     height: calc(2*var(--padding));
     width: calc(2*var(--padding));
-    background: #ffa600;
+    background: var(--accent1);
     cursor: pointer;
     border-radius: 100%;
 
@@ -285,7 +288,7 @@ select option {
     content: attr(data-fret);
     /* Use the data-fret attribute to set the content */
     border-radius: 100%;
-    width: 50%;
+    height: 90%;
     aspect-ratio: 1 / 1;
     background-color: var(--accent1);
     color: #fff;

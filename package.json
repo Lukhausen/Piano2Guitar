@@ -6,8 +6,7 @@
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
     "start": "npx parcel src/index.html",
-    "build": "parcel build src/index.html",
-    "buildA": "parcel build src/index.html --reporter @parcel/reporter-bundle-analyzer"
+    "build": "node build.js"
   },
   "staticFiles": {
     "staticPath": "./src/audio",

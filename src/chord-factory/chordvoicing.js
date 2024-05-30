@@ -103,6 +103,12 @@ export class ChordVoicing {
     this.chordSpacing = totalSpacing;
   }
 
+
+
+
+
+
+
   static PLAYABILITY_WEIGHTS = {
     fingersUsed: 1,
     fingerSpread: 4,
@@ -132,7 +138,7 @@ export class ChordVoicing {
       details.mutedDifficulty * ChordVoicing.PLAYABILITY_WEIGHTS.mutedDifficulty +
       details.mutedReachability * ChordVoicing.PLAYABILITY_WEIGHTS.mutedReachability +
       details.barreAmount * ChordVoicing.PLAYABILITY_WEIGHTS.barreAmount
-    ) / Object.keys(ChordVoicing.PLAYABILITY_WEIGHTS).length;
+    ) / Object.values(ChordVoicing.PLAYABILITY_WEIGHTS).reduce((sum, weight) => sum + weight, 0);
 
     this.playabilityRating = details.total;
   }
@@ -229,32 +235,37 @@ export class ChordVoicing {
 
 
   static SOUND_QUALITY_WEIGHTS = {
-    harmonicCompleteness: 1,
+    harmonicCompleteness: 3,
     openStrings: 1,
-    playedStrings: 1,
-    fretBoardHeight: 0,
-    voicingRange: 0,
-    doubleNotes: 1
+    playedStrings: 2,
+    fretBoardHeight: 1,
+    voicingRange: 4,
+    doubleNotes: 1,
+    voicingExp: 3,
   };
+
 
   // 1 Best Sound, 0 worst sound
   rateSoundQuality() {
     const details = this.ratingDetails.soundQuality;
-    details.harmonicCompleteness = this.assessSoundHarmonicCompleteness();
-    details.openStrings = this.assessSoundOpenStrings();
-    details.playedStrings = this.assessSoundPlayedStrings();
-    details.fretBoardHeight = this.assessSoundFretBoardHeight();
-    details.voicingRange = this.assessSoundVoicingRange();
-    details.doubleNotes = this.assessSoundDoubleNotes();
+    details.harmonicCompleteness = this.assessSoundHarmonicCompleteness() * ChordVoicing.SOUND_QUALITY_WEIGHTS.harmonicCompleteness;
+    details.openStrings = this.assessSoundOpenStrings() * ChordVoicing.SOUND_QUALITY_WEIGHTS.openStrings;
+    details.playedStrings = this.assessSoundPlayedStrings() * ChordVoicing.SOUND_QUALITY_WEIGHTS.playedStrings;
+    details.fretBoardHeight = this.assessSoundFretBoardHeight() * ChordVoicing.SOUND_QUALITY_WEIGHTS.fretBoardHeight;
+    details.voicingRange = this.assessSoundVoicingRange() * ChordVoicing.SOUND_QUALITY_WEIGHTS.voicingRange;
+    details.doubleNotes = this.assessSoundDoubleNotes() * ChordVoicing.SOUND_QUALITY_WEIGHTS.doubleNotes;
+    details.voicingExp = this.assesSoundVoicingExp() * ChordVoicing.SOUND_QUALITY_WEIGHTS.voicingExp;
 
     details.total = (
-      details.harmonicCompleteness * ChordVoicing.SOUND_QUALITY_WEIGHTS.harmonicCompleteness +
-      details.openStrings * ChordVoicing.SOUND_QUALITY_WEIGHTS.openStrings +
-      details.playedStrings * ChordVoicing.SOUND_QUALITY_WEIGHTS.playedStrings +
-      details.fretBoardHeight * ChordVoicing.SOUND_QUALITY_WEIGHTS.fretBoardHeight +
-      details.voicingRange * ChordVoicing.SOUND_QUALITY_WEIGHTS.voicingRange +
-      details.doubleNotes * ChordVoicing.SOUND_QUALITY_WEIGHTS.doubleNotes
-    ) / Object.keys(ChordVoicing.SOUND_QUALITY_WEIGHTS).length;
+      details.harmonicCompleteness +
+      details.openStrings +
+      details.playedStrings +
+      details.fretBoardHeight +
+      details.voicingRange +
+      details.doubleNotes +
+      details.voicingExp
+
+    ) / Object.values(ChordVoicing.SOUND_QUALITY_WEIGHTS).reduce((sum, weight) => sum + weight, 0);
 
     this.soundQualityRating = details.total;
   }
@@ -304,7 +315,7 @@ export class ChordVoicing {
   }
 
   assessSoundFretBoardHeight() {
-    return Math.max(0, (1 - (this.minAboveZero / 12)))
+    return Math.max(0, (1- (this.minAboveZero / 12)))
   }
 
 
@@ -345,6 +356,41 @@ export class ChordVoicing {
       }
     }
     return 1 - (doubleNotes / 5)
+  }
+
+  assesSoundVoicingExp() {
+    // The Closer to 1 the Bigger are the Gaps Between the Low Notes
+    // The CLoser to 0, the more it is equal spaces are between the Notes
+    let decayParameter = 0.5
+    this.ratingDetails.soundQuality.expDeltaArray = [0,0,0,0,0,0]
+    let min = 99
+    let max = -1
+    this.actuallyPlayedNotes.forEach(element => {
+      if (element > max) {
+        max = element
+      }
+      if (element < min && element != -1) {
+        min = element
+      }
+    })
+    let difference = max - min
+
+    let desiredpoint
+    let comultative_delta = 0
+    let unmuted_strings = 0
+    for (let i = 0; i < 6; i++) {
+      //If Not Muted, get the Desired exponential Decay point
+      if (this.actuallyPlayedNotes[i] != -1) {
+        unmuted_strings++
+        desiredpoint = ((difference) * (1 - Math.exp(-decayParameter * i))) + min;
+        comultative_delta +=  Math.abs(desiredpoint - this.actuallyPlayedNotes[i])
+        this.ratingDetails.soundQuality.expDeltaArray[i] = desiredpoint
+      }
+    }
+    this.ratingDetails.soundQuality.expComultativeDelta = comultative_delta
+
+    //lessdelta means Better sound
+    return 1 - Math.min((comultative_delta / (difference*unmuted_strings)), 1)
   }
 }
 /*
