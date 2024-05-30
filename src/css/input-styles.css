@@ -59,24 +59,24 @@ html {
     font-weight: 100;
 }
 
-.mainHeader{
-font-weight: 300;
-display: flex;
-flex-direction: row;
-gap: var(--padding);
+.mainHeader {
+    font-weight: 300;
+    display: flex;
+    flex-direction: row;
+    gap: var(--padding);
 }
 
-.versionDescription{
+.versionDescription {
     font-size: medium;
     font-weight: 900;
 }
 
-.versionInformation{
+.versionInformation {
     font-size: small;
     font-weight: 100;
 }
 
-body{
+body {
     margin: 0;
     width: 100vw;
     display: flex;
@@ -421,7 +421,7 @@ body{
 }
 
 @media screen and (max-height: 800px) {
-    .inputWrapper{
+    .inputWrapper {
         height: 70vh;
     }
 }

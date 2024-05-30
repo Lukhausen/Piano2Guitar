@@ -116,28 +116,29 @@ export class ChordVoicing {
     fretHeight: 1,
     mutedDifficulty: 2,
     mutedReachability: 2,
-    barreAmount: 1
+    barreAmount: 1,
+    
   };
 
   // 0 is Badly Playable and 1 Is good PLayability
   ratePlayability() {
     const details = this.ratingDetails.playability;
-    details.fingersUsed = this.assessPlayabilityFingersUsed();
-    details.fingerSpread = this.assessPlayabilityFingerSpread();
-    details.mutedAmount = this.assessPlayabilityMutedAmount();
-    details.fretHeight = this.assessPlayabilityFretHeight();
-    details.mutedDifficulty = this.assessPlayabilityMutedDifficulty();
-    details.mutedReachability = this.assessPlayabilityMutedReachability();
-    details.barreAmount = this.assessPlayabilityBarreAmount();
+    details.fingersUsed = this.assessPlayabilityFingersUsed() * ChordVoicing.PLAYABILITY_WEIGHTS.fingersUsed
+    details.fingerSpread = this.assessPlayabilityFingerSpread() * ChordVoicing.PLAYABILITY_WEIGHTS.fingerSpread
+    details.mutedAmount = this.assessPlayabilityMutedAmount() * ChordVoicing.PLAYABILITY_WEIGHTS.mutedAmount
+    details.fretHeight = this.assessPlayabilityFretHeight() * ChordVoicing.PLAYABILITY_WEIGHTS.fretHeight
+    details.mutedDifficulty = this.assessPlayabilityMutedDifficulty() * ChordVoicing.PLAYABILITY_WEIGHTS.mutedDifficulty
+    details.mutedReachability = this.assessPlayabilityMutedReachability() * ChordVoicing.PLAYABILITY_WEIGHTS.mutedReachability
+    details.barreAmount = this.assessPlayabilityBarreAmount() * ChordVoicing.PLAYABILITY_WEIGHTS.barreAmount
 
     details.total = (
-      details.fingersUsed * ChordVoicing.PLAYABILITY_WEIGHTS.fingersUsed +
-      details.fingerSpread * ChordVoicing.PLAYABILITY_WEIGHTS.fingerSpread +
-      details.mutedAmount * ChordVoicing.PLAYABILITY_WEIGHTS.mutedAmount +
-      details.fretHeight * ChordVoicing.PLAYABILITY_WEIGHTS.fretHeight +
-      details.mutedDifficulty * ChordVoicing.PLAYABILITY_WEIGHTS.mutedDifficulty +
-      details.mutedReachability * ChordVoicing.PLAYABILITY_WEIGHTS.mutedReachability +
-      details.barreAmount * ChordVoicing.PLAYABILITY_WEIGHTS.barreAmount
+      details.fingersUsed +
+      details.fingerSpread +
+      details.mutedAmount +
+      details.fretHeight +
+      details.mutedDifficulty +
+      details.mutedReachability +
+      details.barreAmount
     ) / Object.values(ChordVoicing.PLAYABILITY_WEIGHTS).reduce((sum, weight) => sum + weight, 0);
 
     this.playabilityRating = details.total;
@@ -315,7 +316,7 @@ export class ChordVoicing {
   }
 
   assessSoundFretBoardHeight() {
-    return Math.max(0, (1- (this.minAboveZero / 12)))
+    return Math.max(0, (1 - (this.minAboveZero / 12)))
   }
 
 
@@ -362,7 +363,7 @@ export class ChordVoicing {
     // The Closer to 1 the Bigger are the Gaps Between the Low Notes
     // The CLoser to 0, the more it is equal spaces are between the Notes
     let decayParameter = 0.5
-    this.ratingDetails.soundQuality.expDeltaArray = [0,0,0,0,0,0]
+    this.ratingDetails.soundQuality.expDeltaArray = [0, 0, 0, 0, 0, 0]
     let min = 99
     let max = -1
     this.actuallyPlayedNotes.forEach(element => {
@@ -383,14 +384,14 @@ export class ChordVoicing {
       if (this.actuallyPlayedNotes[i] != -1) {
         unmuted_strings++
         desiredpoint = ((difference) * (1 - Math.exp(-decayParameter * i))) + min;
-        comultative_delta +=  Math.abs(desiredpoint - this.actuallyPlayedNotes[i])
+        comultative_delta += Math.abs(desiredpoint - this.actuallyPlayedNotes[i])
         this.ratingDetails.soundQuality.expDeltaArray[i] = desiredpoint
       }
     }
     this.ratingDetails.soundQuality.expComultativeDelta = comultative_delta
 
     //lessdelta means Better sound
-    return 1 - Math.min((comultative_delta / (difference*unmuted_strings)), 1)
+    return 1 - Math.min((comultative_delta / (difference * unmuted_strings)), 1)
   }
 }
 /*

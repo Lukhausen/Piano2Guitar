@@ -216,13 +216,12 @@ export class TabHTML {
             });
 
             const fingerPositions = [0, 0, 0, 0, 0, 0];
-            const barreSize = 0;
 
             const chordDiagram = new TabGenerator(
                 voicing,
                 fingerPositions,
                 0,
-                [{ fromString: 6, toString: 1, fret: barreSize }],
+                [],
                 this.color,
                 this.invertColor(this.color),
                 this.fingerNumbers,
@@ -274,7 +273,18 @@ export class TabHTML {
             let chordNameContainer = document.createElement('div'); // Container for chord diagrams
             random = Math.floor(Math.random() * 3) + 2;
             let underscores = "_".repeat(random);
-            chordNameContainer.innerHTML = underscores; chordNameContainer.classList.add("progressionGeneratorChordName");
+            let easteregg = Math.floor(Math.random() * 2000);
+            if (easteregg == 1){
+                underscores = "Hannah"
+            }
+            if (easteregg == 2){
+                underscores = "Lukas"
+            }
+            if (easteregg == 3){
+                underscores = "Marc"
+            }
+            chordNameContainer.innerHTML = underscores;
+            chordNameContainer.classList.add("progressionGeneratorChordName");
 
             //Putting chordSwitchContainer and chordNameContainer into a div so they dont have any gap
             let chordInfoContainer = document.createElement('div');
