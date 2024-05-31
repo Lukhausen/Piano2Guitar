@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let [progressionHTML, capo] = await progressionGenerator.getProgressionEasyHTML();
         document.getElementById("easyProgressionWrapper").innerHTML = "";
         document.getElementById("easyProgressionWrapper").appendChild(progressionHTML);
-        document.getElementById("easyProgressionCapo").innerHTML = "Capo: "+capo+"fr";
+        document.getElementById("easyProgressionCapo").innerHTML = "Capo: " + capo + "fr";
 
     };
 
@@ -269,36 +269,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+
+
+
+
+
+
+
+    //ADVANCED SETTINGS
+    window.toggleAdvSettings = async function () {
+
+        let advSettingsScreen = document.getElementById("settingsAdvanced");
+        let advSettingsButton = document.getElementById("settingsAdvancedButton");
+        advSettingsScreen.classList.toggle("visible")
+
+    }
+
     let reloadFlag = false;
 
     // Make Settings Button functional
     window.toggleSettings = async function () {
         let settingsScreen = document.getElementById("settings");
         let closeSettings = document.getElementById("closeSettings");
-    
+        let advSettingsScreen = document.getElementById("settingsAdvanced");
+
+
         console.log("Toggle Settings clicked");
-    
+
+        // If the main settings are being closed, also close the advanced settings
+        if (settingsScreen.classList.contains('visible') && advSettingsScreen.classList.contains('visible')) {
+            advSettingsScreen.classList.remove('visible');
+        }
+
         // Toggle a class that controls the visibility and opacity
         settingsScreen.classList.toggle('visible');
         closeSettings.classList.toggle('visible');
-    
+
         console.log("Settings screen visibility toggled:", settingsScreen.classList.contains('visible'));
-    
+
         if (reloadFlag) {
             console.log("Reload flag is true, updating tuning settings.");
             localStorage.setItem('guitarTuning', JSON.stringify(settings.tuning));
-    
+
             console.log("New tuning saved to localStorage:", settings.tuning);
-    
+
             progressionGenerator.reloadProgression();
             console.log("Progression reloaded.");
-            
+
             updateProgressionDynamic(soundQualityValue);
             console.log("Progression dynamic updated.");
-    
+
             updateProgressionEasy();
             console.log("Progression easy updated.");
-    
+
             reloadFlag = false;
         }
     };
@@ -440,16 +463,68 @@ document.addEventListener('DOMContentLoaded', () => {
             const storedFretRange = parseInt(localStorage.getItem('fretRange'));
             setFretRange(storedFretRange);
             console.log("Stored fret range from localStorage:", storedFretRange);
-        } else{
+        } else {
             setFretRange(settings.fingerFretRange)
         }
     }
 
-    // Initialize the fret range setting
+
+
+
+
+
+
+    //ADVANCED
+    //settingsmutePermutations
+    document.getElementById('settingsmutePermutations').addEventListener('change', function () {
+        settings.mutePermutations = this.checked;
+        localStorage.setItem('mutePermutations', this.checked);
+        reloadFlag = true; // Ensure the progression is updated
+        console.log(`Only mute if necessary set to: ${this.checked}`);
+    });
+
+    function loadMuteSetting() {
+        console.log("Loading mute setting...");
+        if (localStorage.getItem('mutePermutations') !== null) {
+            const storedMuteSetting = JSON.parse(localStorage.getItem('mutePermutations'));
+            settings.mutePermutations = storedMuteSetting;
+            document.getElementById('settingsmutePermutations').checked = storedMuteSetting;
+            console.log("Stored mute setting from localStorage:", storedMuteSetting);
+        } else {
+            settings.mutePermutations = false; // Default value
+            document.getElementById('settingsmutePermutations').checked = false;
+        }
+    }
+
+    //startWithRoot
+    document.getElementById('settingsStartWithRoot').addEventListener('change', function () {
+        settings.startWithRoot = this.checked;
+        localStorage.setItem('startWithRoot', this.checked);
+        reloadFlag = true; // Ensure the progression is updated
+        console.log(`Start with root set to: ${this.checked}`);
+    });
+
+    function loadRootSetting() {
+        console.log("Loading root setting...");
+        if (localStorage.getItem('startWithRoot') !== null) {
+            const storedRootSetting = JSON.parse(localStorage.getItem('startWithRoot'));
+            settings.startWithRoot = storedRootSetting;
+            document.getElementById('settingsStartWithRoot').checked = storedRootSetting;
+            console.log("Stored root setting from localStorage:", storedRootSetting);
+        } else {
+            settings.startWithRoot = true; // Default value
+            document.getElementById('settingsStartWithRoot').checked = true;
+        }
+    }
+
+
+
+
     loadFretRangeSetting();
     loadTuningSettings();
-    checkCommonTunings()
-    //Update the Progressions to get the PLaceholders:
-    updateProgressionDynamic(soundQualityValue)
-    updateProgressionEasy()
+    loadMuteSetting();
+    loadRootSetting()
+    checkCommonTunings();
+    updateProgressionDynamic(soundQualityValue);
+    updateProgressionEasy();
 })

@@ -13,7 +13,9 @@ class Settings {
   constructor() {
     this._tuning = [40, 45, 50, 55, 59, 64];
     this._fingerFretRange = 4;
-    this._onlyMuteIfNecessary = true
+    this._mutePermutations = false
+    this._startWithRoot = true;
+
   }
 
   /**
@@ -57,26 +59,47 @@ class Settings {
       throw new Error("Invalid fingerFretRange value. It must be a positive integer.");
     }
   } /**
-  * Get the current onlyMuteIfNecessary value.
-  * @returns {boolean} The current onlyMuteIfNecessary value.
+  * Get the current mutePermutations value.
+  * @returns {boolean} The current mutePermutations value.
   */
 
-  get onlyMuteIfNecessary() {
-    return this._onlyMuteIfNecessary;
+  get mutePermutations() {
+    return this._mutePermutations;
   }
 
   /**
-   * Set a new onlyMuteIfNecessary value.
-   * @param {boolean} value - A boolean representing the new onlyMuteIfNecessary value.
+   * Set a new mutePermutations value.
+   * @param {boolean} value - A boolean representing the new mutePermutations value.
    * @throws {Error} Throws an error if the value is not a boolean.
    */
-  set onlyMuteIfNecessary(value) {
+  set mutePermutations(value) {
     if (typeof value === 'boolean') {
-      this._onlyMuteIfNecessary = value;
+      this._mutePermutations = value;
     } else {
-      throw new Error("Invalid onlyMuteIfNecessary value. It must be a boolean.");
+      throw new Error("Invalid mutePermutations value. It must be a boolean.");
     }
   }
+  /**
+  * Get the current startWithRoot value.
+  * @returns {boolean} The current startWithRoot value.
+  */
+  get startWithRoot() {
+    return this._startWithRoot;
+  }
+
+  /**
+   * Set a new startWithRoot value.
+   * @param {boolean} value - A boolean representing the new startWithRoot value.
+   * @throws {Error} Throws an error if the value is not a boolean.
+   */
+  set startWithRoot(value) {
+    if (typeof value === 'boolean') {
+      this._startWithRoot = value;
+    } else {
+      throw new Error("Invalid startWithRoot value. It must be a boolean.");
+    }
+  }
+
 }
 
 export const settings = new Settings();

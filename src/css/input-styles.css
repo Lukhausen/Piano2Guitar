@@ -54,7 +54,7 @@ html {
 .header {
     display: flex;
     justify-content: space-between;
-    align-items: end;
+    align-items: start;
     font-size: max(1.6vw, 3vh);
     font-weight: 100;
 }
@@ -101,7 +101,18 @@ body {
 
 #settingsIcon {
     z-index: 10;
+    filter: drop-shadow(0px 0px 5px #0000006d);
 }
+
+.settingsWrapper{
+    display: flex;
+    font-size:large;
+    font-weight: 500;
+    align-items: start;
+    justify-content: center;
+    gap: var(--padding);
+}
+
 
 .inputWrapper {
     display: flex;
@@ -145,18 +156,18 @@ body {
 
 }
 
-.visualPianoIcon {
+.visualIcon {
     width: max(3vh, 1.5vw);
     height: auto;
     transition: 0.2s;
 }
 
-.visualPianoIcon:hover {
+.visualIcon:hover {
     cursor: pointer;
     transform: scale(1.05);
 }
 
-.visualPianoIcon:active {
+.visualIcon:active {
     cursor: pointer;
     transform: scale(0.8);
 }
@@ -415,9 +426,10 @@ body {
         --padding: 7px;
     }
 
-    .visualPianoIcon {
-        width: max(3vh, 3vw);
+    .visualIcon {
+        width: max(4vh, 3vw);
     }
+    .settingsWrapperText{display: none;}
 }
 
 @media screen and (max-height: 800px) {

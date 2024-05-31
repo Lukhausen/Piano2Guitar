@@ -25,6 +25,9 @@
     visibility: visible;
 }
 
+
+
+
 .settingsInfo {
     display: flex;
     align-items: center;
@@ -40,13 +43,14 @@
     text-transform: capitalize;
 }
 
-#settingsFooter{
+#settingsFooter {
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
+    justify-content: space-between;
+    align-items: end;
+    z-index: 7;
 }
 
-#settingsFooter div:hover{
+#settingsFooter div:hover {
     cursor: pointer;
 }
 
@@ -135,7 +139,7 @@
     /*     border: 1px, solid #fff;
     
  */
- min-height: 30px;
+    min-height: 30px;
     border-right: var(--padding) var(--light0) solid;
 
 
@@ -346,10 +350,12 @@ select option {
         height: 100vh;
         width: 100vw;
     }
+
     .settingsStringTuning {
         width: 80vw;
     }
-    .settingsFretSliderWrapper{
+
+    .settingsFretSliderWrapper {
         width: 80vw;
 
     }

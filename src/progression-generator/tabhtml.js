@@ -194,13 +194,31 @@ export class TabHTML {
                 } catch (error) {
                     console.error('Error generating chord diagram:', error);
                 }
+            } else {
+                let diagramsContainer = this.generatePlaceholder(1,this.chordFactory.identifier)
+
+                diagramsContainer[0].style.opacity = 0.4
+                diagramsContainer[0].style.filter = "blur(3px)"
+
+                let impossibleWrapper = []
+                impossibleWrapper[0] = document.createElement('div');
+                impossibleWrapper[0].appendChild(diagramsContainer[0])
+                impossibleWrapper[0].classList.add("progressionGeneratorImpossibleWrapper");
+
+
+                let impossible = document.createElement('div');
+                impossible.innerHTML = "<strong>IMPOSSIBLE</strong><br>with these<br>settings"
+                impossible.classList.add("progressionGeneratorImpossible");
+                impossibleWrapper[0].appendChild(impossible)
+
+                return impossibleWrapper
             }
         }
 
         return diagrams; // Return the container with all SVGs
     }
 
-    generatePlaceholder(placeholderCount = 4) {
+    generatePlaceholder(placeholderCount = 4, label) {
         let diagrams = [];
 
         for (let i = 0; i < placeholderCount; i++) {
@@ -271,19 +289,26 @@ export class TabHTML {
 
             //Crafting the CHordname contsainer
             let chordNameContainer = document.createElement('div'); // Container for chord diagrams
-            random = Math.floor(Math.random() * 3) + 2;
-            let underscores = "_".repeat(random);
-            let easteregg = Math.floor(Math.random() * 2000);
-            if (easteregg == 1){
-                underscores = "Hannah"
-            }
-            if (easteregg == 2){
-                underscores = "Lukas"
-            }
-            if (easteregg == 3){
-                underscores = "Marc"
-            }
+            let underscores = ""
+
+            if (!label) {
+                console.log("Label",label)
+                random = Math.floor(Math.random() * 3) + 2;
+
+                underscores = "_".repeat(random);
+                let easteregg = Math.floor(Math.random() * 2000);
+                if (easteregg == 1) {
+                    underscores = "Hannah"
+                }
+                if (easteregg == 2) {
+                    underscores = "Lukas"
+                }
+                if (easteregg == 3) {
+                    underscores = "Marc"
+                }
+            } else { underscores = label }
             chordNameContainer.innerHTML = underscores;
+
             chordNameContainer.classList.add("progressionGeneratorChordName");
 
             //Putting chordSwitchContainer and chordNameContainer into a div so they dont have any gap

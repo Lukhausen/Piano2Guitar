@@ -54,7 +54,7 @@
 .progressionGeneratorChordName {
     border-radius: var(--rounding);
     background-color: var(--light1);
-    padding: calc(var(--padding)/2)  var(--padding);
+    padding: calc(var(--padding)/2) var(--padding);
     font-weight: 800;
     box-sizing: border-box;
     color: var(--dark3);
@@ -103,6 +103,19 @@
 
 
 
+
+.progressionGeneratorImpossibleWrapper {
+    position: relative;
+}
+
+.progressionGeneratorImpossible {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(0px 0px 5px #00000076);
+    text-align: center;
+}
 
 
 

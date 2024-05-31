@@ -21,7 +21,7 @@ export class ChordVoicing {
    * @param {Array<number>} chordFactoryNotes - Array of note indices used in the chord (0-11 representing C-B).
    * @param {number} chordFactoryRoot - The root note of the chord.
    */
-  constructor(voicing, fingerPositions, barres, minAboveZero, fingersUsed, chordFactoryNotes, chordFactoryRoot) {
+  constructor(voicing, fingerPositions, barres, minAboveZero, fingersUsed, chordFactoryNotes, chordFactoryRoot, actuallyPlayedNotes) {
 
 
     this.voicing = voicing;
@@ -33,15 +33,9 @@ export class ChordVoicing {
     this.chordSpacing = 0
     this.chordFactoryNotes = chordFactoryNotes
     this.chordFactoryRoot = chordFactoryRoot
-    this.actuallyPlayedNotes = [0, 0, 0, 0, 0, 0]
+    this.actuallyPlayedNotes = actuallyPlayedNotes
 
-    for (let i = 0; i < 6; i++) {
-      if (this.voicing[i] >= 0) {
-        this.actuallyPlayedNotes[i] = (this.voicing[i] + settings.tuning[i])
-      } else {
-        this.actuallyPlayedNotes[i] = this.voicing[i]
-      }
-    }
+
 
     this.playabilityRating = 0;
     this.soundQualityRating = 0; // New property to store sound quality rating
@@ -400,12 +394,12 @@ export class ChordVoicing {
     let playedNotesModulo = this.actuallyPlayedNotes.map(note => note % 12)
     let overlap = new Set();
     let minStrings = Math.min(6, this.chordFactoryNotes.length);
-    for (let string = 0; string <minStrings; string++) {
-      if (this.chordFactoryNotes.includes(playedNotesModulo[5-string])) {
-        overlap.add(playedNotesModulo[5-string]);
+    for (let string = 0; string < minStrings; string++) {
+      if (this.chordFactoryNotes.includes(playedNotesModulo[5 - string])) {
+        overlap.add(playedNotesModulo[5 - string]);
       }
     }
-    this.ratingDetails.soundQuality.highStringHarmonicOverlap = overlap.size+" / "+minStrings
+    this.ratingDetails.soundQuality.highStringHarmonicOverlap = overlap.size + " / " + minStrings
     return overlap.size / minStrings;
   }
 }

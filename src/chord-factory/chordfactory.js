@@ -7,7 +7,7 @@ export class ChordFactory {
     console.log("ChordFactory Recieved Notes: ", chord.notes)
     this.identifier = chord.name
     this.notes = chord.notes;
-    this.startWithRoot = startWithRoot
+    settings.startWithRoot = settings.startWithRoot
     this.root = chord.rootNote
     this.tuning = tuning;
     this.fingerPositions = this.calculateValidFingerPositions();
@@ -53,7 +53,7 @@ export class ChordFactory {
         const validPositions = this.getValidFretPositionsForNote(chordIndex, stringIndex % 12);
         positions.push(...validPositions);
       }
-      if (!settings.onlyMuteIfNecessary) {
+      if (settings.mutePermutations) {
         positions.push(-1); // Add -1 only if there is no 0
       }
       positions.sort((a, b) => a - b); // Sort the positions from lowest to highest
@@ -124,10 +124,10 @@ export class ChordFactory {
         if (fingerIndexStorage[string] < fingerIndexLength[string]) {
           // CHeck if its in range for Valid CHord, if so add it 
           if (this.fingerPositions[string][fingerIndexStorage[string]] < fret + settings.fingerFretRange) {
-            console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]])
-            console.log("fret, string", fret, string)
+            //  console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]])
+            //console.log("fret, string", fret, string)
             maskScope[string].push(this.fingerPositions[string][fingerIndexStorage[string]])
-            console.log("maskScope" ,structuredClone(maskScope))
+            // console.log("maskScope" ,structuredClone(maskScope))
 
             for (let pos1 of maskScope[(string + 1) % 6]) {
               for (let pos2 of maskScope[(string + 2) % 6]) {
@@ -143,7 +143,6 @@ export class ChordFactory {
                       newVoicing[(string + 5) % 6] = pos5
 
 
-                      console.log("NEW: ", newVoicing)
                       chords.push(newVoicing);
                     }
                   }
@@ -183,7 +182,7 @@ export class ChordFactory {
 
     allChordsCopy.forEach(voicing => {
       // Start By Muting All Chords
-      if (this.startWithRoot) {
+      if (settings.startWithRoot) {
         for (let string = 0; string < 6; string++) {
           if (voicing[string] == -1) {
             continue;
@@ -239,7 +238,7 @@ export class ChordFactory {
           barreUseFingers,
           minAboveZero,
           this.notes,
-          this.startWithRoot ? this.root : -1
+          settings.startWithRoot ? this.root : -1
         );
 
         playableChordsSet.add(JSON.stringify(newVoicing));
@@ -278,6 +277,7 @@ export class ChordFactory {
     let fingerPositionsCounter = 0
     let fingerPositions = [-1, -1, -1, -1, -1, -1]
     let fingerPositionsAmmount = 0
+    let actuallyPlayedNotes = [-1, -1, -1, -1, -1, -1]
 
 
     allChordsCopy.forEach(voicing => {
@@ -296,12 +296,23 @@ export class ChordFactory {
       fingerPositionsAmmount = 0
 
 
+
+      //Calcualte the Real played Notes
+      for (let i = 0; i < 6; i++) {
+        if (voicing[i] >= 0) {
+          actuallyPlayedNotes[i] = (voicing[i] + settings.tuning[i])
+        } else {
+          actuallyPlayedNotes[i] = voicing[i]
+        }
+      }
+
+
       for (let string = 0; string < 6; string++) {
         //Mute Strings That are not the Root Note
-        if (this.startWithRoot && mutingTillRoot) {
-          if (voicing[string] == -1) {
+        if (settings.startWithRoot && mutingTillRoot) {
+          if (actuallyPlayedNotes[string] == -1) {
             // Do Nothing
-          } else if (((voicing[string] + this.tuning[string]) % 12) != this.root) {
+          } else if (((actuallyPlayedNotes[string]) % 12) != this.root) {
             // Mute The String
             voicing[string] = -1;
           } else {
@@ -414,7 +425,8 @@ export class ChordFactory {
         minAboveZero,
         fingerPositionsAmmount,
         this.notes,
-        this.startWithRoot ? this.root : -1
+        settings.startWithRoot ? this.root : -1,
+        actuallyPlayedNotes
       );
 
       const chordVoicingEndTime = performance.now();
