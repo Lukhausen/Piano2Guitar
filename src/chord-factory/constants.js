@@ -13,6 +13,7 @@ class Settings {
   constructor() {
     this._tuning = [40, 45, 50, 55, 59, 64];
     this._fingerFretRange = 4;
+    this._onlyMuteIfNecessary = true
   }
 
   /**
@@ -54,6 +55,26 @@ class Settings {
       this._fingerFretRange = value;
     } else {
       throw new Error("Invalid fingerFretRange value. It must be a positive integer.");
+    }
+  } /**
+  * Get the current onlyMuteIfNecessary value.
+  * @returns {boolean} The current onlyMuteIfNecessary value.
+  */
+
+  get onlyMuteIfNecessary() {
+    return this._onlyMuteIfNecessary;
+  }
+
+  /**
+   * Set a new onlyMuteIfNecessary value.
+   * @param {boolean} value - A boolean representing the new onlyMuteIfNecessary value.
+   * @throws {Error} Throws an error if the value is not a boolean.
+   */
+  set onlyMuteIfNecessary(value) {
+    if (typeof value === 'boolean') {
+      this._onlyMuteIfNecessary = value;
+    } else {
+      throw new Error("Invalid onlyMuteIfNecessary value. It must be a boolean.");
     }
   }
 }

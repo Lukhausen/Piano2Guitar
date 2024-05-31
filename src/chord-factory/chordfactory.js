@@ -53,7 +53,7 @@ export class ChordFactory {
         const validPositions = this.getValidFretPositionsForNote(chordIndex, stringIndex % 12);
         positions.push(...validPositions);
       }
-      if (!positions.includes(0)) { // Check if positions array does not contain 0
+      if (!settings.onlyMuteIfNecessary) {
         positions.push(-1); // Add -1 only if there is no 0
       }
       positions.sort((a, b) => a - b); // Sort the positions from lowest to highest
@@ -83,15 +83,10 @@ export class ChordFactory {
     let chords = [];
     //console.log("Initial chords array:", chords);
 
-    let maskScope = [];
-    for (let i = 0; i < 6; i++) {
-      //Check If A Zero is present in the Valid Positions. Then We dont need to Mute The String Ever.
-      if (this.fingerPositions[i])
-        maskScope[i] = [this.fingerPositions[i][0]]; // Each sub-array is separately instantiated
-    }
+    let maskScope = Array.from({ length: 6 }, () => []);
     //console.log("Initial maskScope array:", maskScope);
 
-    const fingerIndexStorage = Array(6).fill(1);
+    const fingerIndexStorage = Array(6).fill(0);
     //console.log("Initial fingerIndexStorage array:", fingerIndexStorage);
 
     let fingerIndexLength = []
@@ -102,7 +97,7 @@ export class ChordFactory {
     //console.log("Finger index lengths for all strings:", fingerIndexLength);
 
     // As the first entry of the chords is allways -1 we can skip this
-    for (let fret = 0; fret < 13; fret++) {
+    for (let fret = -1; fret < 13; fret++) {
       //console.log("generateAllChordCombinations2 - FRET: ", fret)
 
       for (let string = 0; string < 6; string++) {
@@ -128,10 +123,11 @@ export class ChordFactory {
         // First Check If there is a New Element inside the Array
         if (fingerIndexStorage[string] < fingerIndexLength[string]) {
           // CHeck if its in range for Valid CHord, if so add it 
-          if (this.fingerPositions[string][fingerIndexStorage[string]] <= fret + settings.fingerFretRange - 1) {
-            //console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]])
-
+          if (this.fingerPositions[string][fingerIndexStorage[string]] < fret + settings.fingerFretRange) {
+            console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]])
+            console.log("fret, string", fret, string)
             maskScope[string].push(this.fingerPositions[string][fingerIndexStorage[string]])
+            console.log("maskScope" ,structuredClone(maskScope))
 
             for (let pos1 of maskScope[(string + 1) % 6]) {
               for (let pos2 of maskScope[(string + 2) % 6]) {
@@ -147,7 +143,7 @@ export class ChordFactory {
                       newVoicing[(string + 5) % 6] = pos5
 
 
-                      //console.log("NEW: ", newVoicing)
+                      console.log("NEW: ", newVoicing)
                       chords.push(newVoicing);
                     }
                   }

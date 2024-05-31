@@ -63,14 +63,17 @@ export class MIDIAccessManager {
             window.dispatchEvent(new CustomEvent('noteOff', { detail: eventDetail }));
             if (this.activeNotes.size === 0 && this.notesPlayed.size > 0) {
                 this.outputNotes();
+                this.notesPlayed.clear();
             }
         }
     }
 
     outputNotes() {
         const uniqueNotes = Array.from(this.notesPlayed);
-        console.log(uniqueNotes);
-        window.dispatchEvent(new CustomEvent('notesOutput', { detail: uniqueNotes }));
+        if (uniqueNotes.length > 0) {
+            console.log(uniqueNotes);
+            window.dispatchEvent(new CustomEvent('notesOutput', { detail: uniqueNotes }));
+        }
     }
 
     updateStatus(message) {

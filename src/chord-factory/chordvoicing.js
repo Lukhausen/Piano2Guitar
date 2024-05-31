@@ -117,7 +117,7 @@ export class ChordVoicing {
     mutedDifficulty: 2,
     mutedReachability: 2,
     barreAmount: 1,
-    
+
   };
 
   // 0 is Badly Playable and 1 Is good PLayability
@@ -236,13 +236,14 @@ export class ChordVoicing {
 
 
   static SOUND_QUALITY_WEIGHTS = {
-    harmonicCompleteness: 3,
+    harmonicCompleteness: 0,
     openStrings: 1,
     playedStrings: 2,
     fretBoardHeight: 1,
     voicingRange: 4,
     doubleNotes: 1,
     voicingExp: 3,
+    highStringHarmonicCompleteness: 2,
   };
 
 
@@ -256,6 +257,7 @@ export class ChordVoicing {
     details.voicingRange = this.assessSoundVoicingRange() * ChordVoicing.SOUND_QUALITY_WEIGHTS.voicingRange;
     details.doubleNotes = this.assessSoundDoubleNotes() * ChordVoicing.SOUND_QUALITY_WEIGHTS.doubleNotes;
     details.voicingExp = this.assesSoundVoicingExp() * ChordVoicing.SOUND_QUALITY_WEIGHTS.voicingExp;
+    details.highStringHarmonicCompleteness = this.assessSoundHighStringHarmonicCompleteness() * ChordVoicing.SOUND_QUALITY_WEIGHTS.highStringHarmonicCompleteness;
 
     details.total = (
       details.harmonicCompleteness +
@@ -264,7 +266,8 @@ export class ChordVoicing {
       details.fretBoardHeight +
       details.voicingRange +
       details.doubleNotes +
-      details.voicingExp
+      details.voicingExp +
+      details.highStringHarmonicCompleteness
 
     ) / Object.values(ChordVoicing.SOUND_QUALITY_WEIGHTS).reduce((sum, weight) => sum + weight, 0);
 
@@ -392,6 +395,18 @@ export class ChordVoicing {
 
     //lessdelta means Better sound
     return 1 - Math.min((comultative_delta / (difference * unmuted_strings)), 1)
+  }
+  assessSoundHighStringHarmonicCompleteness() {
+    let playedNotesModulo = this.actuallyPlayedNotes.map(note => note % 12)
+    let overlap = new Set();
+    let minStrings = Math.min(6, this.chordFactoryNotes.length);
+    for (let string = 0; string <minStrings; string++) {
+      if (this.chordFactoryNotes.includes(playedNotesModulo[5-string])) {
+        overlap.add(playedNotesModulo[5-string]);
+      }
+    }
+    this.ratingDetails.soundQuality.highStringHarmonicOverlap = overlap.size+" / "+minStrings
+    return overlap.size / minStrings;
   }
 }
 /*
