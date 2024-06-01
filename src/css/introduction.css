@@ -1,0 +1,117 @@
+.introduction {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    border-radius: var(--rounding);
+    margin-bottom: var(--padding);
+}
+
+
+
+#introductionHeader {
+    cursor: pointer;
+    font-size: larger;
+    padding: var(--padding);
+    background-color: var(--dark1);
+    box-sizing: border-box;
+    border-radius: var(--rounding);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--padding);
+    transition: 0.2s;
+}
+
+#introductionHeader:hover{
+    filter: brightness(1.1);
+}
+
+#introductionHeader.active {
+    border-radius: var(--rounding) var(--rounding) 0 0;
+
+}
+
+#introductionHeader:after {
+    content: '\25BC';
+    /* Down arrow */
+    color: white;
+    font-weight: bold;
+    float: right;
+    transition: transform 0.2s ease;
+}
+
+#introductionHeader.active:after {
+    transform: rotate(180deg);
+}
+
+.introductionWrapper {
+    width: 100%;
+    padding: var(--padding);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: var(--padding);
+}
+
+#introductionContent {
+    box-sizing: border-box;
+    max-height: 0;
+    overflow: hidden;
+    transition: 0.2s ease-out;
+    width: 100%;
+    background-color: var(--dark2);
+
+    border-radius: var(--rounding) 0 var(--rounding) var(--rounding);
+
+}
+
+.introductionContentText {
+    text-align: center;
+    width: 100%;
+}
+
+.introductionContentItemWrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: calc(2*var(--padding));
+
+}
+
+.introductionContentItem {
+    box-sizing: border-box;
+    padding: var(--padding);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: var(--padding);
+    flex: 1;
+    padding: var(--padding);
+    min-width: 200px
+}
+
+.introductionContentItem svg {
+    fill: var(--accent1);
+    width: max(3vw, 4vh);
+    height: auto;
+    filter: drop-shadow(0px 0px 10px hwb(from var(--accent1) h w b / 0.3));
+
+}
+
+.introductionContentItemHeader {
+    font-weight: 900;
+    text-align: center;
+    font-size: larger;
+    filter: drop-shadow(0px 0px 10px #ffffff17);
+}
+
+.introductionContentItemText {
+    text-align: center;
+    opacity: 0.6;
+}

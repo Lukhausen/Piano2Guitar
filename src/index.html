@@ -4,7 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Piano2Guitar</title>
+    <title>PianoToGuitar: Convert Piano Chords to Guitar Tunings Easily</title>
+    <meta name="description"
+        content="PianoToGuitar is designed to translate chords into guitar tabs. It includes custom guitar tuning options and MIDI support. Tabs are rated by difficulty and sound quality.">
+
+
+
     <!-- STYLESHEETS -->
     <link rel="stylesheet" href="piano/style.css" />
     <link rel="stylesheet" href="progression-generator/style.css" />
@@ -15,6 +20,8 @@
     <link rel="stylesheet" href="css/adv-settings.css" />
     <link rel="stylesheet" href="css/footer.css" />
     <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/introduction.css" />
+    <link rel="stylesheet" href="css/general.css" />
 
 
 
@@ -30,8 +37,138 @@
 </head>
 
 <body>
-    <header>PianoToGuitar.com</header>
+
     <div class="content">
+        <div class="mainHeader">
+            <svg id="Ebene_2" data-name="Ebene 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 243.68 212.74">
+                <g id="Ebene_1-2" data-name="Ebene 1">
+                    <path class="cls-1"
+                        d="M46.18,212.74h-19.25C12.05,212.74,0,200.69,0,185.81v-64.85c17.21,3.47,34.67,6.22,52.36,8.21.1,0,.21.02.31.03.2,2.47.74,4.84,1.57,7.08,1.36,3.67,3.49,6.97,6.21,9.68,3.44,3.43,7.79,5.94,12.66,7.12v32.73c0,14.88-12.06,26.93-26.93,26.93Z" />
+                    <path class="cls-1"
+                        d="M137.91,52.01c-5.32.14-10.66.21-16.01.21-5.14,0-10.26-.06-15.37-.19h-.11s0-.31,0-.31c5.16.13,10.33.19,15.53.19,5.34,0,10.66-.07,15.96-.21v.31Z" />
+                    <path class="cls-1"
+                        d="M131.47,212.74h-19.25c-14.88,0-26.93-12.05-26.93-26.93v-32.6c12.08-2.64,21.13-13.4,21.13-26.29v-48.18s.11,0,.11,0c5.18.14,10.38.21,15.59.21s10.54-.08,15.79-.21v48.18c0,7.44,3.02,14.18,7.88,19.04,3.43,3.42,7.76,5.92,12.6,7.11v32.74c0,14.88-12.05,26.93-26.92,26.93Z" />
+                    <path class="cls-1"
+                        d="M243.68,39.78v146.04c0,14.87-12.05,26.93-26.93,26.93h-19.25c-14.87,0-26.93-12.05-26.93-26.93v-32.58c12.11-2.63,21.18-13.4,21.18-26.31V47.97c17.54-2,34.87-4.74,51.92-8.19Z" />
+                    <path class="cls-1"
+                        d="M243.68,19.74v7.03c-17.06,3.45-34.38,6.19-51.92,8.18-7.02.8-14.08,1.48-21.18,2.04-4.05.31-8.11.59-12.18.83-6.79.4-13.63.69-20.48.86-5.29.13-10.59.2-15.91.2-5.21,0-10.41-.06-15.59-.2-7.08-.17-14.12-.47-21.13-.88-4.07-.24-8.13-.52-12.18-.84-6.88-.55-13.73-1.2-20.54-1.97C34.8,32.98,17.27,30.21,0,26.7v-6.86c17.27,3.49,34.8,6.25,52.56,8.26,6.81.76,13.66,1.41,20.54,1.95,4.05.32,8.11.6,12.18.83,7.01.42,14.05.71,21.13.87,5.04.13,10.09.19,15.16.19,5.46,0,10.91-.07,16.34-.22,6.85-.17,13.69-.47,20.48-.87,4.07-.23,8.13-.52,12.18-.84,7.1-.56,14.16-1.25,21.18-2.04,17.54-2.01,34.87-4.76,51.92-8.22Z" />
+                    <path class="cls-1"
+                        d="M243.68,0v7.03c-17.06,3.45-34.38,6.18-51.92,8.17-7.03.79-14.08,1.47-21.18,2.02-4.05.32-8.11.6-12.18.83-6.79.4-13.63.69-20.48.85-5.21.13-10.45.2-15.7.2-5.28,0-10.55-.07-15.8-.2-7.08-.17-14.11-.48-21.13-.89-4.07-.24-8.13-.53-12.18-.85-6.88-.54-13.73-1.21-20.54-1.97C34.8,13.17,17.27,10.39,0,6.88V.02c17.27,3.5,34.81,6.27,52.56,8.26,6.81.77,13.66,1.42,20.54,1.97,4.05.31,8.11.6,12.18.83,7.02.42,14.05.71,21.13.88,5.11.13,10.23.19,15.37.19,5.39,0,10.77-.07,16.12-.21,6.85-.17,13.69-.47,20.48-.86,4.07-.24,8.13-.52,12.18-.84,7.1-.56,14.15-1.24,21.18-2.04,17.54-2,34.87-4.74,51.92-8.2Z" />
+                    <path class="cls-1"
+                        d="M52.57,116.29c-.07,0-.14-.01-.21-.02C34.67,114.26,17.21,111.49,0,108v-6.86c17.21,3.48,34.68,6.23,52.36,8.22.07,0,.14.02.21.02v6.91Z" />
+                    <path class="cls-1"
+                        d="M52.57,95.23c-.07-.01-.14-.02-.21-.03C34.67,93.03,17.2,90.09,0,86.44v-6.86c17.2,3.65,34.67,6.57,52.36,8.73.07.01.14.02.21.02v6.9Z" />
+                    <path class="cls-1"
+                        d="M52.57,75.61c-.07-.01-.14-.02-.21-.03C34.67,73.42,17.2,70.49,0,66.83v-6.85c17.2,3.64,34.67,6.56,52.36,8.71.07,0,.14.02.21.02v6.9Z" />
+                    <path class="cls-1"
+                        d="M52.57,56.16c-.14-.02-.28-.03-.42-.05C34.52,53.94,17.13,51.03,0,47.39v-6.86c17.13,3.64,34.52,6.54,52.15,8.68.14.02.28.03.42.05v6.9Z" />
+                    <path class="cls-1"
+                        d="M122.12,78.95c-5.21,0-10.41-.07-15.59-.21h-.11s0-6.93,0-6.93h.11c5.04.13,10.09.19,15.16.19,5.42,0,10.83-.07,16.22-.22v6.96c-5.25.13-10.51.21-15.79.21Z" />
+                    <path class="cls-1"
+                        d="M122.33,59.17c-5.28,0-10.55-.07-15.8-.21h-.11s0-6.93,0-6.93h.11c5.11.13,10.23.19,15.37.19,5.35,0,10.69-.07,16.01-.21v6.95c-5.17.14-10.37.21-15.58.21Z" />
+                </g>
+            </svg>
+            <h1>PianoToGuitar.com</h1>
+        </div>
+
+        <div class="introduction">
+
+        
+        
+            <div id="introductionHeader"><svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960"
+                    width="30px" fill="#e8eaed">
+                    <path
+                        d="M453-280h60v-240h-60v240Zm26.98-314q14.02 0 23.52-9.2T513-626q0-14.45-9.48-24.22-9.48-9.78-23.5-9.78t-23.52 9.78Q447-640.45 447-626q0 13.6 9.48 22.8 9.48 9.2 23.5 9.2Zm.29 514q-82.74 0-155.5-31.5Q252-143 197.5-197.5t-86-127.34Q80-397.68 80-480.5t31.5-155.66Q143-709 197.5-763t127.34-85.5Q397.68-880 480.5-880t155.66 31.5Q709-817 763-763t85.5 127Q880-563 880-480.27q0 82.74-31.5 155.5Q817-252 763-197.68q-54 54.31-127 86Q563-80 480.27-80Zm.23-60Q622-140 721-239.5t99-241Q820-622 721.19-721T480-820q-141 0-240.5 98.81T140-480q0 141 99.5 240.5t241 99.5Zm-.5-340Z" />
+                </svg>
+                INFO
+            </div>
+            <div id="introductionContent">
+                <div class="introductionWrapper">
+                    <div class="introductionContentText">
+                        <h3>PianoToGuitar is a tool that helps you find guitar chords for all types of guitar tunings.
+                            It rates each chord based on how good it sounds and how difficult it is to play.<br>You
+                            can search for chords in several ways: by searching chords by name, by selecting the piano
+                            keys,
+                            or by connecting a MIDI device and playing the chord directly.</h3>
+                    </div>
+                    <div class="introductionContentItemWrapper">
+                        <div class="introductionContentItem">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px"
+                                fill="currentColor">
+                                <path
+                                    d="M180-120q-24 0-42-18t-18-42v-600q0-23 18-41.5t42-18.5h600q23 0 41.5 18.5T840-780v600q0 24-18.5 42T780-120H180Zm0-60h157v-210h-20q-12.75 0-21.37-8.63Q287-407.25 287-420v-360H180v600Zm443 0h157v-600H673v360q0 12.75-8.62 21.37Q655.75-390 643-390h-20v210Zm-246 0h206v-210h-20q-12.75 0-21.37-8.63Q533-407.25 533-420v-360H427v360q0 12.75-8.62 21.37Q409.75-390 397-390h-20v210Z" />
+                            </svg>
+                            <div class="introductionContentItemHeader">MIDI Support</div>
+                            <div class="introductionContentItemText">Use your MIDI Device to quickly search Chords!
+                            </div>
+                        </div>
+                        <div class="introductionContentItem">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px"
+                                fill="currentColor">
+                                <path
+                                    d="M231.82-160q-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37v-264h-52q-12.75 0-21.37-8.68-8.63-8.67-8.63-21.5 0-12.82 8.63-21.32 8.62-8.5 21.37-8.5h164q12.75 0 21.38 8.68 8.62 8.67 8.62 21.5 0 12.82-8.62 21.32-8.63 8.5-21.38 8.5h-52v264q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63Zm0-414q-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37v-166q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.62 8.5 8.63 8.5 21.38v166q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63ZM398-615q-12.75 0-21.37-8.68-8.63-8.67-8.63-21.5 0-12.82 8.63-21.32 8.62-8.5 21.37-8.5h52v-95q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.62 8.5 8.63 8.5 21.38v95h52q12.75 0 21.38 8.68 8.62 8.67 8.62 21.5 0 12.82-8.62 21.32-8.63 8.5-21.38 8.5H398Zm81.82 455q-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37v-335q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.62 8.5 8.63 8.5 21.38v335q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63Zm248 0q-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37v-97h-52q-12.75 0-21.37-8.68-8.63-8.67-8.63-21.5 0-12.82 8.63-21.32 8.62-8.5 21.37-8.5h164q12.75 0 21.38 8.68 8.62 8.67 8.62 21.5 0 12.82-8.62 21.32-8.63 8.5-21.38 8.5h-52v97q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63Zm0-247q-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37v-333q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.62 8.5 8.63 8.5 21.38v333q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63Z" />
+                            </svg>
+                            <div class="introductionContentItemHeader">Custom Guitar Tuning</div>
+                            <div class="introductionContentItemText">Supports <strong>all</strong> Guitar
+                                Tunings!<br>Use
+                                the Settings to change the Guitar Tuning.</div>
+                        </div>
+                        <div class="introductionContentItem">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px"
+                                fill="currentColor">
+                                <path
+                                    d="m643-273 44-41q7-7 7-15.5t-7-15.5L535-497q5-14 8-27t3-27q0-58-41-99t-99-41q-11 0-21 1.5t-20 5.5q-9 5-13 13t2 14l73 72-54 51-71-70q-5-5-13-4t-11 9q-5 11-7 23.5t-2 24.5q0 57 40 96.5t97 39.5q14 0 27.5-2.5T461-425l151 152q6 6 15.5 6t15.5-6ZM480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-156t86-127Q252-817 325-848.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 82-31.5 155T763-197.5q-54 54.5-127 86T480-80Zm0-60q142 0 241-99.5T820-480q0-142-99-241t-241-99q-141 0-240.5 99T140-480q0 141 99.5 240.5T480-140Zm0-340Z" />
+                            </svg>
+                            <div class="introductionContentItemHeader">Adjust Difficulty</div>
+                            <div class="introductionContentItemText">Adjust everything to your skill Level.<br>Use the
+                                settings to change how many frets a Chord can span</div>
+                        </div>
+                        <div class="introductionContentItem">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px"
+                                fill="#e8eaed">
+                                <path
+                                    d="M480-80q-27 0-47.5-13T406-129h-14q-24 0-42-18t-18-42v-143q-66-43-104-110t-38-148q0-121 84.5-205.5T480-880q121 0 205.5 84.5T770-590q0 81-38 148T628-332v143q0 24-18 42t-42 18h-14q-6 23-26.5 36T480-80Zm-88-109h176v-44H392v44Zm0-84h176v-40H392v40Zm-9-100h74v-137l-92-92 31-31 84 84 84-84 31 31-92 92v137h74q60-28 96.5-87T710-590q0-97-66.5-163.5T480-820q-97 0-163.5 66.5T250-590q0 71 36.5 130t96.5 87Zm97-176Zm0-48Z" />
+                            </svg>
+                            <div class="introductionContentItemHeader">Creative Chords</div>
+                            <div class="introductionContentItemText">Find new and undiscovered Chords<br>We use
+                                algorithms to generate <strong>all</strong> possible Chords.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    var coll = document.getElementById("introductionHeader");
+                    var content = document.getElementById("introductionContent");
+
+                    // Function to toggle the introduction state
+                    function toggleIntroduction() {
+                        coll.classList.toggle("active");
+                        if (content.style.maxHeight) {
+                            content.style.maxHeight = null;
+                            localStorage.setItem("isIntroductionOpen", "false");
+                        } else {
+                            // Dynamically measure the required height
+                            content.style.maxHeight = content.scrollHeight * 2 + "px";;
+                            localStorage.setItem("isIntroductionOpen", "true");
+                        }
+                    }
+
+                    // Event listener for the introduction header
+                    coll.addEventListener("click", toggleIntroduction);
+
+                    // Check local storage and set the initial state
+                    window.onload = function () {
+                        if (localStorage.getItem("isIntroductionOpen") === "true") {
+                            coll.classList.add("active");
+                            content.style.maxHeight = content.scrollHeight * 2 + "px";;
+                        } else if (localStorage.getItem("isIntroductionOpen") === null) {
+                            // If visiting for the first time, open the introduction by default
+                            toggleIntroduction();
+                        }
+                    };
+                </script>
+            </div>
+        </div>
         <div class="inputWrapper">
             <div id="closeSettings" onClick="toggleSettings()"></div>
             <div id="settings">
@@ -124,7 +261,7 @@
                 <div id="settingsFooter">
                     <div id="settingsAdvancedButton" onclick="toggleAdvSettings()">
                         <div>ADVANCED</div><svg xmlns="http://www.w3.org/2000/svg" height="24px"
-                            viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+                            viewBox="0 -960 960 960" width="24px" class=" visualIcon" class="visualIcon">
                             <path
                                 d="m620-284 56-56q6-6 6-14t-6-14L540-505q4-11 6-22t2-25q0-57-40.5-97.5T410-690q-11 0-21 1t-20 5q-9 4-11 14t5 17l74 74-56 56-74-74q-7-7-17-5t-14 11q-3 10-4.5 20t-1.5 21q0 57 40.5 97.5T408-412q13 0 24.5-2t22.5-6l137 136q6 6 14 6t14-6ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
                         </svg>
@@ -145,7 +282,8 @@
                             </div>
                             <div class="settingSubDescription">
                                 When this setting is enabled, the chord generator will consider every possible
-                                configuration of muted strings, even if some strings could be played.<br>If disabled, the chord generator avoids unnecessarily muting strings.
+                                configuration of muted strings, even if some strings could be played.<br>If disabled,
+                                the chord generator avoids unnecessarily muting strings.
                             </div>
                         </div>
                         <div class="checkbocWrapper">
@@ -175,11 +313,12 @@
             </div>
             <div class="header">
                 <div class="mainHeader">
-                    PianoToGuitar.com<div class="versionDescription">ALPHA<div class="versionInformation">Last Update:
+                    <div class="versionDescription">ALPHA<div class="versionInformation">Last Update:
                             {{BUILD_DATE}}</div>
                     </div>
                 </div>
-                <div class="settingsWrapper"><div class="settingsWrapperText">SETTINGS</div>
+                <div class="settingsWrapper">
+                    <div class="settingsWrapperText">SETTINGS</div>
                     <svg class="visualIcon" id="settingsIcon" xmlns="http://www.w3.org/2000/svg"
                         onclick="toggleSettings()" height="24" viewBox="0 -960 960 960" width="24">
                         <path
@@ -192,8 +331,8 @@
                     <div class="pianoMIDIWrapper">
 
                         <div class="pianoContainer"></div>
-                        <div id="MIDIStatusDiv">
-                            Initializing MIDI... </div>
+                        <select id="MIDIStatusDiv">
+                            </select>
                     </div>
                     <div class="pianoIconContainer">
                         <svg class="visualIcon" id="volumeIcon" xmlns="http://www.w3.org/2000/svg"
@@ -201,13 +340,13 @@
                             <path
                                 d="M560-131v-82q90-26 145-100t55-168q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 127-78 224.5T560-131ZM120-360v-240h160l200-200v640L280-360H120Zm440 40v-322q47 22 73.5 66t26.5 96q0 51-26.5 94.5T560-320ZM400-606l-86 86H200v80h114l86 86v-252ZM300-480Z" />
                         </svg>
-                        <svg class="visualIcon" xmlns="http://www.w3.org/2000/svg" onclick="playPiano()"
-                            height="24" viewBox="0 -960 960 960" width="24">
+                        <svg class="visualIcon" xmlns="http://www.w3.org/2000/svg" onclick="playPiano()" height="24"
+                            viewBox="0 -960 960 960" width="24">
                             <path
                                 d="m380-300 280-180-280-180v360ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
                         </svg>
-                        <svg class="visualIcon" xmlns="http://www.w3.org/2000/svg" onclick="clearPiano()"
-                            height="24" viewBox="0 -960 960 960" width="24">
+                        <svg class="visualIcon" xmlns="http://www.w3.org/2000/svg" onclick="clearPiano()" height="24"
+                            viewBox="0 -960 960 960" width="24">
                             <path fill="currentColor"
                                 d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm80-160h80v-360h-80v360Zm160 0h80v-360h-80v360Z" />
                         </svg>

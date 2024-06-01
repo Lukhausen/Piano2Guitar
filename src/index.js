@@ -28,6 +28,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // Import the MidiManager
     const midiManager = new MIDIAccessManager();
 
+
+    // Function to update the MIDI device dropdown
+    function updateMIDIDevices() {
+        const devices = midiManager.getAllMIDIDevices();
+        const midiStatusDiv = document.getElementById('MIDIStatusDiv');
+        midiStatusDiv.innerHTML = ''; // Clear existing options
+    
+        devices.inputs.forEach(device => {
+            const option = document.createElement('option');
+            option.value = device.id;
+            option.textContent = device.name;
+            midiStatusDiv.appendChild(option);
+        });
+    
+        // Optionally set the first device as the default selected device
+        if (devices.inputs.length > 0) {
+            midiManager.setMIDIDevice(devices.inputs[0].id);
+        }
+    }
+    
+
+    document.getElementById('MIDIStatusDiv').addEventListener('change', function() {
+        const selectedDeviceId = this.value;
+        midiManager.setMIDIDevice(selectedDeviceId);
+    });
+
+    // Event listener to update the device list when devices change
+    window.addEventListener('MIDIDeviceChanged', updateMIDIDevices);
+
+    // Initial update on page load
+    document.addEventListener('DOMContentLoaded', updateMIDIDevices);
+
+
     var visualPianoOctaves = 3
 
 
