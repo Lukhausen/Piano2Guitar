@@ -79,19 +79,24 @@ export class ChordFactory {
   generateAllChordCombinations2() {
 
     const startTime = performance.now();
-
+    let insertedTempIndexes = [];
     let chords = [];
     //console.log("Initial chords array:", chords);
 
     let maskScope = Array.from({ length: 6 }, () => []);
+    // Initialize the Masscope Array, so that it has stuff loaded. THe algorithm cant work without anything in there, as then the laoding will not make it pssible to catch the firdst few permutations
+/*     for (let string = 0; string < 6; string++) {
+      maskScope[string][0] = this.fingerPositions[string][0]
+    } */
+
     //console.log("Initial maskScope array:", maskScope);
 
     const fingerIndexStorage = Array(6).fill(0);
     //console.log("Initial fingerIndexStorage array:", fingerIndexStorage);
 
     let fingerIndexLength = []
-    this.fingerPositions.forEach((element, inndex) => {
-      fingerIndexLength[inndex] = element.length - 1
+    this.fingerPositions.forEach((element, index) => {
+      fingerIndexLength[index] = element.length - 1
     })
 
     //console.log("Finger index lengths for all strings:", fingerIndexLength);
@@ -101,6 +106,7 @@ export class ChordFactory {
       //console.log("generateAllChordCombinations2 - FRET: ", fret)
 
       for (let string = 0; string < 6; string++) {
+        console.log("maskScope before" ,structuredClone(maskScope))
 
         for (let validPosition = 0; validPosition < maskScope[string].length; validPosition++) {
           // FIrst remove all Non Fitting Elements From Out current maskScope on All Strings.
@@ -124,10 +130,20 @@ export class ChordFactory {
         if (fingerIndexStorage[string] < fingerIndexLength[string]) {
           // CHeck if its in range for Valid CHord, if so add it 
           if (this.fingerPositions[string][fingerIndexStorage[string]] < fret + settings.fingerFretRange) {
-            //  console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]])
-            //console.log("fret, string", fret, string)
+            console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]])
+            console.log("fret, string", fret, string)
             maskScope[string].push(this.fingerPositions[string][fingerIndexStorage[string]])
-            // console.log("maskScope" ,structuredClone(maskScope))
+            console.log("maskScope after" ,structuredClone(maskScope))
+
+
+            //As The For Loop exists if one mask scope is not set = [] we need to populate the not set masks with -1 as there is no valid string in reach we can play, so we need to mute it.
+            insertedTempIndexes = [];
+            for (let i = 0; i < maskScope.length; i++) {
+              if (maskScope[i].length == 0) {
+                maskScope[i].push(-1);
+                insertedTempIndexes.push(i);
+              }
+            }
 
             for (let pos1 of maskScope[(string + 1) % 6]) {
               for (let pos2 of maskScope[(string + 2) % 6]) {
@@ -142,16 +158,24 @@ export class ChordFactory {
                       newVoicing[(string + 4) % 6] = pos4
                       newVoicing[(string + 5) % 6] = pos5
 
-
+                      console.log("NEW: ", structuredClone(newVoicing))
                       chords.push(newVoicing);
                     }
                   }
                 }
               }
             }
+
+
             //Flag the next index to be looked at later
 
             fingerIndexStorage[string]++
+
+
+            //Remove The -1s we added from maskscope.
+            for (let i of insertedTempIndexes) {
+              maskScope[i].pop();
+            }
 
           } else {
             //Break because the element found is too big to be inserte into the maskScope
