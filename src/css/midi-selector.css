@@ -1,0 +1,32 @@
+
+#MIDIStatusDiv {
+    background-color: var(--dark2);
+    color: var(--light3);
+    border: 0;
+    font-weight: 100;
+    border-radius: var(--rounding);
+    padding: 0 0;
+    outline: none;
+    font-size: large;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    position: relative;
+}
+
+/* Styling for the dropdown arrow */
+#MIDIStatusDiv::-ms-expand {
+    display: block;
+
+}
+
+
+/* Change the background color of selected option */
+#MIDIStatusDiv option:checked {
+    background-color: var(--dark2);
+    /* Optional: Change text color for selected option */
+}
+
+
+/* Additional styling for dropdown options */
+#MIDIStatusDiv option {
+    background-color: var(--dark2);
+}

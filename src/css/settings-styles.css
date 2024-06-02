@@ -232,7 +232,7 @@
 
 
 
-select {
+#settingsCommonTunings {
     background-color: var(--light0);
     color: #000000;
     border: 0;
@@ -246,17 +246,17 @@ select {
 }
 
 /* Styling for the dropdown arrow */
-select::-ms-expand {
+#settingsCommonTunings::-ms-expand {
     display: block;
 
 }
 
-select:focus {
+#settingsCommonTunings:focus {
     box-shadow: 0px 0px 10px var(--accent1);
 }
 
 /* Change the background color of selected option */
-select option:checked {
+#settingsCommonTunings option:checked {
     background-color: var(--light0);
     color: #000000;
     /* Optional: Change text color for selected option */
@@ -264,7 +264,7 @@ select option:checked {
 
 
 /* Additional styling for dropdown options */
-select option {
+#settingsCommonTunings option {
     background-color: var(--light0);
     color: #000000;
 }

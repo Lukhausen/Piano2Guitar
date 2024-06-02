@@ -28,37 +28,62 @@ document.addEventListener('DOMContentLoaded', () => {
     // Import the MidiManager
     const midiManager = new MIDIAccessManager();
 
+    const MIDIStatusDiv = document.getElementById('MIDIStatusDiv');
 
-    // Function to update the MIDI device dropdown
-    function updateMIDIDevices() {
-        const devices = midiManager.getAllMIDIDevices();
-        const midiStatusDiv = document.getElementById('MIDIStatusDiv');
-        midiStatusDiv.innerHTML = ''; // Clear existing options
-    
-        devices.inputs.forEach(device => {
-            const option = document.createElement('option');
-            option.value = device.id;
-            option.textContent = device.name;
-            midiStatusDiv.appendChild(option);
-        });
-    
-        // Optionally set the first device as the default selected device
-        if (devices.inputs.length > 0) {
-            midiManager.setMIDIDevice(devices.inputs[0].id);
+    MIDIStatusDiv.style.display = "none";
+
+
+    // Event listener to update the device list when devices change
+    window.addEventListener('MIDIdeviceChange', (event) => {
+        console.log(event)
+
+        const devices = event.detail.devicelist; // Receive the detailed list of devices
+        if (!devices.length) {
+            MIDIStatusDiv.style.display = "none";
+            return
         }
-    }
-    
+        MIDIStatusDiv.innerHTML = ''; // Clear existing options
 
-    document.getElementById('MIDIStatusDiv').addEventListener('change', function() {
+        devices.forEach(device => {
+            const option = document.createElement('option');
+            option.value = device.name;
+            option.textContent = "MIDI: "+device.name;
+            MIDIStatusDiv.appendChild(option);
+        });
+        MIDIStatusDiv.style.display = "flex";
+
+        // Restore the selected device if it is available, or set the first device as default
+        if (MIDIStatusDiv.querySelector(`option[value="${event.detail.selectedDeviceName}"]`)) {
+            MIDIStatusDiv.value = event.detail.selectedDeviceName;
+        } else {
+            midiManager.setMIDIDevice(devices[0].name);
+            MIDIStatusDiv.value = devices[0].name;
+        }
+
+    });
+
+
+    document.getElementById('MIDIStatusDiv').addEventListener('change', function () {
         const selectedDeviceId = this.value;
         midiManager.setMIDIDevice(selectedDeviceId);
     });
 
     // Event listener to update the device list when devices change
-    window.addEventListener('MIDIDeviceChanged', updateMIDIDevices);
 
     // Initial update on page load
-    document.addEventListener('DOMContentLoaded', updateMIDIDevices);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     var visualPianoOctaves = 3
@@ -234,9 +259,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    window.addEventListener("statusUpdated", async (e) => {
-        document.getElementById("MIDIStatusDiv").innerHTML = e.detail
-    })
+    /*     window.addEventListener("statusUpdated", async (e) => {
+            document.getElementById("MIDIStatusDiv").innerHTML = e.detail
+        }) */
 
 
     //Functionality to autom,atically add Chord when played by midi:

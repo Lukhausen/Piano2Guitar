@@ -4,7 +4,7 @@ export class MIDIAccessManager {
         this.maxRetries = 50;
         this.notesPlayed = new Set();
         this.activeNotes = new Set();
-        this.selectedDeviceId = localStorage.getItem('selectedMIDIId') || null;
+        this.selectedDeviceName = localStorage.getItem('selectedMIDIName') || null;
 
         if (navigator.requestMIDIAccess) {
             this.attemptMIDIAccess();
@@ -13,35 +13,43 @@ export class MIDIAccessManager {
         }
     }
 
-    getAllMIDIDevices() {
-        if (!this.midiAccess) {
-            console.log("MIDI access has not been initialized.");
-            return { inputs: [], outputs: [] };
-        }
-        return {
-            inputs: Array.from(this.midiAccess.inputs.values()),
-            outputs: Array.from(this.midiAccess.outputs.values())
-        };
-    }
 
-    setMIDIDevice(deviceId) {
-        // Store the selected device ID in localStorage
-        localStorage.setItem('selectedMIDIId', deviceId);
-
+    setMIDIDevice(deviceName) {
+        // Store the selected device name in localStorage
+        this.selectedDeviceName = deviceName
+        localStorage.setItem('selectedMIDIName', deviceName);
+    
         // First, disconnect all existing connections
         this.midiAccess.inputs.forEach(input => {
             input.onmidimessage = null;
         });
-
-        // Now, set the new device
-        const device = this.midiAccess.inputs.get(deviceId);
+    
+        // Convert inputs to an array and find the device by name
+        const devices = Array.from(this.midiAccess.inputs.values());
+        let device = devices.find(d => d.name === deviceName);
+    
+        // If the device is not found, log an error and use the first device in the list
         if (!device) {
-            console.error("Device not found:", deviceId);
-            return;
+            console.error("Device not found:", deviceName);
+            device = devices[0]; // Default to the first device if the specified one isn't found
         }
-
+    
+        // Set the MIDI message handler
         device.onmidimessage = this.onMIDIMessage.bind(this);
         console.log(`MIDI device set: ${device.name}`);
+    
+        // Dispatch the event with updated devices list and the selected device name
+        this.dispatchMIDIDeviceChange();
+    }
+    
+
+    dispatchMIDIDeviceChange() {
+        window.dispatchEvent(new CustomEvent('MIDIdeviceChange', {
+            detail: {
+                devicelist: Array.from(this.midiAccess.inputs.values()),
+                selectedDeviceName: this.selectedDeviceName,
+            }
+        }));
     }
 
     attemptMIDIAccess() {
@@ -53,17 +61,23 @@ export class MIDIAccessManager {
             });
     }
 
+
     onMIDISuccess(midiAccess) {
         this.updateStatus("MIDI ready...");
         this.midiAccess = midiAccess; // Store midiAccess for later use
-        midiAccess.onstatechange = this.updateDeviceState.bind(this);
+        midiAccess.onstatechange = this.handleMIDIStateChange.bind(this);
         this.addMIDIInputs(midiAccess.inputs);
 
         // Attempt to set the previously selected MIDI device
-        if (this.selectedDeviceId) {
-            this.setMIDIDevice(this.selectedDeviceId);
+        if (this.selectedDeviceName) {
+            this.setMIDIDevice(this.selectedDeviceName);
         }
     }
+    handleMIDIStateChange(event) {
+        this.updateDeviceState(event);
+        this.dispatchMIDIDeviceChange(); // Dispatch on every state change
+    }
+
 
     addMIDIInputs(inputs) {
         Array.from(inputs.values()).forEach(input => input.onmidimessage = this.onMIDIMessage.bind(this));
@@ -74,14 +88,13 @@ export class MIDIAccessManager {
         this.handleRetry(new Error("Initial connection failed"));
     }
 
-    handleRetry(err) {
+     handleRetry(err) {
         if (this.retryCount < this.maxRetries) {
             this.retryCount++;
             console.log(`Retrying... Attempt ${this.retryCount}`);
             setTimeout(() => this.attemptMIDIAccess(), 3000); // Retry after 3 seconds
         } else {
             console.error(`Failed to connect after ${this.maxRetries} attempts: ${err.message}`);
-            // No MIDI Device Found
             this.updateStatus("");
         }
     }
@@ -122,12 +135,11 @@ export class MIDIAccessManager {
         this.updateStatus(status);
         window.dispatchEvent(new CustomEvent('deviceStateChanged', { detail: { name: port.name, state: port.state } }));
 
-        // Trigger an update to the MIDI devices list
-        window.dispatchEvent(new Event('MIDIDeviceChanged'));
 
         if (port.state === "disconnected" || port.state === "unavailable") {
             this.handleDisconnection();
         }
+        this.dispatchMIDIDeviceChange();
     }
 
     handleDisconnection() {
