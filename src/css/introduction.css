@@ -12,7 +12,7 @@
     cursor: pointer;
     font-size: larger;
     padding: var(--padding);
-    background-color: var(--dark1);
+    background-color: #ffffff10;
     box-sizing: border-box;
     border-radius: var(--rounding);
     display: flex;
@@ -20,16 +20,13 @@
     justify-content: center;
     gap: var(--padding);
     transition: 0.2s;
+    backdrop-filter: blur(10px);
 }
 
 #introductionHeader:hover{
     filter: brightness(1.1);
 }
 
-#introductionHeader.active {
-    border-radius: var(--rounding) var(--rounding) 0 0;
-
-}
 
 #introductionHeader:after {
     content: '\25BC';
@@ -63,7 +60,7 @@
     width: 100%;
     background-color: var(--dark2);
 
-    border-radius: var(--rounding) 0 var(--rounding) var(--rounding);
+    border-radius: var(--rounding);
 
 }
 

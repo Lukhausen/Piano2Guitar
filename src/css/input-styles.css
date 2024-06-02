@@ -1,4 +1,4 @@
-.header {
+.miniHeader {
     display: flex;
     justify-content: space-between;
     align-items: start;
@@ -6,7 +6,7 @@
     font-weight: 100;
 }
 
-.mainHeader {
+.miniMainHeader {
     font-weight: 300;
     display: flex;
     flex-direction: row;
@@ -201,7 +201,7 @@
     padding: var(--padding);
     overflow-y: auto;
     user-select: none;
-    flex: 1 1 100px;
+    flex: 1 1 0px;
 
 }
 

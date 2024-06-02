@@ -1,16 +1,48 @@
 h1 {
     margin: 0;
     font-weight: 100;
+    font-size: xx-large;
 }
 
 .mainHeader {
-    padding-top: var(--padding);
+    display: flex;
+    padding: var(--padding);
     background-color: var(--dark1);
+    background: linear-gradient(0deg, var(--dark1) 0%, var(--dark2) 100%);
+    ;
     align-items: center;
+    justify-content: space-between;
     flex-direction: row;
+    position: relative;
+    border-radius: 0 0 var(--rounding) var(--rounding);
+
+    /* background-image: url("../img/header.jpg");
+background-size: cover; */
+
 }
 
 .mainHeader svg {
-    width: max(3vh, 2vw);
+    width: 3vh;
     fill: #fff
 }
+
+.mainLogo {
+    display: flex;
+    gap: var(--padding);
+    flex: 1
+}
+
+
+@media screen and (orientation: portrait) {
+
+
+    .mainHeader svg {
+
+        width: 5vh;
+    }
+}
+
+@media only screen and (max-width: 800px) {    .mainHeader {
+    flex-direction: column;
+
+}}
