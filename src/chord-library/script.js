@@ -226,50 +226,45 @@ export class ChordLibrary {
     //USing this ugly transpose Chord function as its computationaly faster
     transposeChord(chord, semitones) {
         const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-        let mainChordName = chord.name;
-        let bassNote = null;
     
-        // Check if the chord is a slash chord
-        if (chord.name.includes('/')) {
-            [mainChordName, bassNote] = chord.name.split('/');
+        // Helper function to transpose a note name
+        function transposeNoteName(noteName) {
+            let noteIndex = noteNames.indexOf(noteName);
+            let transposedIndex = (noteIndex + semitones) % 12;
+            if (transposedIndex < 0) transposedIndex += 12; // Correct negative indices
+            return noteNames[transposedIndex];
         }
     
-        // Transpose the root note of the main chord
-        const transposedRootNote = (chord.rootNote + semitones) % 12;
-        const transposedNotes = chord.notes.map(note => (note + semitones) % 12);
+        // Split the chord name at the slash to separate the main part and the bass note (if any)
+        let [mainPart, bassPart] = chord.name.split('/');
     
-        // Determine the transposed main chord name
-        const originalRootNoteName = noteNames[chord.rootNote];
-        const transposedRootNoteName = noteNames[transposedRootNote];
+        // Determine the root note and suffix from the main part
+        let noteLength = mainPart[1] === '#' ? 2 : 1;
+        let rootNoteName = mainPart.substring(0, noteLength);
+        let suffix = mainPart.substring(noteLength);
     
-        // Adjust the main chord name by replacing the root note part
-        let transposedMainChordName = mainChordName.replace(originalRootNoteName, transposedRootNoteName);
+        // Transpose the root note
+        let transposedRootNoteName = transposeNoteName(rootNoteName);
     
-        // Handle the case where the original root note is a single character and the transposed root note is two characters (e.g., C -> C#)
-        if (originalRootNoteName.length === 1 && transposedRootNoteName.length === 2) {
-            transposedMainChordName = transposedRootNoteName + mainChordName.slice(1);
-        } else if (originalRootNoteName.length === 2 && transposedRootNoteName.length === 1) {
-            transposedMainChordName = transposedRootNoteName + mainChordName.slice(2);
-        }
-    
-        let transposedBassNoteName = '';
-    
-        if (bassNote) {
-            // Find the index of the bass note
-            const bassNoteIndex = noteNames.indexOf(bassNote);
-            // Transpose the bass note
-            const transposedBassNote = (bassNoteIndex + semitones) % 12;
-            transposedBassNoteName = noteNames[transposedBassNote];
+        // If there is a bass part, transpose it directly
+        let transposedBassPart = '';
+        if (bassPart) {
+            let bassRootNoteLength = bassPart[1] === '#' ? 2 : 1;
+            let bassRootNoteName = bassPart.substring(0, bassRootNoteLength);
+            transposedBassPart = transposeNoteName(bassRootNoteName) + bassPart.substring(bassRootNoteLength);
         }
     
         // Construct the transposed chord name
-        const transposedName = transposedBassNoteName
-            ? `${transposedMainChordName}/${transposedBassNoteName}`
-            : transposedMainChordName;
+        let transposedChordName = transposedRootNoteName + suffix;
+        if (bassPart) {
+            transposedChordName += '/' + transposedBassPart;
+        }
     
-        return new Chord(transposedRootNote, transposedNotes, transposedName, chord.customRoot);
+        // Transpose the numeric notes in the chord
+        let transposedNotes = chord.notes.map(note => (note + semitones) % 12);
+    
+        return new Chord(noteNames.indexOf(transposedRootNoteName), transposedNotes, transposedChordName, chord.customRoot);
     }
-    
     
 
 }

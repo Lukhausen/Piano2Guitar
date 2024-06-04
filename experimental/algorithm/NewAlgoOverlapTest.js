@@ -33,23 +33,29 @@ function findDifferences(arr1, arr2) {
 function countDuplicates(arr) {
     let counts = {};
     let duplicates = 0;
+    let duplicatedElements = [];
 
     arr.forEach(element => {
-        let key = JSON.stringify(element); // Robust conversion
+        let key = JSON.stringify(element);
         if (counts[key]) {
             counts[key]++;
+            if (counts[key] === 2) { // Add the element and count the first time it's identified as a duplicate
+                duplicatedElements.push({ element: element, count: counts[key] });
+            } else {
+                // Update the count in the duplicatedElements array
+                let foundElement = duplicatedElements.find(el => JSON.stringify(el.element) === key);
+                if (foundElement) {
+                    foundElement.count = counts[key];
+                }
+            }
         } else {
             counts[key] = 1;
         }
     });
 
-    for (let key in counts) {
-        if (counts[key] > 1) {
-            duplicates += counts[key] - 1;
-        }
-    }
+    duplicates = Object.values(counts).reduce((acc, count) => count > 1 ? acc + (count - 1) : acc, 0);
 
-    return duplicates;
+    return { count: duplicates, elements: duplicatedElements };
 }
 
 function countUniqueElements(arr) {
@@ -80,7 +86,9 @@ console.log("Arrays in array_1 but not in array_2:", differences.uniqueToArr1);
 console.log("Amount: ", differences.uniqueToArr1.length);
 console.log("Arrays in array_2 but not in array_1:", differences.uniqueToArr2);
 console.log("Amount: ", differences.uniqueToArr2.length);
-console.log("Duplicate items in array_1: ", duplicatesInNewAlgo);
-console.log("Duplicate items in array_2: ", duplicatesInOldAlgo);
+console.log("Duplicate items in array_1: ", duplicatesInNewAlgo.count);
+console.log("Duplicated elements in array_1: ", duplicatesInNewAlgo.elements);
+console.log("Duplicate items in array_2: ", duplicatesInOldAlgo.count);
+console.log("Duplicated elements in array_2: ", duplicatesInOldAlgo.elements);
 console.log("Unique elements in array_1: ", uniqueCountInNewAlgo);
 console.log("Unique elements in array_2: ", uniqueCountInOldAlgo);

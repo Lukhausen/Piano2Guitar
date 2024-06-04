@@ -20,6 +20,7 @@
         "^toggleVolume",
         "^clearProgression",
         "^toggleSettings",
+        "^toggleAdvSettings"
         
 
 

@@ -265,31 +265,26 @@ export class ProgressionGenerator {
         });
 
         // Return the container with all chord diagrams
-        return [diagramsContainer, bestTransposition];
+        return [diagramsContainer, (12 -bestTransposition)%12];
     }
 
     async getEasiestChords() {
         const easiestChordsArray = [
-            [-1, 0, 2, 2, 2, 0],  // A major (A)
-            [-1, 0, 2, 2, 1, 0],  // A minor (Am)
-            [-1, 0, 2, 0, 1, 0],  // A minor 7 (Am7)
-            [-1, 2, 2, 2, 0, 0],  // A7
-            [-1, 0, 2, 0, 1, 3],  // A7sus4
-            [-1, 3, 2, 0, 1, 0],  // C major (C)
+            [-1, 0, 2, 2, 2, 0],   // A major (A)
+            [-1, 0, 2, 2, 1, 0],   // A minor (Am)
+            [-1, 0, 2, 0, 1, 0],   // A minor 7 (Am7)
+            [-1, 0, 2, 2, 0, 0],   // Asus2
+            [-1, 3, 2, 0, 1, 0],   // C major (C)
             [-1, 3, 2, 0, 1, 0],   // C major 7 (Cmaj7)
-            [-1, 3, 2, 2, 1, 3],  // C7
-            [-1, -1, 0, 2, 3, 2], // D major (D)
-            [-1, -1, 0, 2, 1, 2], // D minor (Dm)
-            [3, 2, 0, 0, 0, 3],   // G major (G)
-            [3, 2, 0, 0, 3, 3],   // G7
-            [0, 2, 2, 1, 0, 0],   // E major (E)
-            [0, 2, 0, 1, 0, 0],   // E7
-            [0, 0, 2, 2, 1, 2],   // E minor 7 (Em7)
-            [0, 2, 2, 0, 0, 0],   // E minor (Em)
-            [1, 3, 3, 2, 1, 1],   // F major (F)
-            [1, 1, 3, 3, 2, 1],   // F major 7 (Fmaj7)
-            [1, 1, 3, 3, 3, 1],  // F7
+            [-1, -1, 0, 2, 3, 2],  // D major (D)
+            [-1, -1, 0, 2, 1, 2],  // D minor (Dm)
+            [3, 2, 0, 0, 0, 3],    // G major (G)
+            [0, 2, 2, 1, 0, 0],    // E major (E)
+            [0, 2, 0, 1, 0, 0],    // E7
+            [0, 2, 2, 0, 0, 0],    // E minor (Em)
+            [1, 3, 3, 2, 1, 1],    // F major (F)
         ];
+        
 
         let easiestChords = [];
         let currentChord = new Set();
