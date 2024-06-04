@@ -85,8 +85,8 @@ export class ChordFactory {
 
     let maskScope = Array.from({ length: 6 }, () => []);
     // Initialize the Masscope Array, so that it has stuff loaded. THe algorithm cant work without anything in there, as then the laoding will not make it pssible to catch the firdst few permutations
-/*     for (let string = 0; string < 6; string++) {
-      maskScope[string][0] = this.fingerPositions[string][0]
+    /* for (let string = 0; string < 6; string++) {
+    maskScope[string][0] = this.fingerPositions[string][0]
     } */
 
     //console.log("Initial maskScope array:", maskScope);
@@ -106,7 +106,7 @@ export class ChordFactory {
       //console.log("generateAllChordCombinations2 - FRET: ", fret)
 
       for (let string = 0; string < 6; string++) {
-        console.log("maskScope before" ,structuredClone(maskScope))
+        console.log("maskScope before", structuredClone(maskScope))
 
         for (let validPosition = 0; validPosition < maskScope[string].length; validPosition++) {
           // FIrst remove all Non Fitting Elements From Out current maskScope on All Strings.
@@ -115,6 +115,9 @@ export class ChordFactory {
             maskScope[string].splice(validPosition, 1);
           }
         }
+
+
+        //preload the New Array
       }
       //for (let i = 0; i < 6; i++) {
       //console.log("generateAllChordCombinations2 - maskScope: ", i, maskScope[i])
@@ -133,7 +136,7 @@ export class ChordFactory {
             console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]])
             console.log("fret, string", fret, string)
             maskScope[string].push(this.fingerPositions[string][fingerIndexStorage[string]])
-            console.log("maskScope after" ,structuredClone(maskScope))
+            console.log("maskScope after", structuredClone(maskScope))
 
 
             //As The For Loop exists if one mask scope is not set = [] we need to populate the not set masks with -1 as there is no valid string in reach we can play, so we need to mute it.

@@ -3,7 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "source": "src/index.html",
-  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "browserslist": [
+    "> 0.01%",
+    "not dead",
+    "ie >= 6",
+    "Firefox >= 1",
+    "Chrome >= 1",
+    "Safari >= 1",
+    "Opera >= 1"
+  ],
   "scripts": {
     "start": "npx parcel src/index.html",
     "build": "node build.js"
