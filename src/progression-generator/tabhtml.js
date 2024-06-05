@@ -121,7 +121,6 @@ export class TabHTML {
                     svgContainer.classList.add("progressionGeneratorSvgContainer");
                     svgContainer.appendChild(svg);
 
-
                     // Container for the ChordSwitching
                     let chordSwitchContainer = document.createElement('div');
                     chordSwitchContainer.classList.add("progressionGeneratorChordSwitchContainer");

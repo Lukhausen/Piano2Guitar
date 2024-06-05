@@ -75,146 +75,122 @@ export class ChordFactory {
   }
 
 
-  //Highly efficent Variant of the Cartesian Product, That will not calulate any position twice
-  generateAllChordCombinations2() {
+generateAllChordCombinations2() {
+  // Start the timer to measure function execution time
+  const startTime = performance.now();
+  
+  // Array to keep track of temporary indexes where -1 is inserted
+  let temporaryMutedIndexes = [];
+  // Array to store all generated chord combinations
+  let generatedChords = [];
 
-    const startTime = performance.now();
-    let insertedTempIndexes = [];
-    let chords = [];
-    //console.log("Initial chords array:", chords);
+  // Initialize maskScope with 6 empty arrays, one for each string
+  let maskScope = Array.from({ length: 6 }, () => []);
+  let preScope = [];
 
-    let maskScope = Array.from({ length: 6 }, () => []);
-    let preScope = []
-    // Initialize the Masscope Array, so that it has stuff loaded. THe algorithm cant work without anything in there, as then the laoding will not make it pssible to catch the firdst few permutations
-    /* for (let string = 0; string < 6; string++) {
-    maskScope[string][0] = this.fingerPositions[string][0]
-    } */
+  // Array to store the current index in fingerPositions for each string
+  const fingerIndexStorage = Array(6).fill(0);
 
-    //console.log("Initial maskScope array:", maskScope);
+  // Array to store the length of valid positions for each string minus one
+  let fingerIndexLength = [];
+  this.fingerPositions.forEach((element, index) => {
+    fingerIndexLength[index] = element.length - 1;
+  });
 
-    const fingerIndexStorage = Array(6).fill(0);
-    //console.log("Initial fingerIndexStorage array:", fingerIndexStorage);
+  // Iterate over all possible frets from -1 (muted) to 12
+  for (let fret = -1; fret < 13; fret++) {
+    preScope = [];
+    temporaryMutedIndexes = [];
 
-    let fingerIndexLength = []
-    this.fingerPositions.forEach((element, index) => {
-      fingerIndexLength[index] = element.length - 1
-    })
+    // Iterate over each string of the guitar
+    for (let string = 0; string < 6; string++) {
+      console.log("maskScope before", structuredClone(maskScope));
 
-    //console.log("Finger index lengths for all strings:", fingerIndexLength);
-
-    // As the first entry of the chords is allways -1 we can skip this
-    for (let fret = -1; fret < 13; fret++) {
-      //console.log("generateAllChordCombinations2 - FRET: ", fret)
-
-      //CLear The Prescope
-      preScope = []
-      insertedTempIndexes = [];
-
-      for (let string = 0; string < 6; string++) {
-        console.log("maskScope before", structuredClone(maskScope))
-
-        for (let validPosition = 0; validPosition < maskScope[string].length; validPosition++) {
-          // FIrst remove all Non Fitting Elements From Out current maskScope on All Strings.
-          // Exclude The -1 (muted) and 0 (open string) Because they can be used everywhere
-          if (maskScope[string][validPosition] > 0 && maskScope[string][validPosition] < fret) {
-            maskScope[string].splice(validPosition, 1);
-          }
-
+      // Remove positions in maskScope that are less than the current fret
+      for (let validPosition = 0; validPosition < maskScope[string].length; validPosition++) {
+        if (maskScope[string][validPosition] > 0 && maskScope[string][validPosition] < fret) {
+          maskScope[string].splice(validPosition, 1);
         }
-        //check if maskscope is empty
-        if (maskScope[string].length == 0) {
-          preScope.push(string)
-        }
-
-        //Go over the Prescope and check if It will get populated or not
-
-        //for (let i = 0; i < 6; i++) {
-        //console.log("generateAllChordCombinations2 - maskScope: ", i, maskScope[i])
       }
-      //}
-      preScope.forEach((string) => {
-        //If finger index is avauoabel
-        if (fingerIndexStorage[string] < fingerIndexLength[string]) {
 
-          // IF fingerposition that is new is valid and in range of Frets
+      // If maskScope is empty for the current string, add it to preScope
+      if (maskScope[string].length == 0) {
+        preScope.push(string);
+      }
+    }
 
-          if (this.fingerPositions[string][fingerIndexStorage[string]] < fret + settings.fingerFretRange) {
-            //This means the maskScope will get populated and we do not need to insert a -1
-          } else {
-            //THe mask Scope does note get populated so we populate it with a -1 and remeber the index where we populated it, so we can remove it alter on.
-            maskScope[string].push(-1);
-            insertedTempIndexes.push(string);
-          }
+    // Populate maskScope for strings in preScope
+    preScope.forEach((string) => {
+      if (fingerIndexStorage[string] < fingerIndexLength[string]) {
+        // If the next valid position is within the allowed fret range
+        if (this.fingerPositions[string][fingerIndexStorage[string]] < fret + settings.fingerFretRange) {
+          // Do nothing as the position will be added in the next loop
+        } else {
+          // Add -1 (muted) to maskScope if the position is out of range
+          maskScope[string].push(-1);
+          temporaryMutedIndexes.push(string);
         }
-      })
-      //Now We deleted all old ElementInternals, we can start inserting New elements one by one
-      for (let string = 0; string < 6; string++) {
-        //console.log("generateAllChordCombinations2 Fret, String", fret, string)
+      }
+    });
 
-        // Add The New Element, if there is one 
-        // First Check If there is a New Element inside the Array
-        if (fingerIndexStorage[string] < fingerIndexLength[string]) {
-          // CHeck if its in range for Valid CHord, if so add it 
-          if (this.fingerPositions[string][fingerIndexStorage[string]] < fret + settings.fingerFretRange) {
-            console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]])
-            console.log("fret, string", fret, string)
-            maskScope[string].push(this.fingerPositions[string][fingerIndexStorage[string]])
-            console.log("maskScope after", structuredClone(maskScope))
+    // Insert new elements into maskScope
+    for (let string = 0; string < 6; string++) {
+      // If there are valid positions left for the current string
+      if (fingerIndexStorage[string] < fingerIndexLength[string]) {
+        // If the next valid position is within the allowed fret range
+        if (this.fingerPositions[string][fingerIndexStorage[string]] < fret + settings.fingerFretRange) {
+          console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]]);
+          console.log("fret, string", fret, string);
+          maskScope[string].push(this.fingerPositions[string][fingerIndexStorage[string]]);
+          console.log("maskScope after", structuredClone(maskScope));
 
+          // Generate all combinations of positions in maskScope
+          for (let pos1 of maskScope[(string + 1) % 6]) {
+            for (let pos2 of maskScope[(string + 2) % 6]) {
+              for (let pos3 of maskScope[(string + 3) % 6]) {
+                for (let pos4 of maskScope[(string + 4) % 6]) {
+                  for (let pos5 of maskScope[(string + 5) % 6]) {
+                    let newVoicing = [];
+                    newVoicing[string] = this.fingerPositions[string][fingerIndexStorage[string]];
+                    newVoicing[(string + 1) % 6] = pos1;
+                    newVoicing[(string + 2) % 6] = pos2;
+                    newVoicing[(string + 3) % 6] = pos3;
+                    newVoicing[(string + 4) % 6] = pos4;
+                    newVoicing[(string + 5) % 6] = pos5;
 
-
-            for (let pos1 of maskScope[(string + 1) % 6]) {
-              for (let pos2 of maskScope[(string + 2) % 6]) {
-                for (let pos3 of maskScope[(string + 3) % 6]) {
-                  for (let pos4 of maskScope[(string + 4) % 6]) {
-                    for (let pos5 of maskScope[(string + 5) % 6]) {
-                      let newVoicing = []
-                      newVoicing[string] = this.fingerPositions[string][fingerIndexStorage[string]]
-                      newVoicing[(string + 1) % 6] = pos1
-                      newVoicing[(string + 2) % 6] = pos2
-                      newVoicing[(string + 3) % 6] = pos3
-                      newVoicing[(string + 4) % 6] = pos4
-                      newVoicing[(string + 5) % 6] = pos5
-
-                      console.log("NEW: ", structuredClone(newVoicing))
-                      chords.push(newVoicing);
-                    }
+                    console.log("NEW: ", structuredClone(newVoicing));
+                    generatedChords.push(newVoicing);
                   }
                 }
               }
             }
-
-
-            //Flag the next index to be looked at later
-
-            fingerIndexStorage[string]++
-
-
-            //Remove The -1s we added from maskscope.
-            for (let i of insertedTempIndexes) {
-              maskScope[i].pop();
-            }
-
-          } else {
-            //Break because the element found is too big to be inserte into the maskScope
           }
+
+          // Move to the next valid position for the current string
+          fingerIndexStorage[string]++;
+
+          // Remove the temporary -1 values added to maskScope
+          for (let i of temporaryMutedIndexes) {
+            maskScope[i].pop();
+          }
+
         } else {
-          //break because there are no more elments left in the Array
+          // Break because the element found is too big to be inserted into the maskScope
         }
-
-        //Calculate the Cartesian Product From the Inserted element
-
-        // Add each element to the chords
+      } else {
+        // Break because there are no more elements left in the Array
       }
     }
-    // Track end time
-    const endTime = performance.now();
-
-    // Calculate the time taken
-    const timeTaken = endTime - startTime;
-    console.log("generateAllChordCombinations2 - Time taken:", timeTaken, "milliseconds");
-    return chords;
   }
+
+  // Track end time and calculate the time taken
+  const endTime = performance.now();
+  const timeTaken = endTime - startTime;
+  console.log("generateAllChordCombinations2 - Time taken:", timeTaken, "milliseconds");
+
+  return generatedChords;
+}
+
 
 
   filterPlayableChords(allChordsCopy) {
