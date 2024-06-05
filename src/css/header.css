@@ -23,7 +23,7 @@ background-size: cover; */
 
 .mainHeader svg {
     width: 3vh;
-    fill: #fff
+    fill: var(--accent1)
 }
 
 .mainLogo {
@@ -55,7 +55,7 @@ background-size: cover; */
 #introductionHeader {
     cursor: pointer;
     font-size: larger;
-    padding: calc(var(--padding)/2) var(--padding) ;
+    padding: calc(var(--padding)/2) var(--padding);
     background-color: #ffffff10;
     box-sizing: border-box;
     border-radius: var(--rounding);
@@ -67,7 +67,7 @@ background-size: cover; */
     backdrop-filter: blur(10px);
 }
 
-#introductionHeader:hover{
+#introductionHeader:hover {
     filter: brightness(1.1);
 }
 
@@ -163,8 +163,9 @@ background-size: cover; */
 
 
 @media screen and (orientation: portrait) {
-.mainHeader{    padding: calc(var(--padding)/2);
-}
+    .mainHeader {
+        padding: calc(var(--padding)/2);
+    }
 
     .mainHeader svg {
 
@@ -172,7 +173,9 @@ background-size: cover; */
     }
 }
 
-@media only screen and (max-width: 800px) {    .mainHeader {
-    flex-direction: column;
+@media only screen and (max-width: 800px) {
+    .mainHeader {
+        flex-direction: column;
 
-}}
+    }
+}

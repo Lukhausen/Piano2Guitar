@@ -26,7 +26,7 @@
 
 .content {
     margin: 0;
-    filter: drop-shadow(0 0 10vw rgba(6, 6, 6, 0.552));
+   box-shadow: 0px 0px 5vw #0000008c;
     box-sizing: border-box;
     width: 80vw;
 
@@ -91,7 +91,6 @@
     background-color: var(--dark2);
     border-radius: var(--rounding);
     gap: calc(var(--padding)/2);
-    flex-basis: 100px;
     box-shadow: inset 0 0 1vw rgba(0, 0, 0, 0.197);
 
 }
@@ -237,7 +236,6 @@
     padding: var(--padding);
     gap: var(--padding);
     border-radius: var(--rounding);
-    overflow-y: auto;
     max-height: 15%;
     box-shadow: inset 0 0 1vw rgba(0, 0, 0, 0.197);
     border-top-right-radius: 0;
@@ -344,7 +342,6 @@
 
     .visualPianoContainer {
         flex: 1;
-        flex-basis: 100px;
     }
 
     html {
@@ -355,7 +352,9 @@
     :root {
         --padding: 10px;
     }
-
+    .inputWrapper {
+        height: 70vh;
+    }
 }
 
 @media only screen and (max-width: 1200px) {
@@ -383,11 +382,5 @@
 
     .versionInformation {
         display: none;
-    }
-}
-
-@media screen and (max-height: 800px) {
-    .inputWrapper {
-        height: 70vh;
     }
 }
