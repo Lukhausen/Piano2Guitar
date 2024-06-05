@@ -102,29 +102,28 @@ export class ChordVoicing {
 
 
 
-
-  static PLAYABILITY_WEIGHTS = {
-    fingersUsed: 1,
-    fingerSpread: 4,
-    mutedAmount: 1,
-    fretHeight: 1,
-    mutedDifficulty: 2,
-    mutedReachability: 2,
-    barreAmount: 1,
-
-  };
-
-  // 0 is Badly Playable and 1 Is good PLayability
   ratePlayability() {
-    const details = this.ratingDetails.playability;
-    details.fingersUsed = this.assessPlayabilityFingersUsed() * ChordVoicing.PLAYABILITY_WEIGHTS.fingersUsed
-    details.fingerSpread = this.assessPlayabilityFingerSpread() * ChordVoicing.PLAYABILITY_WEIGHTS.fingerSpread
-    details.mutedAmount = this.assessPlayabilityMutedAmount() * ChordVoicing.PLAYABILITY_WEIGHTS.mutedAmount
-    details.fretHeight = this.assessPlayabilityFretHeight() * ChordVoicing.PLAYABILITY_WEIGHTS.fretHeight
-    details.mutedDifficulty = this.assessPlayabilityMutedDifficulty() * ChordVoicing.PLAYABILITY_WEIGHTS.mutedDifficulty
-    details.mutedReachability = this.assessPlayabilityMutedReachability() * ChordVoicing.PLAYABILITY_WEIGHTS.mutedReachability
-    details.barreAmount = this.assessPlayabilityBarreAmount() * ChordVoicing.PLAYABILITY_WEIGHTS.barreAmount
+    // Define playability weights directly within this method
+    const PLAYABILITY_WEIGHTS = {
+      fingersUsed: 1,
+      fingerSpread: 4,
+      mutedAmount: 1,
+      fretHeight: 1,
+      mutedDifficulty: 2,
+      mutedReachability: 2,
+      barreAmount: 1,
+    };
 
+    const details = this.ratingDetails.playability;
+    details.fingersUsed = this.assessPlayabilityFingersUsed() * PLAYABILITY_WEIGHTS.fingersUsed;
+    details.fingerSpread = this.assessPlayabilityFingerSpread() * PLAYABILITY_WEIGHTS.fingerSpread;
+    details.mutedAmount = this.assessPlayabilityMutedAmount() * PLAYABILITY_WEIGHTS.mutedAmount;
+    details.fretHeight = this.assessPlayabilityFretHeight() * PLAYABILITY_WEIGHTS.fretHeight;
+    details.mutedDifficulty = this.assessPlayabilityMutedDifficulty() * PLAYABILITY_WEIGHTS.mutedDifficulty;
+    details.mutedReachability = this.assessPlayabilityMutedReachability() * PLAYABILITY_WEIGHTS.mutedReachability;
+    details.barreAmount = this.assessPlayabilityBarreAmount() * PLAYABILITY_WEIGHTS.barreAmount;
+
+    // Calculate total playability score
     details.total = (
       details.fingersUsed +
       details.fingerSpread +
@@ -133,7 +132,7 @@ export class ChordVoicing {
       details.mutedDifficulty +
       details.mutedReachability +
       details.barreAmount
-    ) / Object.values(ChordVoicing.PLAYABILITY_WEIGHTS).reduce((sum, weight) => sum + weight, 0);
+    ) / Object.values(PLAYABILITY_WEIGHTS).reduce((sum, weight) => sum + weight, 0);
 
     this.playabilityRating = details.total;
   }
@@ -229,30 +228,30 @@ export class ChordVoicing {
 
 
 
-  static SOUND_QUALITY_WEIGHTS = {
-    harmonicCompleteness: 0,
-    openStrings: 1,
-    playedStrings: 2,
-    fretBoardHeight: 1,
-    voicingRange: 4,
-    doubleNotes: 1,
-    voicingExp: 3,
-    highStringHarmonicCompleteness: 2,
-  };
-
-
-  // 1 Best Sound, 0 worst sound
   rateSoundQuality() {
-    const details = this.ratingDetails.soundQuality;
-    details.harmonicCompleteness = this.assessSoundHarmonicCompleteness() * ChordVoicing.SOUND_QUALITY_WEIGHTS.harmonicCompleteness;
-    details.openStrings = this.assessSoundOpenStrings() * ChordVoicing.SOUND_QUALITY_WEIGHTS.openStrings;
-    details.playedStrings = this.assessSoundPlayedStrings() * ChordVoicing.SOUND_QUALITY_WEIGHTS.playedStrings;
-    details.fretBoardHeight = this.assessSoundFretBoardHeight() * ChordVoicing.SOUND_QUALITY_WEIGHTS.fretBoardHeight;
-    details.voicingRange = this.assessSoundVoicingRange() * ChordVoicing.SOUND_QUALITY_WEIGHTS.voicingRange;
-    details.doubleNotes = this.assessSoundDoubleNotes() * ChordVoicing.SOUND_QUALITY_WEIGHTS.doubleNotes;
-    details.voicingExp = this.assesSoundVoicingExp() * ChordVoicing.SOUND_QUALITY_WEIGHTS.voicingExp;
-    details.highStringHarmonicCompleteness = this.assessSoundHighStringHarmonicCompleteness() * ChordVoicing.SOUND_QUALITY_WEIGHTS.highStringHarmonicCompleteness;
+    // Define sound quality weights directly within this method
+    const SOUND_QUALITY_WEIGHTS = {
+      harmonicCompleteness: 0,
+      openStrings: 1,
+      playedStrings: 2,
+      fretBoardHeight: 1,
+      voicingRange: 4,
+      doubleNotes: 1,
+      voicingExp: 3,
+      highStringHarmonicCompleteness: 2,
+    };
 
+    const details = this.ratingDetails.soundQuality;
+    details.harmonicCompleteness = this.assessSoundHarmonicCompleteness() * SOUND_QUALITY_WEIGHTS.harmonicCompleteness;
+    details.openStrings = this.assessSoundOpenStrings() * SOUND_QUALITY_WEIGHTS.openStrings;
+    details.playedStrings = this.assessSoundPlayedStrings() * SOUND_QUALITY_WEIGHTS.playedStrings;
+    details.fretBoardHeight = this.assessSoundFretBoardHeight() * SOUND_QUALITY_WEIGHTS.fretBoardHeight;
+    details.voicingRange = this.assessSoundVoicingRange() * SOUND_QUALITY_WEIGHTS.voicingRange;
+    details.doubleNotes = this.assessSoundDoubleNotes() * SOUND_QUALITY_WEIGHTS.doubleNotes;
+    details.voicingExp = this.assessSoundVoicingExp() * SOUND_QUALITY_WEIGHTS.voicingExp;
+    details.highStringHarmonicCompleteness = this.assessSoundHighStringHarmonicCompleteness() * SOUND_QUALITY_WEIGHTS.highStringHarmonicCompleteness;
+
+    // Calculate total sound quality score
     details.total = (
       details.harmonicCompleteness +
       details.openStrings +
@@ -262,8 +261,7 @@ export class ChordVoicing {
       details.doubleNotes +
       details.voicingExp +
       details.highStringHarmonicCompleteness
-
-    ) / Object.values(ChordVoicing.SOUND_QUALITY_WEIGHTS).reduce((sum, weight) => sum + weight, 0);
+    ) / Object.values(SOUND_QUALITY_WEIGHTS).reduce((sum, weight) => sum + weight, 0);
 
     this.soundQualityRating = details.total;
   }
@@ -356,7 +354,7 @@ export class ChordVoicing {
     return 1 - (doubleNotes / 5)
   }
 
-  assesSoundVoicingExp() {
+  assessSoundVoicingExp() {
     // The Closer to 1 the Bigger are the Gaps Between the Low Notes
     // The CLoser to 0, the more it is equal spaces are between the Notes
     let decayParameter = 0.5
