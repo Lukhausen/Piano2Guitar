@@ -15,6 +15,7 @@ class Settings {
     this._fingerFretRange = 4;
     this._mutePermutations = false
     this._startWithRoot = true;
+    this._trailing = true;
 
   }
 
@@ -97,6 +98,23 @@ class Settings {
       this._startWithRoot = value;
     } else {
       throw new Error("Invalid startWithRoot value. It must be a boolean.");
+    }
+  }
+
+  get trailing() {
+    return this._trailing;
+  }
+
+  /**
+   * Set a new trailing value.
+   * @param {boolean} value - A boolean representing the new trailing value.
+   * @throws {Error} Throws an error if the value is not a boolean.
+   */
+  set trailing(value) {
+    if (typeof value === 'boolean') {
+      this._trailing = value;
+    } else {
+      throw new Error("Invalid trailing value. It must be a boolean.");
     }
   }
 

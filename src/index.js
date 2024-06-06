@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         devices.forEach(device => {
             const option = document.createElement('option');
             option.value = device.name;
-            option.textContent = "MIDI: "+device.name;
+            option.textContent = "MIDI: " + device.name;
             MIDIStatusDiv.appendChild(option);
         });
         MIDIStatusDiv.style.display = "flex";
@@ -577,9 +577,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Trailing Notes
+    document.getElementById('settingsTrailing').addEventListener('change', function () {
+        settings.trailing = this.checked;
+        localStorage.setItem('trailing', this.checked);
+        reloadFlag = true; // Ensure the progression is updated
+        console.log(`Trailing used notes set to: ${this.checked}`);
+    });
 
+    function loadTrailingSetting() {
+        console.log("Loading trailing setting...");
+        if (localStorage.getItem('trailing') !== null) {
+            const storedTrailingSetting = JSON.parse(localStorage.getItem('trailing'));
+            settings.trailing = storedTrailingSetting;
+            document.getElementById('settingsTrailing').checked = storedTrailingSetting;
+            console.log("Stored trailing setting from localStorage:", storedTrailingSetting);
+        } else {
+            settings.trailing = false; // Default value
+            document.getElementById('settingsTrailing').checked = false;
+        }
+    }
 
-
+    loadTrailingSetting();
     loadFretRangeSetting();
     loadTuningSettings();
     loadMuteSetting();

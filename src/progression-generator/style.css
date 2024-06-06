@@ -32,7 +32,7 @@
 }
 
 .progressionGeneratorSvgContainer svg {
-    width: calc(max(10vh, 7vw));
+    width: calc(1px+max(10vh, 7vw));
     height: auto;
 }
 
