@@ -43,7 +43,7 @@
     <div class="content">
         <div class="mainHeader">
             <div class="mainLogo">
-                <svg data-name="Ebene 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 243.68 212.74">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 243.68 212.74">
                     <g>
                         <path class="cls-1"
                             d="M46.18,212.74h-19.25C12.05,212.74,0,200.69,0,185.81v-64.85c17.21,3.47,34.67,6.22,52.36,8.21.1,0,.21.02.31.03.2,2.47.74,4.84,1.57,7.08,1.36,3.67,3.49,6.97,6.21,9.68,3.44,3.43,7.79,5.94,12.66,7.12v32.73c0,14.88-12.06,26.93-26.93,26.93Z" />
@@ -74,7 +74,11 @@
                 <h1>PianoToGuitar.com</h1>
             </div>
             <div id="introductionHeader">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>
+                <svg class="visualIcon"  xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                    <path
+                        d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+                </svg>
             </div>
         </div>
 
@@ -134,6 +138,10 @@
                             <div class="introductionContentItemText">Find new and undiscovered Chords<br>We use
                                 algorithms to generate <strong>all</strong> possible Chords.</div>
                         </div>
+                    </div>
+                    <div class="introductionContentText">
+                        <h3>Click on a chord to add it to your progression.<br>
+                            Double-click a piano key to set it as the root note.</h3>
                     </div>
                 </div>
 
@@ -349,10 +357,10 @@
                             {{BUILD_DATE}}</div>
                     </div>
                 </div>
-                <div class="settingsWrapper"  onclick="toggleSettings()">
+                <div class="settingsWrapper" onclick="toggleSettings()">
                     <div class="settingsWrapperText">SETTINGS</div>
-                    <svg class="visualIcon" id="settingsIcon" xmlns="http://www.w3.org/2000/svg"
-                        height="24" viewBox="0 -960 960 960" width="24">
+                    <svg class="visualIcon" id="settingsIcon" xmlns="http://www.w3.org/2000/svg" height="24"
+                        viewBox="0 -960 960 960" width="24">
                         <path
                             d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z" />
                     </svg>
@@ -413,11 +421,13 @@
             <div class="progression">
                 <div class="progressionInfo">
                     <div class="progressionInfoText">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-                            <path
-                                d="M349.4 44.6c5.9-13.7 1.5-29.7-10.6-38.5s-28.6-8-39.9 1.8l-256 224c-10 8.8-13.6 22.9-8.9 35.3S50.7 288 64 288H175.5L98.6 467.4c-5.9 13.7-1.5 29.7 10.6 38.5s28.6 8 39.9-1.8l256-224c10-8.8 13.6-22.9 8.9-35.3s-16.6-20.7-30-20.7H272.5L349.4 44.6z" />
-                        </svg>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                                <path
+                                    d="M349.4 44.6c5.9-13.7 1.5-29.7-10.6-38.5s-28.6-8-39.9 1.8l-256 224c-10 8.8-13.6 22.9-8.9 35.3S50.7 288 64 288H175.5L98.6 467.4c-5.9 13.7-1.5 29.7 10.6 38.5s28.6 8 39.9-1.8l256-224c10-8.8 13.6-22.9 8.9-35.3s-16.6-20.7-30-20.7H272.5L349.4 44.6z" />
+                            </svg>
+                        </div>
                         <div class="progressionInfoTextWrapper">
                             <div class="progressionInfoTextName"><i>DYNAMIC</i></div>
                             <div class="progressionInfoTextSubtitle">Adjust the slider to transition from simple chords

@@ -1,7 +1,9 @@
 h1 {
     margin: 0;
     font-weight: 100;
-    font-size: calc(var(--font-size)*2);
+    font-size: min(10cqw, calc(2.5*var(--font-size)));
+    display: flex;
+    align-items: center; 
 }
 
 .mainHeader {
@@ -19,7 +21,6 @@ background-size: cover; */
 }
 
 .mainHeader svg {
-    width: 2.5vh;
     fill: var(--accent1)
 }
 
@@ -28,6 +29,7 @@ background-size: cover; */
     gap: var(--padding);
     flex: 1;
     padding: calc(2*var(--padding));
+    container-type: size;
 
 }
 
@@ -56,7 +58,7 @@ background-size: cover; */
     padding: calc(2*var(--padding));
     background-color: #ffffff10;
     box-sizing: border-box;
-    border-radius: 0 0  var(--rounding) 0;
+    border-radius: 0 0 var(--rounding) 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -161,14 +163,8 @@ background-size: cover; */
 
 
 @media screen and (orientation: portrait) {
-    .mainHeader {
-    }
+    .mainHeader {}
 
-    .mainHeader svg {
-
-        width: 5vh;
-    }
 }
 
-@media only screen and (max-width: 800px) {
-}
+@media only screen and (max-width: 800px) {}
