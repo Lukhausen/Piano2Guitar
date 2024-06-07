@@ -217,15 +217,18 @@ export class ProgressionGenerator {
         let maxOverlap = 0;
 
         // Function to transpose a chord by a given number of semitones
-        const transposeChord = (chord, semitones) => {
+        let transposeChord = (chord, semitones) => {
             return this.chordLibrary.transposeChord(chord, semitones);
         };
 
         for (let i = 0; i < 12; i++) {
 
             let overlapCount = 0;
-            let transposedProgression = originalProgression.map(chord => transposeChord(chord, i));
-            console.error(this.transposedProgression)
+            let transposedProgression = await Promise.all(
+                originalProgression.map(chord =>
+                    this.chordLibrary.simplifySlashChord(transposeChord(chord, i))
+                )
+            );
             transposedProgression.forEach(chord => {
 
                 this.easiestChords.forEach(easyChord => {
@@ -242,7 +245,12 @@ export class ProgressionGenerator {
         }
 
         // Transpose the original progression to the best transposition
-        let bestTransposedProgression = originalProgression.map(chord => transposeChord(chord, bestTransposition));
+
+        let bestTransposedProgression = await Promise.all(
+            originalProgression.map(chord =>
+                this.chordLibrary.simplifySlashChord(transposeChord(chord, bestTransposition))
+            )
+        );
 
         bestTransposedProgression = bestTransposedProgression.map(chord => {
             if (chord instanceof Chord) {

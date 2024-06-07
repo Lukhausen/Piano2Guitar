@@ -101,18 +101,22 @@ export class ChordVoicing {
 
 
 
-
+  //1 is good playability, 0 is bad palyability
   ratePlayability() {
     // Define playability weights directly within this method
     const PLAYABILITY_WEIGHTS = {
-      fingersUsed: 1,
-      fingerSpread: 4,
-      mutedAmount: 1,
-      fretHeight: 1,
-      mutedDifficulty: 2,
-      mutedReachability: 2,
-      barreAmount: 1,
+      fingersUsed: 3,        // Increased due to significant impact on difficulty
+      fingerSpread: 5,       // Increased to reflect moderate spreads being easier
+      fretHeight: 9,         // Kept moderate as high frets can be challenging
+      mutedAmount: 15,        // Kept moderate as muting few strings is common
+      mutedDifficulty: 6,    // Increased due to high difficulty of unreachable mutes
+      mutedReachability: 2,  // Increased due to difficulty of unreachable mutes
+      barreAmount: 9,        // Increased due to high difficulty of barre chords
+      barreDifficulty: 0,
+      fingerDistances: 2,    // Increased to reflect larger distances being harder
     };
+
+
 
     const details = this.ratingDetails.playability;
     details.fingersUsed = this.assessPlayabilityFingersUsed() * PLAYABILITY_WEIGHTS.fingersUsed;
@@ -122,6 +126,8 @@ export class ChordVoicing {
     details.mutedDifficulty = this.assessPlayabilityMutedDifficulty() * PLAYABILITY_WEIGHTS.mutedDifficulty;
     details.mutedReachability = this.assessPlayabilityMutedReachability() * PLAYABILITY_WEIGHTS.mutedReachability;
     details.barreAmount = this.assessPlayabilityBarreAmount() * PLAYABILITY_WEIGHTS.barreAmount;
+    details.fingerDistances = this.assessPlayabilityFingerDistances() * PLAYABILITY_WEIGHTS.fingerDistances;
+    details.barreDifficulty = this.assessPlayabilityBarreDifficulty() * PLAYABILITY_WEIGHTS.barreDifficulty;
 
     // Calculate total playability score
     details.total = (
@@ -131,7 +137,9 @@ export class ChordVoicing {
       details.fretHeight +
       details.mutedDifficulty +
       details.mutedReachability +
-      details.barreAmount
+      details.barreAmount +
+      details.barreDifficulty +
+      details.fingerDistances
     ) / Object.values(PLAYABILITY_WEIGHTS).reduce((sum, weight) => sum + weight, 0);
 
     this.playabilityRating = details.total;
@@ -152,7 +160,7 @@ export class ChordVoicing {
         maxFret = this.voicing[i]
       }
     }
-    return 1 - ((1.5 ** (maxFret - this.minAboveZero)) / (1.5 ** settings.fingerFretRange))
+    return 1 - ((2 ** (maxFret - this.minAboveZero)) / (2 ** settings.fingerFretRange))
   }
 
   assessPlayabilityMutedAmount() {
@@ -166,7 +174,13 @@ export class ChordVoicing {
   }
 
   assessPlayabilityFretHeight() {
-    return 1 - Math.max((this.minAboveZero / 12), 0)
+    if (Math.max(...this.voicing) > settings.fingerFretRange) {
+      return 1 - (this.minAboveZero / 12)
+    }
+    else {
+      return 1
+    }
+
   }
 
   assessPlayabilityMutedDifficulty() {
@@ -190,6 +204,19 @@ export class ChordVoicing {
 
   assessPlayabilityBarreAmount() {
     return 1 - ((this.barres.length * this.barres.length) / (3 * 3))
+  }
+
+  assessPlayabilityBarreDifficulty() {
+    if(this.barres.length ==0){
+      return 1
+    }
+    let count = 0
+    this.barres.forEach(barre => {
+      //If Full Barre
+      count += barre[2] - barre[1]
+    })
+    let barrevalue = count / this.barres.length
+    return (barrevalue / 5)
   }
 
   assessPlayabilityMutedReachability() {
@@ -220,6 +247,35 @@ export class ChordVoicing {
     return 1 - mutedDifficulty; // Invert to match scale where 1 is easy and 0 is difficult
   }
 
+  assessPlayabilityFingerDistances() {
+    const positions = [];
+
+    // Collect positions of all fingers that are not muting a string.
+    this.fingerPositions.forEach((pos, index) => {
+      if (pos > 0 && this.voicing[index] !== -1) {
+        positions.push({ finger: pos, fret: this.voicing[index], string: index });
+      }
+    });
+
+    // Sort the positions array by finger order
+    positions.sort((a, b) => a.finger - b.finger);
+    //console.log(positions)
+
+    // Calculate total distance between consecutive fingers
+    let totalDistance = 0;
+    for (let i = 0; i < positions.length - 1; i++) {
+      const fretDistance = Math.abs(positions[i].fret - positions[i + 1].fret);
+      const stringDistance = Math.abs(positions[i].string - positions[i + 1].string);
+      totalDistance += fretDistance + stringDistance;
+    }
+
+    return settings.fingerFretRange / totalDistance;
+  }
+
+
+
+
+
 
 
 
@@ -231,10 +287,10 @@ export class ChordVoicing {
   rateSoundQuality() {
     // Define sound quality weights directly within this method
     const SOUND_QUALITY_WEIGHTS = {
-      harmonicCompleteness: 0,
+      harmonicCompleteness: 1,
       openStrings: 1,
       playedStrings: 2,
-      fretBoardHeight: 1,
+      fretBoardHeight: 2,
       voicingRange: 4,
       doubleNotes: 1,
       voicingExp: 3,

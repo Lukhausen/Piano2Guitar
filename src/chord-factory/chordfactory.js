@@ -46,22 +46,30 @@ export class ChordFactory {
 
   calculateValidFingerPositions() {
     const fingerPositions = [];
-
+  
     for (let stringIndex of this.tuning) {
       const positions = [];
       for (let chordIndex of this.notes) {
         const validPositions = this.getValidFretPositionsForNote(chordIndex, stringIndex % 12);
-        positions.push(...validPositions);
+        // Add each valid position only if it's not already in the array
+        validPositions.forEach(position => {
+          if (!positions.includes(position)) {
+            positions.push(position);
+          }
+        });
       }
-      if (settings.mutePermutations) {
-        positions.push(-1); // Add -1 only if there is no 0
+      // Add -1 for muting if necessary, ensuring it's not already present
+      if (settings.mutePermutations && !positions.includes(-1)) {
+        positions.push(-1);
       }
-      positions.sort((a, b) => a - b); // Sort the positions from lowest to highest
+      // Sort the positions from lowest to highest
+      positions.sort((a, b) => a - b);
       fingerPositions.push(positions);
     }
-
+  
     return fingerPositions;
   }
+  
 
   getValidFretPositionsForNote(noteIndex, stringIndex) {
     const baseFret = (noteIndex - stringIndex + 120) % 12;
@@ -99,6 +107,7 @@ export class ChordFactory {
       fingerIndexLength[index] = element.length - 1;
     });
 
+
     // Iterate over all possible frets from -1 (muted) to 12
     for (let fret = -1; fret < 13; fret++) {
       preScope = [];
@@ -123,6 +132,7 @@ export class ChordFactory {
       for (let string = 0; string < 6; string++) {
         //console.log("maskScope before", structuredClone(maskScope));
 
+        console.log("scope before removal", structuredClone(maskScope))
         // Remove positions in maskScope that are less than the current fret
         for (let validPosition = 0; validPosition < maskScope[string].length; validPosition++) {
           if (maskScope[string][validPosition] > 0 && maskScope[string][validPosition] < fret) {
@@ -133,6 +143,7 @@ export class ChordFactory {
             }
           }
         }
+        console.log("scope after removal", structuredClone(maskScope))
 
         // If maskScope is empty for the current string, add it to preScope
         if (maskScope[string].length == 0) {
@@ -164,9 +175,9 @@ export class ChordFactory {
           // If the next valid position is within the allowed fret range
           if (this.fingerPositions[string][fingerIndexStorage[string]] < fret + settings.fingerFretRange) {
             //console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]]);
-            //console.log("fret, string", fret, string);
+            console.log("fret, string", fret, string);
             maskScope[string].push(this.fingerPositions[string][fingerIndexStorage[string]]);
-            //console.log("maskScope after", structuredClone(maskScope));
+            console.log("maskScope after insertion", structuredClone(maskScope));
 
             // Generate all combinations of positions in maskScope
             for (let pos1 of maskScope[(string + 1) % 6]) {
@@ -182,7 +193,7 @@ export class ChordFactory {
                       newVoicing[(string + 4) % 6] = pos4;
                       newVoicing[(string + 5) % 6] = pos5;
 
-                      //console.log("NEW: ", structuredClone(newVoicing));
+                      console.log("NEW: ", structuredClone(newVoicing));
                       generatedChords.push(newVoicing);
                     }
                   }
@@ -193,10 +204,7 @@ export class ChordFactory {
             // Move to the next valid position for the current string
             fingerIndexStorage[string]++;
 
-            // Remove the temporary -1 values added to maskScope
-            for (let i of temporaryMutedIndexes) {
-              maskScope[i].pop();
-            }
+
 
           } else {
             // Break because the element found is too big to be inserted into the maskScope
@@ -204,6 +212,10 @@ export class ChordFactory {
         } else {
           // Break because there are no more elements left in the Array
         }
+      }
+      // Remove the temporary -1 values added to maskScope
+      for (let i of temporaryMutedIndexes) {
+        maskScope[i].pop();
       }
     }
 
@@ -453,6 +465,11 @@ export class ChordFactory {
         }
       }
 
+      let fingersused = Math.max(...fingerPositions)
+      //filter one String Chords
+      if (fingersused < 2) {
+        return
+      }
       //IF minabove Zero Was note set, Set it to zero
       if (minAboveZero == 99) {
         minAboveZero = 0
@@ -465,7 +482,7 @@ export class ChordFactory {
         fingerPositions,
         barres,
         minAboveZero,
-        fingerPositionsAmmount,
+        fingersused,
         this.notes,
         settings.startWithRoot ? this.root : -1,
         actuallyPlayedNotes

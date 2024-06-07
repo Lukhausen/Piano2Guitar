@@ -150,9 +150,8 @@ export class ChordLibrary {
         console.log("Searching Chords...")
         const results = [];
         noteArray = noteArray.map(note => note % 12); // Normalize notes to be within octave
-        if (rootNote) {
+        if (rootNote >= 0) {
             rootNote = rootNote % 12
-
         }
         const inputNotesSet = new Set(noteArray);
 
@@ -175,7 +174,7 @@ export class ChordLibrary {
             //console.log("Searched Root: " + rootNote + " Presen Root: " + chord.rootNote);
 
             // Adjusting match percentage based on root note comparison
-            if (rootNote !== null) {
+            if (rootNote !== null || rootNote !== undefined) {
                 if (chord.rootNote == rootNote) {
                     //console.log("Matching Root for: " + chord.name + " Root: " + chord.rootNote + " Notes: " + chordNotes)
                     // If root notes match, this is fine as calculated
@@ -226,7 +225,7 @@ export class ChordLibrary {
     //USing this ugly transpose Chord function as its computationaly faster
     transposeChord(chord, semitones) {
         const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-    
+
         // Helper function to transpose a note name
         function transposeNoteName(noteName) {
             let noteIndex = noteNames.indexOf(noteName);
@@ -234,18 +233,18 @@ export class ChordLibrary {
             if (transposedIndex < 0) transposedIndex += 12; // Correct negative indices
             return noteNames[transposedIndex];
         }
-    
+
         // Split the chord name at the slash to separate the main part and the bass note (if any)
         let [mainPart, bassPart] = chord.name.split('/');
-    
+
         // Determine the root note and suffix from the main part
         let noteLength = mainPart[1] === '#' ? 2 : 1;
         let rootNoteName = mainPart.substring(0, noteLength);
         let suffix = mainPart.substring(noteLength);
-    
+
         // Transpose the root note
         let transposedRootNoteName = transposeNoteName(rootNoteName);
-    
+
         // If there is a bass part, transpose it directly
         let transposedBassPart = '';
         if (bassPart) {
@@ -253,19 +252,48 @@ export class ChordLibrary {
             let bassRootNoteName = bassPart.substring(0, bassRootNoteLength);
             transposedBassPart = transposeNoteName(bassRootNoteName) + bassPart.substring(bassRootNoteLength);
         }
-    
+
         // Construct the transposed chord name
         let transposedChordName = transposedRootNoteName + suffix;
         if (bassPart) {
             transposedChordName += '/' + transposedBassPart;
         }
-    
+
         // Transpose the numeric notes in the chord
         let transposedNotes = chord.notes.map(note => (note + semitones) % 12);
-    
+
         return new Chord(noteNames.indexOf(transposedRootNoteName), transposedNotes, transposedChordName, chord.customRoot);
     }
-    
+
+
+    async simplifySlashChord(chord) {
+        // Check if the chord is a slash chord (contains a '/')
+        if (!chord.name.includes('/')) {
+            return chord; // Return original chord if it's not a slash chord
+        }
+
+        console.warn("simplifySlashChord", chord.notes)
+
+
+
+        // Search for a chord in the library that matches the modified notes
+        let matchedChords = await this.searchChords(chord.notes, undefined, 50)
+
+        if (matchedChords.length > 0) {
+            console.warn(this.convertDragDropItemsToChords(matchedChords[0]))
+            return this.convertDragDropItemsToChords(matchedChords[0]); // Return the first matching chord
+        } else {
+            return chord; // Return original if no match found
+        }
+    }
+    convertDragDropItemsToChords(dragDropItem) {
+        return new Chord(
+            dragDropItem.rootNote,
+            dragDropItem.notes,
+            dragDropItem.name,
+            dragDropItem.customRoot,
+        )
+    }
 
 }
 

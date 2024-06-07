@@ -352,7 +352,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    let soundQualityValue = 0.7;
+    let soundQualityValue = 0.0;
+    document.getElementById("soundQualitySlider").value = soundQualityValue*100
     let progressionGenerator = new ProgressionGenerator([], true, chordLibrary, "#ffffff", "onNote", true)
 
     document.addEventListener('selectedItemsUpdated', async function (event) {
