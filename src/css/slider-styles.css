@@ -1,36 +1,35 @@
-
-
 #soundQualitySlider {
     -webkit-appearance: none;
     width: 100%;
     height: var(--padding);
-    background: var(--light1);
+    background: var(--light2);
     border-radius: var(--rounding);
     outline: none;
-    opacity: 0.7;
     -webkit-transition: .2s;
     transition: opacity .2s;
-    margin:  calc(var(--padding)/2) 0px;
+    margin: calc(var(--padding)/1) 0px;
     padding: 0;
     border: 0;
     box-shadow: 0 0 1vw rgba(0, 0, 0, 0.312);
-
+    transition: 0.2s;
 }
 
 #soundQualitySlider:hover {
-    opacity: 1;
+    filter: contrast(1.5);
+    box-shadow: 0px 0px 20px hwb(from var(--accent1) h w b / 0.1);
+
 }
 
 #soundQualitySlider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    height: calc(2*var(--padding));
-    width: calc(2*var(--padding));
+    height: calc(2.5*var(--padding));
+    width: calc(2.5*var(--padding));
     background: var(--accent1);
     cursor: pointer;
     border-radius: 100%;
-    box-shadow: 0 0 1vw rgba(0, 0, 0, 0.312);
-
+    box-shadow: 0px 0px 20px hwb(from var(--accent1) h w b / 0.3);
+    border: groove   #ffffff4b;
 }
 
 #soundQualitySlider::-moz-range-thumb {

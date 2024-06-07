@@ -1,4 +1,3 @@
-
 #MIDIStatusDiv {
     background-color: var(--dark2);
     color: var(--light3);
@@ -7,9 +6,10 @@
     border-radius: var(--rounding);
     padding: 0 0;
     outline: none;
-    font-size: large;
     transition: background-color 0.3s, color 0.3s, border-color 0.3s;
     position: relative;
+    cursor: pointer;
+    font-size: calc(var(--font-size)*1);
 }
 
 /* Styling for the dropdown arrow */

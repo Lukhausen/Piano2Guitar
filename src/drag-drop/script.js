@@ -20,7 +20,6 @@ export default class DragAndDropList {
         })
 
         this.dropzoneId = dropzoneId;
-
         this.selectedItemsEvent = new CustomEvent('selectedItemsUpdated', { bubbles: true, detail: { selectedItems: [] } });
 
         this.emptyMessageContainer = document.getElementById(emptyMessage);
@@ -311,7 +310,7 @@ export default class DragAndDropList {
         this.updateArrayFromList();
     }
 
-    updateArrayFromList(){
+    updateArrayFromList() {
         this.selectedItemsArray = Array.from(this.selectedItemsContainer.children).map(el => {
             const chordName = el.textContent.split(' (')[0];
             return this.items.find(item => item.name === chordName);
@@ -357,4 +356,22 @@ export default class DragAndDropList {
     getArray() {
         return [...this.selectedItemsArray];
     }
+
+
+
+    loadChords(chords) {
+        this.selectedItemsArray = [];
+        chords.forEach(chordName => {
+            if (chordName) {
+                const newDragDropItem = new DragAndDropItem(chordName, 0);  // Assuming full match for direct loads
+                this.addSelectedItem(newDragDropItem);
+            } else {
+                console.error('Chord not found:', chordName);
+            }
+        });
+        this.updateDisplayArray();
+    }
+
+    
+
 }

@@ -177,6 +177,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+
+
+
+
+
+
+
+
+
+
     document.querySelector('.pianoContainer').addEventListener('notesChanged', async (e) => {
         let items
         if (e.detail.notes.length > 0) {
@@ -292,7 +302,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    let soundQualityValue = 1;
+
+
+    function updateURLWithChordNames(selectedItems) {
+        // Extract chord names from the selected items
+        const chordNames = selectedItems.map(item => item.name);
+    
+        // Join all chord names into a comma-separated string
+        const chordsParam = chordNames.join(',');
+    
+        // Create the new URL
+        const newURL = `${window.location.pathname}?chords=${encodeURIComponent(chordsParam)}`;
+    
+        // Update the URL without reloading the page
+        window.history.replaceState({ path: newURL }, '', newURL);
+        console.log("URL Updated with Chords: " + newURL);
+    }
+
+    
+
+
+
+
+    function getChordsFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const chordsParam = urlParams.get('chords');
+        if (chordsParam) {
+            const chordNames = chordsParam.split(',');
+            return chordNames.map(decodeURIComponent);
+        }
+        return [];
+    }
+
+    function loadChordsFromURL() {
+        const chordNames = getChordsFromURL();
+        if (chordNames.length > 0) {
+            let chords = chordNames.map(chord => chordLibrary.getChordByName(chord))
+            dragAndDropList.loadChords(chords);
+            console.log("Chords loaded from URL:", chords);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    let soundQualityValue = 0.7;
     let progressionGenerator = new ProgressionGenerator([], true, chordLibrary, "#ffffff", "onNote", true)
 
     document.addEventListener('selectedItemsUpdated', async function (event) {
@@ -300,7 +360,12 @@ document.addEventListener('DOMContentLoaded', () => {
         await progressionGenerator.setProgression(event.detail.selectedItems)
         await updateProgressionDynamic(soundQualityValue)
         await updateProgressionEasy()
+        updateURLWithChordNames(event.detail.selectedItems);
+
+
     });
+
+
 
 
     const soundQualitySlider = document.getElementById("soundQualitySlider");
@@ -606,4 +671,5 @@ document.addEventListener('DOMContentLoaded', () => {
     checkCommonTunings();
     updateProgressionDynamic(soundQualityValue);
     updateProgressionEasy();
+    loadChordsFromURL();
 })

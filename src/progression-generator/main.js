@@ -48,8 +48,10 @@ export class ProgressionGenerator {
     }
 
     async initialize(initialProgression) {
-        this.setProgression(initialProgression);
-        this.easiestChords = await this.getEasiestChords();
+        await this.setProgression(initialProgression);
+
+        await this.getEasiestChords();
+
 
     }
 
@@ -203,6 +205,10 @@ export class ProgressionGenerator {
 
 
     async getProgressionEasyHTML() {
+        if (!this.easiestChords) {
+            await this.getEasiestChords();  // Assumed to properly fetch and set this.easiestChords
+        }
+
         if (this.progression.length < 1) {
             return [this.getPlaceholderHTML(), 0];
         }
@@ -216,10 +222,12 @@ export class ProgressionGenerator {
         };
 
         for (let i = 0; i < 12; i++) {
+
             let overlapCount = 0;
             let transposedProgression = originalProgression.map(chord => transposeChord(chord, i));
-
+            console.error(this.transposedProgression)
             transposedProgression.forEach(chord => {
+
                 this.easiestChords.forEach(easyChord => {
                     if (chord.name == easyChord.name) {
                         overlapCount++;
@@ -265,7 +273,7 @@ export class ProgressionGenerator {
         });
 
         // Return the container with all chord diagrams
-        return [diagramsContainer, (12 -bestTransposition)%12];
+        return [diagramsContainer, (12 - bestTransposition) % 12];
     }
 
     async getEasiestChords() {
@@ -284,7 +292,7 @@ export class ProgressionGenerator {
             [0, 2, 2, 0, 0, 0],    // E minor (Em)
             [1, 3, 3, 2, 1, 1],    // F major (F)
         ];
-        
+
 
         let easiestChords = [];
         let currentChord = new Set();
@@ -310,7 +318,8 @@ export class ProgressionGenerator {
         }
 
         console.log("getEasiestChords:", easiestChords)
-        return easiestChords
+        this.easiestChords = easiestChords
+        return
     }
 
     invertColor(hex) {

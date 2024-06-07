@@ -2,7 +2,6 @@
     display: flex;
     justify-content: space-between;
     align-items: start;
-    font-size: max(1.6vw, 3vh);
     font-weight: 100;
 }
 
@@ -14,12 +13,10 @@
 }
 
 .versionDescription {
-    font-size: medium;
     font-weight: 900;
 }
 
 .versionInformation {
-    font-size: small;
     font-weight: 100;
 }
 
@@ -45,7 +42,6 @@
 
 .settingsWrapper {
     display: flex;
-    font-size: large;
     font-weight: 500;
     align-items: start;
     justify-content: center;
@@ -140,9 +136,7 @@
     gap: calc(var(--padding)/2)
 }
 
-#MIDIStatusDiv {
-    color: var(--light3);
-}
+
 
 .searchWordContainer {
     flex: 1;
@@ -173,13 +167,13 @@
     background-color: var(--dark2);
     box-sizing: border-box;
     border: none;
+    font-size: calc(var(--font-size)*1);
     border-bottom: 2px solid var(--dark1);
     /* Same bottom border on focus */
     padding: var(--padding);
     /* Padding around text */
     border-radius: var(--rounding) var(--rounding) 0 0;
     color: var(--light1);
-    font-size: large;
 
 }
 

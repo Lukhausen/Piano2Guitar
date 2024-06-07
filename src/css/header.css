@@ -1,16 +1,13 @@
 h1 {
     margin: 0;
     font-weight: 100;
-    font-size: xx-large;
+    font-size: calc(var(--font-size)*2);
 }
 
 .mainHeader {
     display: flex;
-    padding: calc(2*var(--padding));
     background-color: var(--dark1);
     background: linear-gradient(0deg, var(--dark1) 0%, var(--dark2) 100%);
-    ;
-    align-items: center;
     justify-content: space-between;
     flex-direction: row;
     position: relative;
@@ -22,14 +19,16 @@ background-size: cover; */
 }
 
 .mainHeader svg {
-    width: 3vh;
+    width: 2.5vh;
     fill: var(--accent1)
 }
 
 .mainLogo {
     display: flex;
     gap: var(--padding);
-    flex: 1
+    flex: 1;
+    padding: calc(2*var(--padding));
+
 }
 
 
@@ -54,17 +53,16 @@ background-size: cover; */
 
 #introductionHeader {
     cursor: pointer;
-    font-size: larger;
-    padding: calc(var(--padding)/2) var(--padding);
+    padding: calc(2*var(--padding));
     background-color: #ffffff10;
     box-sizing: border-box;
-    border-radius: var(--rounding);
+    border-radius: 0 0  var(--rounding) 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--padding);
+    gap: calc(var(--padding)/2);
     transition: 0.2s;
-    backdrop-filter: blur(10px);
+    box-shadow: 0px 0px 1vw #0000006e;
 }
 
 #introductionHeader:hover {
@@ -148,7 +146,7 @@ background-size: cover; */
 .introductionContentItemHeader {
     font-weight: 900;
     text-align: center;
-    font-size: larger;
+    font-size: calc(var(--font-size)*1.5);
     filter: drop-shadow(0px 0px 10px #ffffff17);
 }
 
@@ -164,7 +162,6 @@ background-size: cover; */
 
 @media screen and (orientation: portrait) {
     .mainHeader {
-        padding: calc(var(--padding)/2);
     }
 
     .mainHeader svg {
@@ -174,8 +171,4 @@ background-size: cover; */
 }
 
 @media only screen and (max-width: 800px) {
-    .mainHeader {
-        flex-direction: column;
-
-    }
 }

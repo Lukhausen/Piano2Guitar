@@ -121,7 +121,7 @@ export class ChordFactory {
 
       // Iterate over each string of the guitar
       for (let string = 0; string < 6; string++) {
-        console.log("maskScope before", structuredClone(maskScope));
+        //console.log("maskScope before", structuredClone(maskScope));
 
         // Remove positions in maskScope that are less than the current fret
         for (let validPosition = 0; validPosition < maskScope[string].length; validPosition++) {
@@ -163,10 +163,10 @@ export class ChordFactory {
         if (fingerIndexStorage[string] < fingerIndexLength[string]) {
           // If the next valid position is within the allowed fret range
           if (this.fingerPositions[string][fingerIndexStorage[string]] < fret + settings.fingerFretRange) {
-            console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]]);
-            console.log("fret, string", fret, string);
+            //console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]]);
+            //console.log("fret, string", fret, string);
             maskScope[string].push(this.fingerPositions[string][fingerIndexStorage[string]]);
-            console.log("maskScope after", structuredClone(maskScope));
+            //console.log("maskScope after", structuredClone(maskScope));
 
             // Generate all combinations of positions in maskScope
             for (let pos1 of maskScope[(string + 1) % 6]) {
@@ -182,7 +182,7 @@ export class ChordFactory {
                       newVoicing[(string + 4) % 6] = pos4;
                       newVoicing[(string + 5) % 6] = pos5;
 
-                      console.log("NEW: ", structuredClone(newVoicing));
+                      //console.log("NEW: ", structuredClone(newVoicing));
                       generatedChords.push(newVoicing);
                     }
                   }

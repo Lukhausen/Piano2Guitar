@@ -73,12 +73,8 @@
                 </svg>
                 <h1>PianoToGuitar.com</h1>
             </div>
-            <div id="introductionHeader"><svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960"
-                    width="30px" fill="currenColor">
-                    <path
-                        d="M453-280h60v-240h-60v240Zm26.98-314q14.02 0 23.52-9.2T513-626q0-14.45-9.48-24.22-9.48-9.78-23.5-9.78t-23.52 9.78Q447-640.45 447-626q0 13.6 9.48 22.8 9.48 9.2 23.5 9.2Zm.29 514q-82.74 0-155.5-31.5Q252-143 197.5-197.5t-86-127.34Q80-397.68 80-480.5t31.5-155.66Q143-709 197.5-763t127.34-85.5Q397.68-880 480.5-880t155.66 31.5Q709-817 763-763t85.5 127Q880-563 880-480.27q0 82.74-31.5 155.5Q817-252 763-197.68q-54 54.31-127 86Q563-80 480.27-80Zm.23-60Q622-140 721-239.5t99-241Q820-622 721.19-721T480-820q-141 0-240.5 98.81T140-480q0 141 99.5 240.5t241 99.5Zm-.5-340Z" />
-                </svg>
-                INFO
+            <div id="introductionHeader">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>
             </div>
         </div>
 
@@ -353,10 +349,10 @@
                             {{BUILD_DATE}}</div>
                     </div>
                 </div>
-                <div class="settingsWrapper">
+                <div class="settingsWrapper"  onclick="toggleSettings()">
                     <div class="settingsWrapperText">SETTINGS</div>
                     <svg class="visualIcon" id="settingsIcon" xmlns="http://www.w3.org/2000/svg"
-                        onclick="toggleSettings()" height="24" viewBox="0 -960 960 960" width="24">
+                        height="24" viewBox="0 -960 960 960" width="24">
                         <path
                             d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z" />
                     </svg>
@@ -432,7 +428,7 @@
                         </div>
                     </div>
                     <div class="soundQualityWrapper">
-                        <input id="soundQualitySlider" type="range" min="0" max="100" value="50">
+                        <input id="soundQualitySlider" type="range" min="0" max="100" value="70">
                         <div class="soundQualityLables">
                             <div>EASY</div>
                             <div>BEST SOUND</div>
