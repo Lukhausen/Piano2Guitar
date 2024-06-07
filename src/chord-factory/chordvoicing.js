@@ -107,12 +107,12 @@ export class ChordVoicing {
     const PLAYABILITY_WEIGHTS = {
       fingersUsed: 3,        // Increased due to significant impact on difficulty
       fingerSpread: 5,       // Increased to reflect moderate spreads being easier
-      fretHeight: 9,         // Kept moderate as high frets can be challenging
-      mutedAmount: 15,        // Kept moderate as muting few strings is common
-      mutedDifficulty: 6,    // Increased due to high difficulty of unreachable mutes
+      fretHeight: 30,         // Kept moderate as high frets can be challenging
+      mutedAmount: 40,        // Kept moderate as muting few strings is common
+      mutedDifficulty: 14,    // Increased due to high difficulty of unreachable mutes
       mutedReachability: 2,  // Increased due to difficulty of unreachable mutes
       barreAmount: 9,        // Increased due to high difficulty of barre chords
-      barreDifficulty: 0,
+      barreDifficulty: 6,
       fingerDistances: 2,    // Increased to reflect larger distances being harder
     };
 
@@ -208,7 +208,7 @@ export class ChordVoicing {
 
   assessPlayabilityBarreDifficulty() {
     if(this.barres.length ==0){
-      return 1
+      return 0.9
     }
     let count = 0
     this.barres.forEach(barre => {
@@ -290,7 +290,7 @@ export class ChordVoicing {
       harmonicCompleteness: 1,
       openStrings: 1,
       playedStrings: 2,
-      fretBoardHeight: 2,
+      fretBoardHeight: 3,
       voicingRange: 4,
       doubleNotes: 1,
       voicingExp: 3,
