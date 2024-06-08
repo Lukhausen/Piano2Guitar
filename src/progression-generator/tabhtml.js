@@ -89,12 +89,12 @@ export class TabHTML {
         }
     }
 
-    generateHTML(soundQuality = 0.5, ammount = 1) {
+    async generateHTML(soundQuality = 0.5, ammount = 1) {
         // Sort the playable chords by combined rating
-        this.chordFactory.sortPlayableChordsByCombinedRating(soundQuality);
+        await this.chordFactory.sortPlayableChordsByCombinedRating(soundQuality);
+        this.maxChords = this.chordFactory.playableChords.length
 
         let diagrams = [];
-
         // Extract first 'ammount' playable chords from the ChordFactory instance
         for (let i = 0; i < ammount; i++) {
             if (this.chordFactory.playableChords[i]) {

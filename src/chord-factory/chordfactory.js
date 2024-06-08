@@ -7,14 +7,24 @@ export class ChordFactory {
     console.log("ChordFactory Recieved Notes: ", chord.notes)
     this.identifier = chord.name
     this.notes = chord.notes;
-    settings.startWithRoot = settings.startWithRoot
     this.root = chord.rootNote
     this.tuning = tuning;
     this.fingerPositions = this.calculateValidFingerPositions();
-    this.allChords = this.generateAllChordCombinations2()
-    this.playableChords = this.filterPlayableChords2(structuredClone(this.allChords))
-    //this.getFretSpanStatistics()
-    this.sortPlayableChordsByCombinedRating(1)
+    this.playableChordsLoaded = new Promise(resolve => {
+      this.resolvePlayableChords = resolve;
+    });
+
+    this.ChordCombinationsWorker = new Worker('./chord-factory/ChordCombinationsWorker.js', { type: 'module' });
+    this.ChordCombinationsWorker.postMessage({ fingerPositions: this.fingerPositions });
+    this.ChordCombinationsWorker.onmessage = (e => {
+      this.allChords = e.data;
+      this.playableChords = this.filterPlayableChords(structuredClone(this.allChords));
+      this.resolvePlayableChords();  // Resolve the promise when chords are ready
+    }).bind(this);
+
+
+
+
   }
 
   getFretSpanStatistics() {
@@ -46,7 +56,7 @@ export class ChordFactory {
 
   calculateValidFingerPositions() {
     const fingerPositions = [];
-  
+
     for (let stringIndex of this.tuning) {
       const positions = [];
       for (let chordIndex of this.notes) {
@@ -66,10 +76,10 @@ export class ChordFactory {
       positions.sort((a, b) => a - b);
       fingerPositions.push(positions);
     }
-  
+
     return fingerPositions;
   }
-  
+
 
   getValidFretPositionsForNote(noteIndex, stringIndex) {
     const baseFret = (noteIndex - stringIndex + 120) % 12;
@@ -83,237 +93,10 @@ export class ChordFactory {
   }
 
 
-  generateAllChordCombinations2() {
-    // Start the timer to measure function execution time
-    const startTime = performance.now();
-
-    // Array to keep track of temporary indexes where -1 is inserted
-    let temporaryMutedIndexes = [];
-    // Array to store all generated chord combinations
-    let generatedChords = [];
-
-    // Initialize maskScope with 6 empty arrays, one for each string
-    let maskScope = Array.from({ length: 6 }, () => []);
-    let preScope = [];
-    let trail = []
-    let trailIndexes = []
-
-    // Array to store the current index in fingerPositions for each string
-    const fingerIndexStorage = Array(6).fill(0);
-
-    // Array to store the length of valid positions for each string minus one
-    let fingerIndexLength = [];
-    this.fingerPositions.forEach((element, index) => {
-      fingerIndexLength[index] = element.length - 1;
-    });
-
-
-    // Iterate over all possible frets from -1 (muted) to 12
-    for (let fret = -1; fret < 13; fret++) {
-      preScope = [];
-      temporaryMutedIndexes = [];
-
-      // Reduce the Trail for each Trail Index by 1
-      if (settings.trailing) {
-        trailIndexes.forEach((string, index, object) => {
-          trail[string] -= 1;
-
-          // Check if the current value is below the allowable range
-          if (trail[string] <= (settings.fingerFretRange * -1)) {
-            trail[string] = 0;
-
-            // Remove the current string from trailIndexes if the value is out of the range
-            object.splice(index, 1);
-          }
-        });
-      }
-
-      // Iterate over each string of the guitar
-      for (let string = 0; string < 6; string++) {
-        //console.log("maskScope before", structuredClone(maskScope));
-
-        console.log("scope before removal", structuredClone(maskScope))
-        // Remove positions in maskScope that are less than the current fret
-        for (let validPosition = 0; validPosition < maskScope[string].length; validPosition++) {
-          if (maskScope[string][validPosition] > 0 && maskScope[string][validPosition] < fret) {
-            maskScope[string].splice(validPosition, 1);
-            //Add the position to the Trailing Elements
-            if (settings.trailing) {
-              trail[string] = -1
-            }
-          }
-        }
-        console.log("scope after removal", structuredClone(maskScope))
-
-        // If maskScope is empty for the current string, add it to preScope
-        if (maskScope[string].length == 0) {
-          // only Push the element to the PreScope If its not trailing
-          if (!trail[string] || !settings.trailing) {
-            preScope.push(string);
-          }
-        }
-      }
-
-      // Populate maskScope for strings in preScope
-      preScope.forEach((string) => {
-        if (fingerIndexStorage[string] < fingerIndexLength[string]) {
-          // If the next valid position is within the allowed fret range
-          if (this.fingerPositions[string][fingerIndexStorage[string]] < fret + settings.fingerFretRange) {
-            // Do nothing as the position will be added in the next loop
-          } else {
-            // Add -1 (muted) to maskScope if the position is out of range
-            maskScope[string].push(-1);
-            temporaryMutedIndexes.push(string);
-          }
-        }
-      });
-
-      // Insert new elements into maskScope
-      for (let string = 0; string < 6; string++) {
-        // If there are valid positions left for the current string
-        if (fingerIndexStorage[string] < fingerIndexLength[string]) {
-          // If the next valid position is within the allowed fret range
-          if (this.fingerPositions[string][fingerIndexStorage[string]] < fret + settings.fingerFretRange) {
-            //console.log("generateAllChordCombinations2 Pushing into maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]] ", maskScope[string], string, this.fingerPositions[string][fingerIndexStorage[string]]);
-            console.log("fret, string", fret, string);
-            maskScope[string].push(this.fingerPositions[string][fingerIndexStorage[string]]);
-            console.log("maskScope after insertion", structuredClone(maskScope));
-
-            // Generate all combinations of positions in maskScope
-            for (let pos1 of maskScope[(string + 1) % 6]) {
-              for (let pos2 of maskScope[(string + 2) % 6]) {
-                for (let pos3 of maskScope[(string + 3) % 6]) {
-                  for (let pos4 of maskScope[(string + 4) % 6]) {
-                    for (let pos5 of maskScope[(string + 5) % 6]) {
-                      let newVoicing = [];
-                      newVoicing[string] = this.fingerPositions[string][fingerIndexStorage[string]];
-                      newVoicing[(string + 1) % 6] = pos1;
-                      newVoicing[(string + 2) % 6] = pos2;
-                      newVoicing[(string + 3) % 6] = pos3;
-                      newVoicing[(string + 4) % 6] = pos4;
-                      newVoicing[(string + 5) % 6] = pos5;
-
-                      console.log("NEW: ", structuredClone(newVoicing));
-                      generatedChords.push(newVoicing);
-                    }
-                  }
-                }
-              }
-            }
-
-            // Move to the next valid position for the current string
-            fingerIndexStorage[string]++;
-
-
-
-          } else {
-            // Break because the element found is too big to be inserted into the maskScope
-          }
-        } else {
-          // Break because there are no more elements left in the Array
-        }
-      }
-      // Remove the temporary -1 values added to maskScope
-      for (let i of temporaryMutedIndexes) {
-        maskScope[i].pop();
-      }
-    }
-
-    // Track end time and calculate the time taken
-    const endTime = performance.now();
-    const timeTaken = endTime - startTime;
-    console.log("generateAllChordCombinations2 - Time taken:", timeTaken, "milliseconds");
-
-    return generatedChords;
-  }
 
 
 
   filterPlayableChords(allChordsCopy) {
-    const startTime = performance.now();
-
-    const playableChordsSet = new Set();
-
-    allChordsCopy.forEach(voicing => {
-      // Start By Muting All Chords
-      if (settings.startWithRoot) {
-        for (let string = 0; string < 6; string++) {
-          if (voicing[string] == -1) {
-            continue;
-          } else if (((voicing[string] + this.tuning[string]) % 12) != this.root) {
-            voicing[string] = -1;
-          } else {
-            break;
-          }
-        }
-      }
-
-      // Faster Way to Calculate the MinaboveZero
-      let minAboveZero = Infinity;
-      for (let i = 0; i < voicing.length; i++) {
-        if (voicing[i] > 0 && voicing[i] < minAboveZero) {
-          minAboveZero = voicing[i];
-        }
-      }
-      if (minAboveZero === Infinity) {
-        minAboveZero = 0;
-      }
-
-      let fingersUsed = 0;
-      let barreStop = false;
-      let barreUseFingers = 0;
-      let barreAddFingers = 0;
-      for (let i = 5; i >= 0; i--) {
-        if (voicing[i] <= 0) {
-          barreStop = true;
-        }
-        if (voicing[i] >= minAboveZero && barreStop == false) {
-          barreUseFingers++;
-          if (voicing[i] > minAboveZero) {
-            barreAddFingers++;
-          }
-        } else if (voicing[i] > 0 && voicing[i] !== "x") {
-          barreAddFingers++;
-        }
-      }
-      if (barreUseFingers) {
-        if (barreUseFingers >= 2 && barreAddFingers > 3) {
-          return;
-        } else if (barreUseFingers < 2) {
-          fingersUsed = voicing.filter(fret => fret >= minAboveZero).length;
-          barreUseFingers = 0;
-        }
-      }
-      if (fingersUsed <= 4) {
-        let newVoicing = new ChordVoicing(
-          voicing,
-          barreUseFingers > 0 ? minAboveZero : null,
-          barreUseFingers > 0 ? barreAddFingers : fingersUsed,
-          barreUseFingers,
-          minAboveZero,
-          this.notes,
-          settings.startWithRoot ? this.root : -1
-        );
-
-        playableChordsSet.add(JSON.stringify(newVoicing));
-      }
-    });
-
-    // Convert the Set back to an array of unique ChordVoicing objects
-    const playableChords = Array.from(playableChordsSet).map(voicingString => JSON.parse(voicingString));
-
-    // Track end time
-    const endTime = performance.now();
-
-    // Calculate the time taken
-    const timeTaken = endTime - startTime;
-    console.log("filterPlayableChords - Time taken:", timeTaken, "milliseconds");
-
-    return playableChords;
-  }
-
-
-  filterPlayableChords2(allChordsCopy) {
     const startTime = performance.now();
     let playableChordsVoicingSet = new Set();
     let playableChordsArray = []
@@ -528,15 +311,21 @@ export class ChordFactory {
    * 
    * @throws {Error} If `soundWeight` is not a number between 0 and 1.
    */
-  sortPlayableChordsByCombinedRating(soundWeight = 0) {
+  async sortPlayableChordsByCombinedRating(soundWeight = 0) {
     if (typeof soundWeight !== 'number' || soundWeight < 0 || soundWeight > 1) {
       throw new Error("soundWeight must be a number between 0 and 1.");
     }
+
+    await this.playableChordsLoaded;  // Wait for the playable chords to be loaded
+
     console.log("Sorting...")
     this.playableChords.sort((a, b) => {
       let aCombinedRating = (a.soundQualityRating * soundWeight) + (a.playabilityRating * (1 - soundWeight));
       let bCombinedRating = (b.soundQualityRating * soundWeight) + (b.playabilityRating * (1 - soundWeight));
       return bCombinedRating - aCombinedRating;
     });
+
+    return this.playableChords;  // Explicitly return the sorted array
   }
+
 }
