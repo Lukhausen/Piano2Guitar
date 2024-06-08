@@ -184,7 +184,7 @@ export class ProgressionGenerator {
 
 
 
-    async getProgressionDynamicHTML(soundQuality = 0.5, amount = 1) {
+    async getProgressionDynamicHTML(soundQuality = 0.5, amount = 2) {
         if (this.progression.length < 1) {
             return this.getPlaceholderHTML();
         }
@@ -193,11 +193,11 @@ export class ProgressionGenerator {
         diagramsContainer.classList.add("progressionGeneratorContainer");
 
 
-        this.progression.forEach((chordFactory, index)=>{
+        this.progression.forEach((chordFactory, index) => {
             let container = document.createElement("div")
             let placeholderhtml = new TabHTML().generatePlaceholder(1, "Loading...")
-            placeholderhtml[0].style.opacity=0.2
-            container.id = "progression-generator-dynamic-"+index
+            placeholderhtml[0].style.opacity = 0.2
+            container.id = "progression-generator-dynamic-" + index
             container.appendChild(placeholderhtml[0])
             diagramsContainer.appendChild(container);
         })
@@ -205,9 +205,9 @@ export class ProgressionGenerator {
         this.progression.forEach(async (chordFactory, index) => {
             const tabHTML = new TabHTML(chordFactory, this.color, this.fingerNumbers, this.showOpenStrings);
             const chordDiagrams = await tabHTML.generateHTML(soundQuality, amount);
-            let container = document.getElementById("progression-generator-dynamic-"+index)
-            container.innerHTML=""
-            container.appendChild(chordDiagrams[0])
+            let container = document.getElementById("progression-generator-dynamic-" + index)
+            container.innerHTML = ""
+            container.appendChild(chordDiagrams[Math.floor(5 * soundQuality * (1 - soundQuality))])
         });
 
         return diagramsContainer;
@@ -278,17 +278,17 @@ export class ProgressionGenerator {
 
 
 
-        bestTransposedProgression.forEach((chordFactory, index)=>{
+        bestTransposedProgression.forEach((chordFactory, index) => {
             let container = document.createElement("div")
             let placeholderhtml = new TabHTML().generatePlaceholder(1, "Loading...")
-            placeholderhtml[0].style.opacity=0.2
-            container.id = "progression-generator-easy-"+index
+            placeholderhtml[0].style.opacity = 0.2
+            container.id = "progression-generator-easy-" + index
             container.appendChild(placeholderhtml[0])
             diagramsContainer.appendChild(container);
         })
 
         // Iterate over each ChordFactory instance in the progression
-        bestTransposedProgression.forEach(async (chordFactory,index) => {
+        bestTransposedProgression.forEach(async (chordFactory, index) => {
             // Create an instance of TabHTML for the current chordFactory
             let tabHTML = new TabHTML(chordFactory, this.color, this.fingerNumbers, this.showOpenStrings);
 
@@ -296,8 +296,8 @@ export class ProgressionGenerator {
             let chordDiagrams = await tabHTML.generateHTML(0, 1);
             // Append the generated HTML to the main container
 
-            let container = document.getElementById("progression-generator-easy-"+index)
-            container.innerHTML=""
+            let container = document.getElementById("progression-generator-easy-" + index)
+            container.innerHTML = ""
             container.appendChild(chordDiagrams[0])
 
         });
