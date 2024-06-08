@@ -150,8 +150,9 @@ export class ChordLibrary {
         console.log("Searching Chords...")
         const results = [];
         noteArray = noteArray.map(note => note % 12); // Normalize notes to be within octave
-        if (rootNote >= 0) {
+        if (rootNote) {
             rootNote = rootNote % 12
+
         }
         const inputNotesSet = new Set(noteArray);
 
@@ -174,7 +175,7 @@ export class ChordLibrary {
             //console.log("Searched Root: " + rootNote + " Presen Root: " + chord.rootNote);
 
             // Adjusting match percentage based on root note comparison
-            if (rootNote !== null || rootNote !== undefined) {
+            if (rootNote !== null) {
                 if (chord.rootNote == rootNote) {
                     //console.log("Matching Root for: " + chord.name + " Root: " + chord.rootNote + " Notes: " + chordNotes)
                     // If root notes match, this is fine as calculated

@@ -29,7 +29,7 @@ function insertDate() {
 
 function buildProject() {
   const { exec } = require('child_process');
-  exec('npx parcel build src/index.html', (err, stdout, stderr) => {
+  exec('npx parcel build src/index.html --no-cache', (err, stdout, stderr) => {
     if (err) {
       console.error('Build process failed:', err);
       return;

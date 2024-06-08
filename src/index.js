@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+
     // Import the MidiManager
     const midiManager = new MIDIAccessManager();
 
@@ -188,16 +189,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     document.querySelector('.pianoContainer').addEventListener('notesChanged', async (e) => {
-        let items
-        if (e.detail.notes.length > 0) {
-            console.log("Reviced notesChanged Event: " + e.detail.notes + " Root: " + e.detail.rootNote)
-            items = await chordLibrary.searchChords(e.detail.notes, e.detail.rootNote, 50)
-        } else {
-            items = allChordLibraryItems
+
+        if (document.visibilityState === 'visible') {
+            let items
+            if (e.detail.notes.length > 0) {
+                console.log("Reviced notesChanged Event: " + e.detail.notes + " Root: " + e.detail.rootNote)
+                items = await chordLibrary.searchChords(e.detail.notes, e.detail.rootNote, 50)
+            } else {
+                items = allChordLibraryItems
+            }
+            //dragAndDropList.ceateAndInsertElement(e.detail.notes)
+            dragAndDropList.updateItems(items)
         }
-        //dragAndDropList.ceateAndInsertElement(e.detail.notes)
-        dragAndDropList.updateItems(items)
-        // Additional logic to handle the change in notes
+        // Additional logic to handle the change in notes}
     });
 
 
@@ -210,32 +214,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.addEventListener('noteOn', (e) => {
-        const { note } = e.detail;
-        const visualKey = mapNoteToVisualKey(note);
-        let count = actualPressedKeys.get(note) || 0;
-        actualPressedKeys.set(note, count + 1);
-        visualPressedKeys.add(visualKey);
-        myPiano.activateKey(visualKey);
-        updateRootNote();
+        if (document.visibilityState === 'visible') {
+            const { note } = e.detail;
+            const visualKey = mapNoteToVisualKey(note);
+            let count = actualPressedKeys.get(note) || 0;
+            actualPressedKeys.set(note, count + 1);
+            visualPressedKeys.add(visualKey);
+            myPiano.activateKey(visualKey);
+            updateRootNote();
+        }
     });
 
     window.addEventListener('noteOff', (e) => {
-        const { note } = e.detail;
-        if (actualPressedKeys.has(note)) {
-            let count = actualPressedKeys.get(note);
-            if (count > 1) {
-                actualPressedKeys.set(note, count - 1);
-            } else {
-                actualPressedKeys.delete(note);
-                // Check if any other actual key maps to the same visual key
-                const anyOther = [...actualPressedKeys.keys()].some(k => mapNoteToVisualKey(k) === mapNoteToVisualKey(note));
-                if (!anyOther) {
-                    visualPressedKeys.delete(mapNoteToVisualKey(note));
-                    myPiano.deactivateKey(mapNoteToVisualKey(note));
+        if (document.visibilityState === 'visible') {
+            const { note } = e.detail;
+            if (actualPressedKeys.has(note)) {
+                let count = actualPressedKeys.get(note);
+                if (count > 1) {
+                    actualPressedKeys.set(note, count - 1);
+                } else {
+                    actualPressedKeys.delete(note);
+                    // Check if any other actual key maps to the same visual key
+                    const anyOther = [...actualPressedKeys.keys()].some(k => mapNoteToVisualKey(k) === mapNoteToVisualKey(note));
+                    if (!anyOther) {
+                        visualPressedKeys.delete(mapNoteToVisualKey(note));
+                        myPiano.deactivateKey(mapNoteToVisualKey(note));
+                    }
                 }
             }
+            updateRootNote();
         }
-        updateRootNote();
     });
 
     function updateRootNote() {
@@ -278,14 +286,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //Functionality to autom,atically add Chord when played by midi:
     window.addEventListener('notesOutput', async (e) => {
-        const notes = e.detail;
-        if (notes.length > 0) {
-            const rootNote = Math.min(...notes);
-            const searchResults = await chordLibrary.searchChords(notes, rootNote, 100);
-            if (searchResults.length > 0) {
-                const chord = searchResults[0];
-                dragAndDropList.addSelectedItem(chord);
-                //popUp.open("Added: " +chord.name, { autoClose: true, duration: 1000 });
+        if (document.visibilityState === 'visible') {
+            const notes = e.detail;
+            if (notes.length > 0) {
+                const rootNote = Math.min(...notes);
+                const searchResults = await chordLibrary.searchChords(notes, rootNote, 100);
+                if (searchResults.length > 0) {
+                    const chord = searchResults[0];
+                    dragAndDropList.addSelectedItem(chord);
+                    //popUp.open("Added: " +chord.name, { autoClose: true, duration: 1000 });
+                }
             }
         }
     });
@@ -307,19 +317,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateURLWithChordNames(selectedItems) {
         // Extract chord names from the selected items
         const chordNames = selectedItems.map(item => item.name);
-    
+
         // Join all chord names into a comma-separated string
         const chordsParam = chordNames.join(',');
-    
+
         // Create the new URL
         const newURL = `${window.location.pathname}?chords=${encodeURIComponent(chordsParam)}`;
-    
+
         // Update the URL without reloading the page
         window.history.replaceState({ path: newURL }, '', newURL);
         console.log("URL Updated with Chords: " + newURL);
     }
 
-    
+
 
 
 
@@ -353,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     let soundQualityValue = 0.0;
-    document.getElementById("soundQualitySlider").value = soundQualityValue*100
+    document.getElementById("soundQualitySlider").value = soundQualityValue * 100
     let progressionGenerator = new ProgressionGenerator([], true, chordLibrary, "#ffffff", "onNote", true)
 
     document.addEventListener('selectedItemsUpdated', async function (event) {
@@ -436,16 +446,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (reloadFlag) {
             console.log("Reload flag is true, updating tuning settings.");
             localStorage.setItem('guitarTuning', JSON.stringify(settings.tuning));
+            console.warn("Settings at Reload", settings)
 
             console.log("New tuning saved to localStorage:", settings.tuning);
 
-            progressionGenerator.reloadProgression();
+            await progressionGenerator.reloadProgression();
             console.log("Progression reloaded.");
 
-            updateProgressionDynamic(soundQualityValue);
+            await updateProgressionDynamic(soundQualityValue);
             console.log("Progression dynamic updated.");
 
-            updateProgressionEasy();
+            await updateProgressionEasy();
             console.log("Progression easy updated.");
 
             reloadFlag = false;
@@ -668,7 +679,9 @@ document.addEventListener('DOMContentLoaded', () => {
     loadFretRangeSetting();
     loadTuningSettings();
     loadMuteSetting();
-    loadRootSetting()
+    loadRootSetting();
+    reloadFlag = false;
+
     checkCommonTunings();
     updateProgressionDynamic(soundQualityValue);
     updateProgressionEasy();

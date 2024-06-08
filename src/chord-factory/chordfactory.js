@@ -4,6 +4,16 @@ import { ChordVoicing } from './chordvoicing.js';
 
 export class ChordFactory {
   constructor(chord, startWithRoot = true, tuning = settings.tuning) {
+
+
+   //CREATE Workers and Updtae Their Settings, as the Workers do not share the same context as the main Thread
+    this.ChordCombinationsWorker = new Worker(new URL('./ChordCombinationsWorker.js', import.meta.url), { type: 'module' });
+    this.ChordFilteringWorker = new Worker(new URL('./ChordFilteringWorker.js', import.meta.url), { type: 'module' });
+    this.ChordFilteringWorker.postMessage({ type: 'settingsUpdate', newSettings: settings });
+    this.ChordCombinationsWorker.postMessage({ type: 'settingsUpdate', newSettings: settings });
+
+
+
     console.log("ChordFactory Recieved Notes: ", chord.notes)
     this.identifier = chord.name
     this.notes = chord.notes;
@@ -14,18 +24,48 @@ export class ChordFactory {
       this.resolvePlayableChords = resolve;
     });
 
-    this.ChordCombinationsWorker = new Worker('./chord-factory/ChordCombinationsWorker.js', { type: 'module' });
+
+
+
+
+
     this.ChordCombinationsWorker.postMessage({ fingerPositions: this.fingerPositions });
     this.ChordCombinationsWorker.onmessage = (e => {
       this.allChords = e.data;
-      this.playableChords = this.filterPlayableChords(structuredClone(this.allChords));
-      this.resolvePlayableChords();  // Resolve the promise when chords are ready
+      this.initializeChordFilteringWorker(); // Initialize the new worker here
     }).bind(this);
 
-
-
-
   }
+
+  initializeChordFilteringWorker() {
+
+    this.ChordFilteringWorker.postMessage({
+      allChords: structuredClone(this.allChords),
+      notes: this.notes,
+      root: this.root
+    });
+
+    this.playableChords = [];
+    this.ChordFilteringWorker.onmessage = (e => {
+      if (e.data.status === 'finished') {
+        this.resolvePlayableChords();  // Resolve the promise when chords are ready
+      } else {
+        const { voicing, fingerPositions, barres, minAboveZero, fingersused, notes, root, actuallyPlayedNotes } = e.data;
+        let newVoicing = new ChordVoicing(
+          voicing,
+          fingerPositions,
+          barres,
+          minAboveZero,
+          fingersused,
+          notes,
+          root,
+          actuallyPlayedNotes
+        );
+        this.playableChords.push(newVoicing);
+      }
+    }).bind(this);
+  }
+
 
   getFretSpanStatistics() {
     let spanCounts = {};  // Object to store the count of each span

@@ -2,7 +2,7 @@
     "compact": true,
     "controlFlowFlattening": true,
     "controlFlowFlatteningThreshold": 0.75,
-    "deadCodeInjection": true,
+    "deadCodeInjection": false,
     "deadCodeInjectionThreshold": 0.4,
     "debugProtection": false,
     "disableConsoleOutput": true,
@@ -10,8 +10,8 @@
     "log": false,
     "numbersToExpressions": true,
     "renameGlobals": true,
-    "renameProperties": true,
-    "renamePropertiesMode": "unsafe",
+    "renameProperties": false,
+    "renamePropertiesMode": "safe",
     "reservedNames": [
         "^settings",
         "^ChordVoicing",
@@ -21,11 +21,14 @@
         "^clearProgression",
         "^toggleSettings",
         "^toggleAdvSettings",
-        
-
-
-
-
+        "^ChordCombinationsWorker",
+        "ChordCombinationsWorker.js",
+        "^module",
+        "^./ChordCombinationsWorker.js",
+        "module",
+        "./constants.js",
+        "^Worker",
+        "import.meta.url",
         " ",
         "m",
         "7",
@@ -99,10 +102,6 @@
         "m/A#",
         "/B",
         "m/B",
-
-
-
-
         "Major",
         "Minor",
         "Minor Pentatonic",
@@ -115,11 +114,24 @@
         "Lydian",
         "Locrian"
     ],
+    "reservedStrings": [
+        "^ChordCombinationsWorker",
+        "^module",
+        "^./ChordCombinationsWorker.js",
+        "^settings",
+        "ChordCombinationsWorker.js",
+        "ChordFilteringWorker",
+        "ChordFilteringWorker.js",
+        "module",
+        "./constants.js",
+        "^Worker",
+        "import.meta.url"
+    ],
     "selfDefending": true,
     "simplify": true,
-    "splitStrings": true,
+    "splitStrings": false,
     "splitStringsChunkLength": 10,
-    "stringArray": true,
+    "stringArray": false,
     "stringArrayCallsTransform": true,
     "stringArrayCallsTransformThreshold": 0.75,
     "stringArrayEncoding": [

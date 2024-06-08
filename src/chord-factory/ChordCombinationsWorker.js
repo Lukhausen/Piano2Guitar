@@ -1,16 +1,23 @@
-import { settings } from "./constants.js";
-
+let settings
 // ChordCombinationsWorker.js
 onmessage = function (e) {
-    const { fingerPositions } = e.data;
-    console.warn("ChordCombinationsWorker called:", fingerPositions)
-    const chords = generateAllChordCombinations(fingerPositions);
-    postMessage(chords);
+    if (e.data.type === 'settingsUpdate') {
+        settings = e.data.newSettings;
+        console.warn("settingsUpdate:", settings)
+
+    } else {
+        const { fingerPositions } = e.data;
+        console.warn("ChordCombinationsWorker called:", fingerPositions)
+        const chords = generateAllChordCombinations(fingerPositions);
+        postMessage(chords);
+    }
 };
 
 
 
 function generateAllChordCombinations(fingerPositions) {
+    console.warn("Settings at generateAllChordCombinations", settings)
+
     // Start the timer to measure function execution time
     const startTime = performance.now();
 
