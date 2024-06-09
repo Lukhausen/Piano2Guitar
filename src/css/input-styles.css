@@ -207,6 +207,7 @@
 .selectedItemsHeaderText {
     display: flex;
     align-items: end;
+    font-size: calc(var(--font-size)*1.2);
 }
 
 #scaleDisplay {

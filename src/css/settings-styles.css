@@ -48,13 +48,13 @@
     font-size: calc(var(--font-size)*1.5)
 }
 
-#settingsFooter {
+.settingsFooter {
     display: flex;
     justify-content: space-between;
     align-items: end;
 }
 
-#settingsFooter div:hover {
+.settingsFooter div:hover {
     cursor: pointer;
 }
 

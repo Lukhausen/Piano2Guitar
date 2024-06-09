@@ -14,7 +14,10 @@
 }
 
 
-
+a {
+    color: inherit; /* blue colors for links too */
+    text-decoration: inherit; /* no underline */
+  }
 /* width */
 ::-webkit-scrollbar {
     width: 5px;
@@ -58,6 +61,10 @@ html {
 body {
     margin: 0px;
     box-sizing: border-box;
+    width: 100%;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
 }
 
 h2{

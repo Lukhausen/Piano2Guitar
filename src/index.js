@@ -416,7 +416,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.toggleAdvSettings = async function () {
 
         let advSettingsScreen = document.getElementById("settingsAdvanced");
-        let advSettingsButton = document.getElementById("settingsAdvancedButton");
         advSettingsScreen.classList.toggle("visible")
 
     }
