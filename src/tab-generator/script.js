@@ -51,7 +51,7 @@ class TabGenerator {
         this.topSpacing = 25;
         this.topBarHeight = 7;
         this.fretSpacing = 25;
-        this.stringSpacing = 25;
+        this.stringSpacing = 24;
         this.paddingLeft = 10;
         this.barreSidesOverflow = 10;
         this.stringOverflowBotom = 10;
@@ -68,7 +68,7 @@ class TabGenerator {
         }
 
         //Global Framw Width
-        this.width = 185;
+        this.width = 180;
         this.height = 145
     }
 

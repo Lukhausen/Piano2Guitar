@@ -38,8 +38,17 @@ background-size: cover; */
 
 
 
+.versionDescription {
+    align-self: baseline;
+    color: var(--light3);
+}
 
-
+.versionDescription strong{
+    color: #000;
+    font-weight: 900;
+    background-color: var(--accent1);
+    padding:  0 var(--padding);
+}
 
 
 
@@ -164,8 +173,9 @@ background-size: cover; */
 
 
 @media screen and (orientation: portrait) {
-    .mainHeader {}
-
+    .versionDescription{
+        display: none;
+    }
 }
 
 @media only screen and (max-width: 800px) {}

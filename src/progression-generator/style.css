@@ -45,7 +45,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    margin-right: calc(max(10vh, 7vw)/5);
+    margin-right: calc(max(10vh, 7vw)/4.5);
     font-size: calc(var(--font-size)*1);
 }
 
@@ -59,7 +59,7 @@
     box-sizing: border-box;
     color: var(--dark3);
     box-shadow: 0 0 10px #00000056, inset 0 0 3px #ffffff6e;
-    margin-right: calc(max(10vh, 7vw)/5);
+    margin-right: calc(max(10vh, 7vw)/4.5);
 }
 
 

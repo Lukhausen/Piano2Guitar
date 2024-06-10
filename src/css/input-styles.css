@@ -12,13 +12,7 @@
     gap: var(--padding);
 }
 
-.versionDescription {
-    font-weight: 900;
-}
 
-.versionInformation {
-    font-weight: 100;
-}
 
 
 .content {
