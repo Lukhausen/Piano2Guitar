@@ -1,3 +1,5 @@
+const NOTE_ARRAY = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
 
 class Piano {
     constructor(containerSelector, options = {}) {
@@ -57,6 +59,7 @@ class Piano {
         for (let index = 0; index < this.totalKeys; index++) {
             let key = document.createElement("div");
             key.setAttribute('data-note', index);
+            key.title = NOTE_ARRAY[index%12]
             if (this.layout[index % this.keysPerOctave] === 1) {
                 key.classList.add("key", "black");
                 key.style.left = `${(whiteCounter * this.whiteKeyWidth) - (this.blackKeyWidth / 2)}%`;
@@ -73,7 +76,7 @@ class Piano {
             this.container.appendChild(key);
             
             this.audioElements[index] = new Audio(`../audio/${index % 24}.mp3`);
-            this.audioElements[index].preload = 'none'; // This prevents the audio from loading until it is explicitly needed
+            this.audioElements[index].preload = 'auto'; // This prevents the audio from loading until it is explicitly needed
 
 
         }

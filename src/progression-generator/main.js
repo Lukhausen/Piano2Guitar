@@ -207,7 +207,8 @@ export class ProgressionGenerator {
             const chordDiagrams = await tabHTML.generateHTML(soundQuality, amount);
             let container = document.getElementById("progression-generator-dynamic-" + index)
             container.innerHTML = ""
-            container.appendChild(chordDiagrams[Math.floor(5 * soundQuality * (1 - soundQuality))])
+            //container.appendChild(chordDiagrams[Math.floor(5 * soundQuality * (1 - soundQuality))])
+            container.appendChild(chordDiagrams[0])
         });
 
         return diagramsContainer;

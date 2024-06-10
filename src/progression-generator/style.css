@@ -72,10 +72,11 @@
 .progressionGeneratorChordSwitchButton {
     display: flex;
     cursor: pointer;
+    padding: var(--padding);
 }
 
 .progressionGeneratorChordSwitchButton svg {
-    height: calc(max(10vh, 7vw)/8);
+    height: var(--font-size);
 
 }
 

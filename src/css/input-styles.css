@@ -379,3 +379,9 @@
         display: none;
     }
 }
+
+@media only screen and (max-height: 850px) {
+    .inputWrapper {
+        height: 70vh;
+    }
+}

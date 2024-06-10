@@ -1,4 +1,5 @@
 import { Chord } from "../chord-library/script.js";
+import { NOTE_ARRAY } from "../chord-factory/utils.js"
 
 export class DragAndDropItem extends Chord {
     constructor(chord, probability = -1) {
@@ -115,8 +116,9 @@ export default class DragAndDropList {
     createItemElement(item, isSelectable = false) {
         const itemElement = document.createElement('div');
         itemElement.textContent = item.name;
+        itemElement.title = item.name + ": " + item.notes?.map(index => NOTE_ARRAY[index]).join(', ');
 
-        itemElement.className = 'dragDropItem';
+            itemElement.className = 'dragDropItem';
         itemElement.id = `dragDropItem-${this.idCounter++}`;
 
         if (item.probability > 0) {
@@ -372,6 +374,6 @@ export default class DragAndDropList {
         this.updateDisplayArray();
     }
 
-    
+
 
 }

@@ -284,6 +284,17 @@
     color: #000000;
 }
 
+.advancedSettingsButton{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: var(--padding);
+    
+    border-radius: var(--rounding);
+    background-color: var(--dark2);
+    padding: calc(var(--padding)/2) var(--padding);
+}
 
 
 .settingsFretWrapper {

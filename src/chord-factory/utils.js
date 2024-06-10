@@ -6,7 +6,7 @@ export const NOTE_INDEX_MAP = {
 };
 
 // Reverse mapping for number to note conversion
-const NOTE_ARRAY = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+export const NOTE_ARRAY = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
 // Convert a note to its respective index number
 export function noteToNumber(note) {
