@@ -396,7 +396,31 @@ document.addEventListener('DOMContentLoaded', () => {
         let [progressionHTML, capo] = await progressionGenerator.getProgressionEasyHTML();
         document.getElementById("easyProgressionWrapper").innerHTML = "";
         document.getElementById("easyProgressionWrapper").appendChild(progressionHTML);
-        document.getElementById("easyProgressionCapo").innerHTML = "Capo: " + capo + "fr";
+
+        let suffix
+        switch (capo) {
+            case 1:
+                suffix = "ˢᵗ";  // Unicode for 'st'
+                break;
+            case 2:
+                suffix = "ⁿᵈ";  // Unicode for 'nd'
+                break;
+            case 3:
+                suffix = "ʳᵈ";  // Unicode for 'rd'
+                break;
+            default:
+                suffix = "ᵗʰ";  // Unicode for 'th'
+                break;
+        }
+
+        if (capo == 0){
+            document.getElementById("easyProgressionCapo").innerHTML = "No Capo";
+
+        }
+        else {
+            document.getElementById("easyProgressionCapo").innerHTML = "Capo: <strong>" + capo + suffix + "</strong> fret";
+
+        }
 
     };
 

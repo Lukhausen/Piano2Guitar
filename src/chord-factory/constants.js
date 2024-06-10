@@ -3,6 +3,7 @@
 export const BARRE_RATING = 1
 export const MAX_FRETS = 24
 
+
 /**
  * Class representing application settings.
  */

@@ -3,7 +3,7 @@ h1 {
     font-weight: 100;
     font-size: min(10cqw, calc(2.5*var(--font-size)));
     display: flex;
-    align-items: center; 
+    align-items: center;
 }
 
 .mainHeader {
@@ -21,16 +21,17 @@ background-size: cover; */
 }
 
 .mainHeader svg {
-    fill: var(--accent1)
+    fill: var(--accent1);
+    height: min(10cqw, calc(2.5*var(--font-size)))
 }
 
 .mainLogo {
     display: flex;
-    gap: var(--padding);
+    gap: calc(var(--padding)*2);
     flex: 1;
     padding: calc(2*var(--padding));
     container-type: size;
-
+    align-items: center;
 }
 
 
