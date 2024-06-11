@@ -3,11 +3,11 @@ let settings
 onmessage = function (e) {
     if (e.data.type === 'settingsUpdate') {
         settings = e.data.newSettings;
-        console.warn("settingsUpdate:", settings)
+        //console.warn("settingsUpdate:", settings)
 
     } else {
         const { fingerPositions } = e.data;
-        console.warn("ChordCombinationsWorker called:", fingerPositions)
+        //console.warn("ChordCombinationsWorker called:", fingerPositions)
         const chords = generateAllChordCombinations(fingerPositions);
         postMessage(chords);
     }
@@ -16,7 +16,7 @@ onmessage = function (e) {
 
 
 function generateAllChordCombinations(fingerPositions) {
-    console.warn("Settings at generateAllChordCombinations", settings)
+    //console.warn("Settings at generateAllChordCombinations", settings)
 
     // Start the timer to measure function execution time
     const startTime = performance.now();
@@ -66,7 +66,7 @@ function generateAllChordCombinations(fingerPositions) {
         for (let string = 0; string < 6; string++) {
             //console.log("maskScope before", structuredClone(maskScope));
 
-            console.log("scope before removal", structuredClone(maskScope))
+            //console.log("scope before removal", structuredClone(maskScope))
             // Remove positions in maskScope that are less than the current fret
             for (let validPosition = 0; validPosition < maskScope[string].length; validPosition++) {
                 if (maskScope[string][validPosition] > 0 && maskScope[string][validPosition] < fret) {
@@ -77,7 +77,7 @@ function generateAllChordCombinations(fingerPositions) {
                     }
                 }
             }
-            console.log("scope after removal", structuredClone(maskScope))
+            //console.log("scope after removal", structuredClone(maskScope))
 
             // If maskScope is empty for the current string, add it to preScope
             if (maskScope[string].length == 0) {

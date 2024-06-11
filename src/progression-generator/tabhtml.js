@@ -137,10 +137,23 @@ export class TabHTML {
                     console.error('Error generating chord diagram:', error);
                 }
             } else {
-                let placeholder = this.generatePlaceholder(1, this.chordFactory.identifier);
-                placeholder[0].style.opacity = 0.4;
-                placeholder[0].style.filter = "blur(3px)";
-                diagrams.push(placeholder[0]);
+                let diagramsContainer = this.generatePlaceholder(1, this.chordFactory.identifier)
+
+                diagramsContainer[0].style.opacity = 0.4
+                diagramsContainer[0].style.filter = "blur(3px)"
+
+                let impossibleWrapper = []
+                impossibleWrapper[0] = document.createElement('div');
+                impossibleWrapper[0].appendChild(diagramsContainer[0])
+                impossibleWrapper[0].classList.add("progressionGeneratorImpossibleWrapper");
+
+
+                let impossible = document.createElement('div');
+                impossible.innerHTML = "<strong>IMPOSSIBLE</strong><br>with these<br>settings"
+                impossible.classList.add("progressionGeneratorImpossible");
+                impossibleWrapper[0].appendChild(impossible)
+
+                return impossibleWrapper
             }
         }
         return diagrams;
@@ -265,7 +278,7 @@ export class TabHTML {
             let underscores = ""
 
             if (!label) {
-                console.log("Label",label)
+                console.log("Label", label)
                 random = Math.floor(Math.random() * 3) + 2;
 
                 underscores = "_".repeat(random);

@@ -1,17 +1,16 @@
-.miniHeader {
+.searchHeaderWrapper{
     display: flex;
     justify-content: space-between;
-    align-items: start;
-    font-weight: 100;
+    
 }
 
-.miniMainHeader {
-    font-weight: 300;
-    display: flex;
-    flex-direction: row;
-    gap: var(--padding);
+.searchHeader{
+    font-size: calc(var(--font-size)*1.2);
 }
-
+.searchSubHeader{
+    font-size: var(--font-size);
+    color: var(--light3);
+}
 
 
 

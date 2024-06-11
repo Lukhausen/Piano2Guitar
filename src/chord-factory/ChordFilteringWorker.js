@@ -4,7 +4,7 @@ let settings;
 self.onmessage = (e) => {
   if (e.data.type === 'settingsUpdate') {
     settings = e.data.newSettings;
-    console.warn("settingsUpdate:", settings)
+    //console.warn("settingsUpdate:", settings)
 
   } else {
     const { allChords, notes, root } = e.data;
@@ -13,9 +13,9 @@ self.onmessage = (e) => {
 };
 
 function filterPlayableChords(allChords, notes, rootNote) {
-  console.warn("Settings at filterPlayableChords", settings)
+  //console.warn("Settings at filterPlayableChords", settings)
 
-  console.error(allChords)
+  //console.error(allChords)
   const startTime = performance.now();
   let playableChordsVoicingSet = new Set();
   let totalChordVoicingTime = 0; // Initialize a variable to accumulate time for ChordVoicing creation
