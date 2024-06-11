@@ -118,7 +118,7 @@ export default class DragAndDropList {
         itemElement.textContent = item.name;
         itemElement.title = item.name + ": " + item.notes?.map(index => NOTE_ARRAY[index]).join(', ');
 
-            itemElement.className = 'dragDropItem';
+        itemElement.className = 'dragDropItem';
         itemElement.id = `dragDropItem-${this.idCounter++}`;
 
         if (item.probability > 0) {
@@ -182,6 +182,7 @@ export default class DragAndDropList {
     addSelectedItem(item) {
 
         this.selectedItemsArray.push(item);
+        //TODO: Deselect all Pinao Keys
         this.updateDisplayArray();
     }
 

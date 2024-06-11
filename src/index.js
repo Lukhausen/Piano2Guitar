@@ -120,39 +120,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const emptyMessageContainer = "emptyMessageContainer";
     const dragAndDropList = new DragAndDropList(allChordLibraryItems, dropzone, itemsContainer, itemSearch, selectedItems, emptyMessageContainer);
 
-
-    var isVolumeOn = localStorage.getItem('volumeState') == 'off' ? false : true;
+    var isVolumeOn
     const volumeIcon = document.getElementById('volumeIcon');
 
-    updateVolumeIcon(); // Update the icon at load
 
-    window.toggleVolume = function () {
 
-        if (isVolumeOn) {
-            myPiano.volumeOff(); // Turn volume off
-            isVolumeOn = false;
-            localStorage.setItem('volumeState', 'off');
-        } else {
-            myPiano.volumeOn(); // Turn volume on
-            isVolumeOn = true;
-            localStorage.setItem('volumeState', 'on');
-        }
-        updateVolumeIcon();
-    };
 
-    function updateVolumeIcon() {
-        if (!isVolumeOn) {
-            myPiano.volumeOn()
-            volumeIcon.innerHTML = `<title>Mute Piano</title><path d="M560-131v-82q90-26 145-100t55-168q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 127-78 224.5T560-131ZM120-360v-240h160l200-200v640L280-360H120Zm440 40v-322q47 22 73.5 66t26.5 96q0 51-26.5 94.5T560-320ZM400-606l-86 86H200v80h114l86 86v-252ZM300-480Z"/>`;
+    function setPianoVolume(state = true) {
+        if (state == "off") {
+            console.error("TRIGGERED OFF", localStorage.getItem('volumeState'))
 
-        } else {
             myPiano.volumeOff()
+            localStorage.setItem('volumeState', "off");
+            isVolumeOn = false;
             volumeIcon.innerHTML = `<title>Unmute Piano</title><path d="M792-56 671-177q-25 16-53 27.5T560-131v-82q14-5 27.5-10t25.5-12L480-368v208L280-360H120v-240h128L56-792l56-56 736 736-56 56Zm-8-232-58-58q17-31 25.5-65t8.5-70q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 53-14.5 102T784-288ZM650-422l-90-90v-130q47 22 73.5 66t26.5 96q0 15-2.5 29.5T650-422ZM480-592 376-696l104-104v208Zm-80 238v-94l-72-72H200v80h114l86 86Zm-36-130Z"/>`;
+            return
+        } else {
+            console.error("TRIGGERED ON", localStorage.getItem('volumeState'))
 
+            myPiano.volumeOn()
+            localStorage.setItem('volumeState', "on");
+            isVolumeOn = true;
+            volumeIcon.innerHTML = `<title>Mute Piano</title><path d="M560-131v-82q90-26 145-100t55-168q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 127-78 224.5T560-131ZM120-360v-240h160l200-200v640L280-360H120Zm440 40v-322q47 22 73.5 66t26.5 96q0 51-26.5 94.5T560-320ZM400-606l-86 86H200v80h114l86 86v-252ZM300-480Z"/>`;
+            return
         }
     }
+    setPianoVolume(localStorage.getItem('volumeState'))
+
+    window.toggleVolume = function () {
+        if (isVolumeOn) {
+            setPianoVolume("off")
+        } else {
+            setPianoVolume("on")
+
+        }
+    };
+
+
 
     window.playPiano = function () {
+        setPianoVolume(true)
         myPiano.playChord();
         console.log("Piano played");
     };
@@ -413,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
         }
 
-        if (capo == 0){
+        if (capo == 0) {
             document.getElementById("easyProgressionCapo").innerHTML = "No Capo";
 
         }
@@ -432,6 +439,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+    document.addEventListener('keydown', function (event) {
+        if (event.key === "Escape") { // Check if the pressed key is Escape
+            let settingsScreen = document.getElementById("settings");
+
+            // Check if any settings panel is currently visible
+            if (settingsScreen.classList.contains('visible')) {
+                toggleSettings()
+                console.log("Settings panels hidden due to Escape key.");
+            }
+        }
+    });
 
 
 

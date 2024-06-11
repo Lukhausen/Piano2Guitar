@@ -44,7 +44,7 @@ background-size: cover; */
 }
 
 .versionDescription strong{
-    color: #000;
+    color: var(--dark1);
     font-weight: 900;
     background-color: var(--accent1);
     padding:  0 var(--padding);

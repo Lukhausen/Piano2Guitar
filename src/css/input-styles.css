@@ -65,7 +65,8 @@
     display: flex;
     flex-direction: row;
     gap: var(--padding);
-    flex: 1
+    flex: 1;
+    user-select: none;
 }
 
 
@@ -84,7 +85,7 @@
 }
 
 .visualIcon {
-    width: max(3vh, 1.5vw);
+    width: calc(var(--font-size)*2.5);
     height: auto;
     transition: 0.2s;
 }
