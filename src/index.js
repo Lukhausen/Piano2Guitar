@@ -369,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    let soundQualityValue = 0.0;
+    let soundQualityValue = 0.7;
     document.getElementById("soundQualitySlider").value = soundQualityValue * 100
     let progressionGenerator = new ProgressionGenerator([], true, chordLibrary, "#ffffff", "onNote", true)
 
@@ -378,6 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await progressionGenerator.setProgression(event.detail.selectedItems)
         await updateProgressionDynamic(soundQualityValue)
         await updateProgressionEasy()
+        await updateProgressionTransposed()
         updateURLWithChordNames(event.detail.selectedItems);
 
 
@@ -432,8 +433,20 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
+    let transposeValue = 0;
 
+    const transposeSlider = document.getElementById("transposeSlider");
+    transposeSlider.addEventListener('input', async (e) => {
+        transposeValue = parseInt(e.target.value);
+        console.log("Transposition Slider Value:", transposeValue, typeof(transposeValue));
+        await updateProgressionTransposed(transposeValue)
+    });
 
+    async function updateProgressionTransposed(transposeValue) {
+        let [progressionHTML, capo] = await progressionGenerator.getProgressionTransposedHTML(transposeValue);
+        document.getElementById("transposedProgressionWrapper").innerHTML = "";
+        document.getElementById("transposedProgressionWrapper").appendChild(progressionHTML);
+    };
 
 
 
@@ -498,6 +511,9 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Progression dynamic updated.");
 
             await updateProgressionEasy();
+            console.log("Progression easy updated.");
+
+            await updateProgressionTransposed();
             console.log("Progression easy updated.");
 
             reloadFlag = false;
@@ -726,5 +742,6 @@ document.addEventListener('DOMContentLoaded', () => {
     checkCommonTunings();
     updateProgressionDynamic(soundQualityValue);
     updateProgressionEasy();
+    updateProgressionTransposed();
     loadChordsFromURL();
 })

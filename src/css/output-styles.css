@@ -42,7 +42,11 @@
 
 }
 .progressionInfoText svg{
-    width: 2.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--font-size)*3);
+    height: calc(var(--font-size)*3);
     fill: var(--accent1);
     filter: drop-shadow(0px 0px 10px hwb(from var(--accent1) h w b / 0.3));
 }
@@ -69,13 +73,20 @@
 
 }
 
-.soundQualityLables {
+.sliderLables {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     font-weight: 1;
     color: var(--light2);
 
+}
+
+.soundTranspoLables div{
+    flex:0;
+    display: flex;
+    justify-content: center;
+    width: var(--font-size);
 }
 
 .soundQualityWrapper {
@@ -105,6 +116,5 @@
     .progressionInfo {
         max-width: 100%;
     }
-
 
 }

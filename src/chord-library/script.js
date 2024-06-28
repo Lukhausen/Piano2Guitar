@@ -226,6 +226,7 @@ export class ChordLibrary {
     //USing this ugly transpose Chord function as its computationaly faster
     transposeChord(chord, semitones) {
         const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        console.warn("Trying: ", chord, semitones)
 
         // Helper function to transpose a note name
         function transposeNoteName(noteName) {

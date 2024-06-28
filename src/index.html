@@ -411,7 +411,8 @@
                 <div>
                     <div class="searchHeader">
                         Search Chords</div>
-                    <div class="searchSubHeader">Click a chord to add it to your progression.<br>Double-click a piano key to set it as the root note</div>
+                    <div class="searchSubHeader">Click a chord to add it to your progression.<br>Double-click a piano
+                        key to set it as the root note</div>
                 </div>
                 <div class="settingsWrapper" onclick="toggleSettings()">
                     <div class="settingsWrapperText">SETTINGS</div>
@@ -516,8 +517,8 @@
                         </div>
                     </div>
                     <div class="soundQualityWrapper">
-                        <input id="soundQualitySlider" type="range" min="0" max="100" value="70">
-                        <div class="soundQualityLables">
+                        <input class="slider" id="soundQualitySlider" type="range" min="0" max="100" value="70">
+                        <div class="sliderLables">
                             <div>EASY</div>
                             <div>BEST SOUND</div>
                         </div>
@@ -543,6 +544,45 @@
                     </div>
                 </div>
                 <div class="progressionWrapper" id="easyProgressionWrapper"></div>
+            </div>
+            <div class="progression">
+                <div class="progressionInfo">
+                    <div class="progressionInfoText">
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                <title>Tranposed Progression</title>
+                                <path
+                                    d="M145.6 7.7C141 2.8 134.7 0 128 0s-13 2.8-17.6 7.7l-104 112c-6.5 7-8.2 17.2-4.4 25.9S14.5 160 24 160H80V352H24c-9.5 0-18.2 5.7-22 14.4s-2.1 18.9 4.4 25.9l104 112c4.5 4.9 10.9 7.7 17.6 7.7s13-2.8 17.6-7.7l104-112c6.5-7 8.2-17.2 4.4-25.9s-12.5-14.4-22-14.4H176V160h56c9.5 0 18.2-5.7 22-14.4s2.1-18.9-4.4-25.9l-104-112z" />
+                            </svg>
+                        </div>
+                        <div class="progressionInfoTextWrapper">
+                            <div class="progressionInfoTextName"><i>TRANSPOSE</i></div>
+                            <div class="progressionInfoTextSubtitle">Transpose the Progression by Semitones
+                            </div>
+                        </div>
+                    </div>
+                    <div class="soundQualityWrapper">
+                        <input class="slider" id="transposeSlider" type="range" min="-6" max="6" value="0">
+                        <div class="sliderLables soundTranspoLables">
+                            <div>-6</div>
+                            <div>-5</div>
+                            <div>-4</div>
+                            <div>-3</div>
+                            <div>-2</div>
+                            <div>-1</div>
+                            <div>0</div>
+                            <div>+1</div>
+                            <div>+2</div>
+                            <div>+3</div>
+                            <div>+4</div>
+                            <div>+5</div>
+                            <div>+6</div>
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="progressionWrapper" id="transposedProgressionWrapper"></div>
             </div>
         </div>
     </div>

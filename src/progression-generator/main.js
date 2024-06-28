@@ -307,6 +307,73 @@ export class ProgressionGenerator {
         return [diagramsContainer, (12 - bestTransposition) % 12];
     }
 
+    async getProgressionTransposedHTML(capo = 0) {
+        if (!this.easiestChords) {
+            await this.getEasiestChords();  // Assumed to properly fetch and set this.easiestChords
+        }
+
+        if (this.progression.length < 1) {
+            return [this.getPlaceholderHTML(), 0];
+        }
+        const originalProgression = structuredClone(this.progressionChords); // Make a copy of the progression chords
+
+        // Function to transpose a chord by a given number of semitones
+        let transposeChord = (chord, semitones) => {
+            return this.chordLibrary.transposeChord(chord, semitones);
+        };
+
+
+        let transposedProgression = await Promise.all(
+            originalProgression.map(chord =>
+                this.chordLibrary.simplifySlashChord(transposeChord(chord, capo))
+            )
+        );
+
+
+        transposedProgression = transposedProgression.map(chord => {
+            if (chord instanceof Chord) {
+                return this.chordFactoryManager.getChordFactory(chord, "easyCapo");
+            } else {
+                console.error('ProgressionGenerator: Invalid chord object in initial progression. Each chord must be an instance of Chord.');
+                return null;
+            }
+        });
+
+
+        // Generate the HTML for the best transposed progression
+        let diagramsContainer = document.createElement('div'); // Container for chord diagrams
+        diagramsContainer.classList.add("progressionGeneratorContainer");
+
+
+
+        transposedProgression.forEach((chordFactory, index) => {
+            let container = document.createElement("div")
+            let placeholderhtml = new TabHTML().generatePlaceholder(1, "Loading...")
+            placeholderhtml[0].style.opacity = 0.2
+            container.id = "progression-generator-easy-capo-" + index
+            container.appendChild(placeholderhtml[0])
+            diagramsContainer.appendChild(container);
+        })
+
+        // Iterate over each ChordFactory instance in the progression
+        transposedProgression.forEach(async (chordFactory, index) => {
+            // Create an instance of TabHTML for the current chordFactory
+            let tabHTML = new TabHTML(chordFactory, this.color, this.fingerNumbers, this.showOpenStrings);
+
+            // Generate the HTML for the current chordFactory
+            let chordDiagrams = await tabHTML.generateHTML(0, 1);
+            // Append the generated HTML to the main container
+
+            let container = document.getElementById("progression-generator-easy-capo-" + index)
+            container.innerHTML = ""
+            container.appendChild(chordDiagrams[0])
+
+        });
+
+        // Return the container with all chord diagrams
+        return [diagramsContainer, capo];
+    }
+
     async getEasiestChords() {
         const easiestChordsArray = [
             [-1, 0, 2, 2, 2, 0],   // A major (A)

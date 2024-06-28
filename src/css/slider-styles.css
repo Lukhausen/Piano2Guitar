@@ -1,4 +1,4 @@
-#soundQualitySlider {
+.slider {
     -webkit-appearance: none;
     width: 100%;
     height: var(--padding);
@@ -14,13 +14,13 @@
     transition: 0.2s;
 }
 
-#soundQualitySlider:hover {
+.slider:hover {
     filter: contrast(1.5);
     box-shadow: 0px 0px 20px hwb(from var(--accent1) h w b / 0.1);
 
 }
 
-#soundQualitySlider::-webkit-slider-thumb {
+.slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     height: calc(2.5*var(--padding));
@@ -32,7 +32,7 @@
     border: groove   #ffffff4b;
 }
 
-#soundQualitySlider::-moz-range-thumb {
+.slider::-moz-range-thumb {
     -webkit-appearance: none;
     appearance: none;
     height: calc(2*var(--padding));
