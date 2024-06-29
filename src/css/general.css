@@ -10,9 +10,9 @@
     --accent1: rgb(255, 166, 0);
     --padding: 10px;
     --rounding: 10px;
-    --font-size: 1em
-}
+    --font-size: 1em;
 
+}
 
 a {
     color: inherit;

@@ -434,13 +434,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     let transposeValue = 0;
-
     const transposeSlider = document.getElementById("transposeSlider");
-    transposeSlider.addEventListener('input', async (e) => {
+    const labels = document.querySelectorAll('.sliderLables div');
+    
+    // Event listener for slider input changes
+    transposeSlider.addEventListener('input', (e) => {
         transposeValue = parseInt(e.target.value);
-        console.log("Transposition Slider Value:", transposeValue, typeof(transposeValue));
-        await updateProgressionTransposed(transposeValue)
+        updateSliderValue(transposeValue);
     });
+    
+    // Event listener for label clicks
+    labels.forEach(label => {
+        label.addEventListener('click', (e) => {
+            transposeValue = parseInt(e.target.getAttribute('data-value'));
+            updateSliderValue(transposeValue);
+        });
+    });
+    
+    // Function to update slider value and handle highlighting
+    function updateSliderValue(value) {
+        // Update slider value
+        transposeSlider.value = transposeValue;
+    
+        // Remove 'active' class from all labels
+        labels.forEach(label => label.classList.remove('active'));
+    
+        // Add 'active' class to the clicked label
+        const currentLabel = document.querySelector(`.sliderLables div[data-value="${transposeValue}"]`);
+        if (currentLabel) {
+            currentLabel.classList.add('active');
+        }
+        updateProgressionTransposed(transposeValue)
+    }
 
     async function updateProgressionTransposed(transposeValue) {
         let [progressionHTML, capo] = await progressionGenerator.getProgressionTransposedHTML(transposeValue);

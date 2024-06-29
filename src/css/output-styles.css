@@ -1,120 +1,116 @@
+
 .outputWrapper {
-    background-color: var(--dark1);
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    background-color: var(--dark1);
-    border-radius: 0 0 var(--rounding) var(--rounding);
-    gap: var(--padding)
+  background-color: var(--dark1);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background-color: var(--dark1);
+  border-radius: 0 0 var(--rounding) var(--rounding);
+  gap: var(--padding);
 }
 
 .progression {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background-color: var(--dark1);
-    /*     box-shadow: 0 0 1vw rgba(0, 0, 0, 0.474);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--dark1);
+  /*     box-shadow: 0 0 1vw rgba(0, 0, 0, 0.474);
  */
-    gap: calc(2*var(--padding));
-    user-select: none;
-    background-color: var(--dark1);
-    ;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23575757' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
-
-
+  gap: calc(2 * var(--padding));
+  user-select: none;
+  background-color: var(--dark1);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23575757' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
 }
 
 .progressionInfo {
-    gap: calc(2*var(--padding));
-    justify-content: space-between;
-    display: flex;
-    flex-direction: column;
-    padding: var(--padding);
-    /*background: linear-gradient(90deg, rgba(141, 141, 141, 0) 0%, var(--dark2) 100%);*/
+  gap: calc(2 * var(--padding));
+  justify-content: space-between;
+  display: flex;
+  flex-direction: column;
+  padding: var(--padding);
+  /*background: linear-gradient(90deg, rgba(141, 141, 141, 0) 0%, var(--dark2) 100%);*/
 }
 
 .progressionInfoText {
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-    gap: var(--padding);
-    align-items: center;
-
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  gap: var(--padding);
+  align-items: center;
 }
-.progressionInfoText svg{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: calc(var(--font-size)*3);
-    height: calc(var(--font-size)*3);
-    fill: var(--accent1);
-    filter: drop-shadow(0px 0px 10px hwb(from var(--accent1) h w b / 0.3));
+.progressionInfoText svg {
+  display: flex;
+  height: calc(var(--font-size) * 3);
+  fill: var(--accent1);
+  filter: drop-shadow(0px 0px 10px hwb(from var(--accent1) h w b / 0.3));
 }
 
-.progressionInfoTextWrapper{
-    flex:1
+.progressionInfoTextWrapper {
+  flex: 1;
 }
 
 .progressionInfoTextName {
-    color: var(--accent1);
-    font-size: calc(var(--font-size)*1.5);
-    font-weight: 900;
-    justify-content: baseline;
-    text-align: start;
+  color: var(--accent1);
+  font-size: calc(var(--font-size) * 1.5);
+  font-weight: 900;
+  justify-content: baseline;
+  text-align: start;
 }
 
 .progressionInfoTextSubtitle {
-    color: var(--light2);
-    text-align: start;
+  color: var(--light2);
+  text-align: start;
 }
 
-#easyProgressionCapo{
-    font-size: calc(var(--font-size)*1.2);
-
+#easyProgressionCapo {
+  font-size: calc(var(--font-size) * 1.2);
 }
 
 .sliderLables {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    font-weight: 1;
-    color: var(--light2);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-weight: 1;
+  color: var(--light2);
+}
+
+.sliderLables div.active {
+    color: var(--accent1);  /* Highlight color */
+    font-weight: bold;  /* Highlight font weight */
+    filter: drop-shadow(0px 0px 10px hwb(from var(--accent1) h w b / 0.3));
 
 }
 
-.soundTranspoLables div{
-    flex:0;
-    display: flex;
-    justify-content: center;
-    width: var(--font-size);
+.soundTranspoLables div {
+  flex: 0;
+  display: flex;
+  justify-content: center;
+  width: var(--font-size);
 }
 
 .soundQualityWrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: end;
-    flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  flex: 1;
 }
 
 .progressionWrapper {
-    user-select: none;
-    display: flex;
-    align-items: center;
-    padding: calc(2*var(--padding)) var(--padding);
-    background-color: var(--dark2);
-    z-index: 0;
-    box-shadow: inset 0px 0px 10px #0000002f;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  padding: calc(2 * var(--padding)) var(--padding);
+  background-color: var(--dark2);
+  z-index: 0;
+  box-shadow: inset 0px 0px 10px #0000002f;
 }
 
-
-
 @media screen and (orientation: portrait) {
-    .progression {
-        flex-direction: column;
-    }
+  .progression {
+    flex-direction: column;
+  }
 
-    .progressionInfo {
-        max-width: 100%;
-    }
-
+  .progressionInfo {
+    max-width: 100%;
+  }
 }
