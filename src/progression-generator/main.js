@@ -225,7 +225,10 @@ export class ProgressionGenerator {
         if (!this.easiestChords) {
             await this.getEasiestChords();  // Make sure easiestChords are loaded
         }
+
         let transpositionResults = [];
+        const totalChords = originalProgression.length;
+        
         for (let i = 0; i < 12; i++) {
             let overlapCount = 0;
             let transposedProgression = await Promise.all(
@@ -233,6 +236,7 @@ export class ProgressionGenerator {
                     this.chordLibrary.simplifySlashChord(this.chordLibrary.transposeChord(chord, i))
                 )
             );
+
             transposedProgression.forEach(chord => {
                 this.easiestChords.forEach(easyChord => {
                     if (chord.name === easyChord.name) {
@@ -240,21 +244,27 @@ export class ProgressionGenerator {
                     }
                 });
             });
-            transpositionResults.push({ transposition: i, overlap: overlapCount });
+
+            let overlapScore = overlapCount / totalChords;
+            let capoHeight = (12 - i) % 12;
+            let capoHeightScore = 1-(capoHeight / 11);  // Normalized between 0 and 1
+
+            let combinedScore = overlapScore * 0.7+ capoHeightScore * 0.3;  // Adjust weights as needed
+            transpositionResults.push({ transposition: i, combinedScore, overlapScore, capoHeightScore });
         }
 
-        // Sort the results based on the overlap count in descending order
-        transpositionResults.sort((a, b) => b.overlap - a.overlap);
+        // Sort the results based on the combined score in descending order
+        transpositionResults.sort((a, b) => b.combinedScore - a.combinedScore);
 
         const bestTranspositions = transpositionResults.map(result => result.transposition);
-        this.bestTranspositions = bestTranspositions
+        this.bestTranspositions = bestTranspositions;
 
         // Dispatch a custom event with the transpositions data
         const event = new CustomEvent('transpositionsDetermined', { detail: { bestTranspositions } });
         window.dispatchEvent(event);
 
-        // Return the array of transpositions sorted by their effectiveness
-        return transpositionResults.map(result => result.transposition);
+        // Return the array of transpositions sorted by their combined score
+        return bestTranspositions;
     }
 
 

@@ -257,7 +257,6 @@
     position: relative;
     cursor: pointer;
     transition: 0.02s;
-    box-shadow: 0 0 10px #00000056, inset 0 0 3px #ffffff6e;
 
 }
 
