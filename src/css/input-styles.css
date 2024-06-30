@@ -251,7 +251,7 @@
     background-color: var(--light0);
     padding: calc(var(--padding) / 2) var(--padding);
     border-radius: var(--rounding);
-    font-weight: 800;
+    font-weight: 900;
     box-sizing: border-box;
     color: var(--dark2);
     position: relative;
@@ -271,6 +271,17 @@
 .dragDropItem:active {
     transform: scale(0.99);
 }
+
+
+.dragDropItem.active{
+    background-color: var(--accent1);
+    color: #000;
+    font-weight: bolder;
+    filter: drop-shadow(0px 0px 10px hwb(from var(--accent1) h w b / 0.3));
+
+  }
+  
+
 
 .dragDropItem span {
     position: relative;

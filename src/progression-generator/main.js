@@ -147,13 +147,19 @@ export class ProgressionGenerator {
         // Populate this.progression with references from the new map
         if (this.progression.length > 1) {
             this.analyzeKey()
+            this.bestTranspositions = await this.determineBestTranspositions(structuredClone(this.progressionChords));
             console.log("analyzeKey: ", this.keyAnalysis)
             const event = new CustomEvent('scaleDetected', { detail: { scale: "Scale: <b>" + numberToNote(this.keyAnalysis[0].rootNote) + " " + this.keyAnalysis[0].scale + "</b>" } });
             console.log("Key Change Event: " + numberToNote(this.keyAnalysis[0].rootNote) + " " + this.keyAnalysis[0].scale)
             window.dispatchEvent(event);
+            
         } else {
-            const event = new CustomEvent('scaleDetected', { detail: { scale: "Scale: ..." } });
+            let event = new CustomEvent('scaleDetected', { detail: { scale: "Scale: ..." } });
             console.log("Key Change Event: none")
+            window.dispatchEvent(event);
+            //Clear the List of Capo Positions
+            let bestTranspositions = "none"
+            event = new CustomEvent('transpositionsDetermined', { detail: { bestTranspositions } });
             window.dispatchEvent(event);
         }
 
@@ -215,51 +221,62 @@ export class ProgressionGenerator {
     }
 
 
-    async getProgressionEasyHTML() {
+    async determineBestTranspositions(originalProgression) {
         if (!this.easiestChords) {
-            await this.getEasiestChords();  // Assumed to properly fetch and set this.easiestChords
+            await this.getEasiestChords();  // Make sure easiestChords are loaded
+        }
+        let transpositionResults = [];
+        for (let i = 0; i < 12; i++) {
+            let overlapCount = 0;
+            let transposedProgression = await Promise.all(
+                originalProgression.map(chord =>
+                    this.chordLibrary.simplifySlashChord(this.chordLibrary.transposeChord(chord, i))
+                )
+            );
+            transposedProgression.forEach(chord => {
+                this.easiestChords.forEach(easyChord => {
+                    if (chord.name === easyChord.name) {
+                        overlapCount++;
+                    }
+                });
+            });
+            transpositionResults.push({ transposition: i, overlap: overlapCount });
+        }
+
+        // Sort the results based on the overlap count in descending order
+        transpositionResults.sort((a, b) => b.overlap - a.overlap);
+
+        const bestTranspositions = transpositionResults.map(result => result.transposition);
+        this.bestTranspositions = bestTranspositions
+
+        // Dispatch a custom event with the transpositions data
+        const event = new CustomEvent('transpositionsDetermined', { detail: { bestTranspositions } });
+        window.dispatchEvent(event);
+
+        // Return the array of transpositions sorted by their effectiveness
+        return transpositionResults.map(result => result.transposition);
+    }
+
+
+
+    async getProgressionEasyHTML(transposeId = 0) {
+        //console.log("getProgressionEasyHTML CALLED")
+        if (!this.easiestChords) {
+            await this.getEasiestChords();  // Make sure easiestChords are loaded
         }
 
         if (this.progression.length < 1) {
             return [this.getPlaceholderHTML(), 0];
         }
-        const originalProgression = structuredClone(this.progressionChords); // Make a copy of the progression chords
-        let bestTransposition = 0;
-        let maxOverlap = 0;
-
-        // Function to transpose a chord by a given number of semitones
-        let transposeChord = (chord, semitones) => {
-            return this.chordLibrary.transposeChord(chord, semitones);
-        };
-
-        for (let i = 0; i < 12; i++) {
-
-            let overlapCount = 0;
-            let transposedProgression = await Promise.all(
-                originalProgression.map(chord =>
-                    this.chordLibrary.simplifySlashChord(transposeChord(chord, i))
-                )
-            );
-            transposedProgression.forEach(chord => {
-
-                this.easiestChords.forEach(easyChord => {
-                    if (chord.name == easyChord.name) {
-                        overlapCount++;
-                    }
-                });
-            });
-
-            if (overlapCount > maxOverlap) {
-                maxOverlap = overlapCount;
-                bestTransposition = i;
-            }
+        let bestTransposition = 0
+        const originalProgression = structuredClone(this.progressionChords);
+        if (this.bestTranspositions) {
+            bestTransposition = this.bestTranspositions[transposeId];
         }
-
-        // Transpose the original progression to the best transposition
 
         let bestTransposedProgression = await Promise.all(
             originalProgression.map(chord =>
-                this.chordLibrary.simplifySlashChord(transposeChord(chord, bestTransposition))
+                this.chordLibrary.simplifySlashChord(this.chordLibrary.transposeChord(chord, bestTransposition))
             )
         );
 

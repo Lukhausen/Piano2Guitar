@@ -22,10 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
-
-
-
     // Import the MidiManager
     const midiManager = new MIDIAccessManager();
 
@@ -400,35 +396,82 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById("dynamicProgressionWrapper").appendChild(progressionHTML);
     };
 
-    async function updateProgressionEasy() {
-        let [progressionHTML, capo] = await progressionGenerator.getProgressionEasyHTML();
+
+
+    // Add event listener for transpositionsDetermined event
+    window.addEventListener('transpositionsDetermined', (event) => {
+        const bestTranspositions = event.detail.bestTranspositions;
+        console.log("bestTranspositions:",bestTranspositions)
+        let easyProgressionCapo = document.getElementById("easyProgressionCapo");
+        let easyProgressionCapoWrapper = document.getElementById("easyProgressionCapoWrapper");
+
+        easyProgressionCapo.innerHTML = ""; // Clear existing content
+        if (bestTranspositions == "none"){
+            easyProgressionCapoWrapper.style.display= "none"
+            return;
+        }
+        easyProgressionCapoWrapper.style.display= "flex"
+
+        // This array will hold all capo elements to manage classes later
+        let capoElements = [];
+
+        for (let i = 0; i < 3; i++) {
+            let suffix = "";
+            let capo = (12 - bestTranspositions[i]) % 12
+            switch (capo) {
+                case 0:
+                    capo = "No Capo"
+                    break;
+                case 1:
+                    suffix = "<sup>st</sup>";  // Unicode for 'st'
+                    break;
+                case 2:
+                    suffix = "<sup>nd</sup>";  // Unicode for 'nd'
+                    break;
+                case 3:
+                    suffix = "<sup>rd</sup>";  // Unicode for 'rd'
+                    break;
+                default:
+                    suffix = "<sup>th</sup>";  // Unicode for 'th'
+                    break;
+            }
+
+            let capoElement = document.createElement("div");
+            capoElement.classList.add("dragDropItem");
+            if (i == 0) {
+                capoElement.classList.add("active");
+            }
+
+            capoElement.id = `easyProgressionCapo-${i}`;
+            capoElement.dataset.transposition = i;  // Set data attribute
+            capoElement.innerHTML = `${capo}${suffix}`;
+
+            // Attach click event listener
+            capoElement.addEventListener('click', function (event) {
+                // Remove active class from all capo elements
+                capoElements.forEach(el => el.classList.remove('active'));
+
+                // Add active class to the clicked element
+                capoElement.classList.add('active');
+
+                const transposition = parseInt(event.currentTarget.dataset.transposition);
+                updateProgressionEasy(transposition);
+            });
+
+            // Store the capo element in the array
+            capoElements.push(capoElement);
+
+            // Append the capo element to the container
+            easyProgressionCapo.appendChild(capoElement);
+        };
+    });
+
+    async function updateProgressionEasy(transposition = 0) {
+        let [progressionHTML, capo] = await progressionGenerator.getProgressionEasyHTML(transposition);
         document.getElementById("easyProgressionWrapper").innerHTML = "";
         document.getElementById("easyProgressionWrapper").appendChild(progressionHTML);
 
-        let suffix
-        switch (capo) {
-            case 1:
-                suffix = "ˢᵗ";  // Unicode for 'st'
-                break;
-            case 2:
-                suffix = "ⁿᵈ";  // Unicode for 'nd'
-                break;
-            case 3:
-                suffix = "ʳᵈ";  // Unicode for 'rd'
-                break;
-            default:
-                suffix = "ᵗʰ";  // Unicode for 'th'
-                break;
-        }
 
-        if (capo == 0) {
-            document.getElementById("easyProgressionCapo").innerHTML = "No Capo";
-
-        }
-        else {
-            document.getElementById("easyProgressionCapo").innerHTML = "Capo: <strong>" + capo + suffix + "</strong> fret";
-
-        }
 
     };
 
@@ -436,13 +479,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let transposeValue = 0;
     const transposeSlider = document.getElementById("transposeSlider");
     const labels = document.querySelectorAll('.sliderLables div');
-    
+
     // Event listener for slider input changes
     transposeSlider.addEventListener('input', (e) => {
         transposeValue = parseInt(e.target.value);
         updateSliderValue(transposeValue);
     });
-    
+
     // Event listener for label clicks
     labels.forEach(label => {
         label.addEventListener('click', (e) => {
@@ -450,15 +493,15 @@ document.addEventListener('DOMContentLoaded', () => {
             updateSliderValue(transposeValue);
         });
     });
-    
+
     // Function to update slider value and handle highlighting
     function updateSliderValue(value) {
         // Update slider value
         transposeSlider.value = transposeValue;
-    
+
         // Remove 'active' class from all labels
         labels.forEach(label => label.classList.remove('active'));
-    
+
         // Add 'active' class to the clicked label
         const currentLabel = document.querySelector(`.sliderLables div[data-value="${transposeValue}"]`);
         if (currentLabel) {
