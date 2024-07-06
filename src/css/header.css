@@ -20,7 +20,7 @@ background-size: cover; */
 
 }
 
-.mainHeader svg {
+.mainLogo svg {
     fill: var(--accent1);
     height: min(10cqw, calc(2.5*var(--font-size)))
 }

@@ -47,7 +47,7 @@ a {
     background: var(--light3);
 }
 
-.visualIcon path {
+.visualIcon {
     fill: var(--light1)
 }
 
