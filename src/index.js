@@ -199,19 +199,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function setMIDIState(state = true) {
         if (state === "off") {
             localStorage.setItem('MIDIState', "off");
-            MIDIStatusDiv.style.textDecoration="line-through"
-            MIDIStatusDiv.style.opacity=0.5
+            MIDIStatusDiv.style.textDecoration = "line-through"
+            MIDIStatusDiv.style.opacity = 0.8
+            MIDIStatusDiv.style.color="#ff5555"
 
             isMIDIOn = false;
             midiToggleIcon.innerHTML = `<title>Enable MIDI</title><desc>Enable MIDI input</desc><path d="m813-61-59-59H180q-24.75 0-42.37-17.63Q120-155.25 120-180v-574l-59-59 43-43 752 752-43 43Zm27-145-60-60v-514H673v360q0 9-5 17t-14 11L533-513v-267H427v161L206-840h574q24.75 0 42.38 17.62Q840-804.75 840-780v574Zm-660 26h157v-210h-20q-12.75 0-21.37-8.63Q287-407.25 287-420v-167L180-694v514Zm197 0h206v-111L427-447v27q0 13-8.5 21.5T397-390h-20v210Zm246 0h71l-71-71v71Z"/>`;
-            midiToggleIcon.style.fill="#ff5555"
+            midiToggleIcon.style.fill = "#ff5555"
         } else {
             localStorage.setItem('MIDIState', "on");
-            MIDIStatusDiv.style.textDecoration="none"
-            MIDIStatusDiv.style.opacity=1
+            MIDIStatusDiv.style.textDecoration = "none"
+            MIDIStatusDiv.style.opacity = 1
+            MIDIStatusDiv.style.color=""
             isMIDIOn = true;
             midiToggleIcon.innerHTML = `<title>Disable MIDI</title><desc>Disable MIDI input</desc><path d="M180-120q-24 0-42-18t-18-42v-600q0-23 18-41.5t42-18.5h600q23 0 41.5 18.5T840-780v600q0 24-18.5 42T780-120H180Zm0-60h157v-210h-20q-12.75 0-21.37-8.63Q287-407.25 287-420v-360H180v600Zm443 0h157v-600H673v360q0 12.75-8.62 21.37Q655.75-390 643-390h-20v210Zm-246 0h206v-210h-20q-12.75 0-21.37-8.63Q533-407.25 533-420v-360H427v360q0 12.75-8.62 21.37Q409.75-390 397-390h-20v210Z"/>`;
-            midiToggleIcon.style.fill=""
+            midiToggleIcon.style.fill = ""
 
         }
     }
@@ -233,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    
+
 
 
 
@@ -244,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelector('.pianoContainer').addEventListener('notesChanged', async (e) => {
 
-        if (document.visibilityState === 'visible' && isMIDIOn) {
+        if (document.visibilityState === 'visible') {
             let items
             if (e.detail.notes.length > 0) {
                 console.log("Reviced notesChanged Event: " + e.detail.notes + " Root: " + e.detail.rootNote)
@@ -301,34 +303,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function updateRootNote() {
-        if (actualPressedKeys.size > 0) {
-            // Convert actualPressedKeys to an array and sort it
-            const sortedNotes = Array.from(actualPressedKeys.keys()).sort((a, b) => a - b);
+        if (isMIDIOn) {
+            if (actualPressedKeys.size > 0) {
+                // Convert actualPressedKeys to an array and sort it
+                const sortedNotes = Array.from(actualPressedKeys.keys()).sort((a, b) => a - b);
 
-            // Determine if the lowest note should be set as the root note
-            const lowestNote = sortedNotes[0];
-            const lowestNoteMod12 = lowestNote % 12;
-            let setRoot = false;
+                // Determine if the lowest note should be set as the root note
+                const lowestNote = sortedNotes[0];
+                const lowestNoteMod12 = lowestNote % 12;
+                let setRoot = false;
 
-            // Check if the lowest note is doubled in higher octaves
-            if (sortedNotes.some(note => note !== lowestNote && note % 12 === lowestNoteMod12)) {
-                setRoot = true;
-            }
+                // Check if the lowest note is doubled in higher octaves
+                if (sortedNotes.some(note => note !== lowestNote && note % 12 === lowestNoteMod12)) {
+                    setRoot = true;
+                }
 
-            // Check if the lowest note is 12 interval steps away from the second lowest note
-            if (sortedNotes.length > 1 && (sortedNotes[1] - lowestNote >= 6)) {
-                setRoot = true;
-            }
+                // Check if the lowest note is 12 interval steps away from the second lowest note
+                if (sortedNotes.length > 1 && (sortedNotes[1] - lowestNote >= 6)) {
+                    setRoot = true;
+                }
 
-            // Set or clear the root note based on the above conditions
-            if (setRoot) {
-                const visualKey = mapNoteToVisualKey(lowestNote);
-                myPiano.setRootNote(visualKey);
+                // Set or clear the root note based on the above conditions
+                if (setRoot) {
+                    const visualKey = mapNoteToVisualKey(lowestNote);
+                    myPiano.setRootNote(visualKey);
+                } else {
+                    myPiano.clearRootNote();
+                }
             } else {
                 myPiano.clearRootNote();
             }
-        } else {
-            myPiano.clearRootNote();
         }
     }
 
@@ -340,7 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //Functionality to autom,atically add Chord when played by midi:
     window.addEventListener('notesOutput', async (e) => {
-        if (document.visibilityState === 'visible') {
+        if (document.visibilityState === 'visible' && isMIDIOn) {
             const notes = e.detail;
             if (notes.length > 0) {
                 const rootNote = Math.min(...notes);
@@ -452,16 +456,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add event listener for transpositionsDetermined event
     window.addEventListener('transpositionsDetermined', (event) => {
         const bestTranspositions = event.detail.bestTranspositions;
-        console.log("bestTranspositions:",bestTranspositions)
+        console.log("bestTranspositions:", bestTranspositions)
         let easyProgressionCapo = document.getElementById("easyProgressionCapo");
         let easyProgressionCapoWrapper = document.getElementById("easyProgressionCapoWrapper");
 
         easyProgressionCapo.innerHTML = ""; // Clear existing content
-        if (bestTranspositions == "none"){
-            easyProgressionCapoWrapper.style.display= "none"
+        if (bestTranspositions == "none") {
+            easyProgressionCapoWrapper.style.display = "none"
             return;
         }
-        easyProgressionCapoWrapper.style.display= "flex"
+        easyProgressionCapoWrapper.style.display = "flex"
 
         // This array will hold all capo elements to manage classes later
         let capoElements = [];
