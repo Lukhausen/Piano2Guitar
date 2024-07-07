@@ -7,8 +7,8 @@ export class ChordFactory {
 
 
    //CREATE Workers and Updtae Their Settings, as the Workers do not share the same context as the main Thread
-    this.ChordCombinationsWorker = new Worker(new URL('./ChordCombinationsWorker.js', import.meta.url), { type: 'module' });
-    this.ChordFilteringWorker = new Worker(new URL('./ChordFilteringWorker.js', import.meta.url), { type: 'module' });
+    this.ChordCombinationsWorker = new Worker(new URL('./CC.js', import.meta.url), { type: 'module' });
+    this.ChordFilteringWorker = new Worker(new URL('./CF.js', import.meta.url), { type: 'module' });
     this.ChordFilteringWorker.postMessage({ type: 'settingsUpdate', newSettings: settings });
     this.ChordCombinationsWorker.postMessage({ type: 'settingsUpdate', newSettings: settings });
 
