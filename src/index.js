@@ -453,6 +453,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //How many capo suggestions are displayed
+    const easyProgressionCapoAmmount = 3
+
     // Add event listener for transpositionsDetermined event
     window.addEventListener('transpositionsDetermined', (event) => {
         const bestTranspositions = event.detail.bestTranspositions;
@@ -470,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // This array will hold all capo elements to manage classes later
         let capoElements = [];
 
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < easyProgressionCapoAmmount; i++) {
             let suffix = "";
             let capo = (12 - bestTranspositions[i]) % 12
             switch (capo) {

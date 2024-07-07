@@ -49,6 +49,7 @@ export class ChordFactory {
     this.ChordFilteringWorker.onmessage = (e => {
       if (e.data.status === 'finished') {
         this.resolvePlayableChords();  // Resolve the promise when chords are ready
+        this.terminateWorkers();
       } else {
         const { voicing, fingerPositions, barres, minAboveZero, fingersused, notes, root, actuallyPlayedNotes } = e.data;
         let newVoicing = new ChordVoicing(
@@ -64,6 +65,18 @@ export class ChordFactory {
         this.playableChords.push(newVoicing);
       }
     }).bind(this);
+  }
+
+
+  terminateWorkers() {
+    if (this.ChordCombinationsWorker) {
+      this.ChordCombinationsWorker.terminate();
+      this.ChordCombinationsWorker = null;
+    }
+    if (this.ChordFilteringWorker) {
+      this.ChordFilteringWorker.terminate();
+      this.ChordFilteringWorker = null;
+    }
   }
 
 
