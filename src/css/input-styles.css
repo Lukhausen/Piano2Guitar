@@ -48,7 +48,7 @@
     height: 50vh;
     background-color: var(--dark1);
     gap: var(--padding);
-    padding: var(--padding);
+    padding: var(--padding) var(--padding) 0 var(--padding);
     box-sizing: border-box;
     position: relative;
     /*     box-shadow: 0 0 min(5vw, 5vh) rgba(0, 0, 0, 0.212);
