@@ -3,11 +3,5 @@
     "reporters": [
         "...",
         "parcel-reporter-static-files-copy"
-    ],
-    "optimizers": {
-        "*.js": [
-            "...",
-            "@rbf/parcel-optimizer-javascript-obfuscator"
-        ]
-    }
+    ]
 }

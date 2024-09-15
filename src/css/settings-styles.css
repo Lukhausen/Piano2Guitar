@@ -338,6 +338,10 @@
     border-radius: var(--rounding);
 }
 
+.settingsFretBar:hover {
+    cursor: pointer;
+}
+
 
 @media only screen and (max-height: 1000px) {
     #settings {
