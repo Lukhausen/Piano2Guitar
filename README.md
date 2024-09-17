@@ -1,4 +1,4 @@
-# PianoToGuitar: Guitar Chord Generator and Analyzer
+# [PianoToGuitar](https://pianotoguitar.com/): Guitar Chord Generator and Analyzer
 
 ## Overview
 
