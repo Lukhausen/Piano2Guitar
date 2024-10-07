@@ -342,6 +342,12 @@
     cursor: pointer;
 }
 
+.closeSettingsIcon{
+    cursor: pointer;
+    position: absolute;
+    z-index: 7;
+}
+
 
 @media only screen and (max-height: 1000px) {
     #settings {
